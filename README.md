@@ -38,4 +38,8 @@ Sea and land are treated separately
 
 Map of preasures for each polygon
 
+## Deadlines
+
+-   **31 may:** First figures
+
 ## How interactive should we make this

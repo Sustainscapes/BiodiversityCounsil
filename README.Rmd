@@ -48,4 +48,15 @@ Sea and land are treated separately
 
 Map of preasures for each polygon
 
+## Deadlines
+
+* **31 may:** First figures
+
+
+## Test files
+
+* Natura 2000
+* BES_NATURETYPER_SHAPE
+* NATUR_VILDT_RESERVATER
+
 ## How interactive should we make this
