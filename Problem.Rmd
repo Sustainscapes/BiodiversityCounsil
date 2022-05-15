@@ -1,0 +1,204 @@
+---
+title: "Concurrent areas problem"
+author: "Derek Corcoran"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F)
+
+```
+
+
+
+## Load the packages
+
+```{r Loadpackages}
+library(sf)
+library(dplyr)
+library(terra)
+library(ggplot2)
+library(tidyr)
+library(patchwork)
+```
+
+
+## The problem
+
+In order to state the problem we will use a variation of the example used in the [SF website](https://r-spatial.github.io/sf/articles/sf3.html#geometrical-operations)
+
+```{r createDataset}
+b0 = st_polygon(list(rbind(c(-1,-1), c(1,-1), c(1,1), c(-1,1), c(-1,-1))))
+b1 = b0 + 2
+b2 = b0 + c(-0.2, 2)
+x = st_sfc(b0, b1, b2)
+
+red_sf <- x %>% st_as_sf() %>% mutate(Red = 1)
+
+red_sf$NameRed <- c("b0", "b1", "b2")
+a0 = b0 * 0.8
+a1 = a0 * 0.5 + c(2, 0.7)
+a2 = a0 + 0.5
+a3 = b0 * 0.5 + c(2, -0.5)
+y = st_sfc(a1,a2,a3) 
+green_sf <- y %>% st_as_sf() %>% mutate(Green = 1)
+
+green_sf$NameGreen <- c("a1", "a2", "a3")
+```
+
+This creates 2 groups of polygons that we can see here:
+
+```{r, echo = FALSE}
+plot(x, border = 'red')
+plot(y, border = 'green', add = TRUE)
+```
+
+As it can be seen there is some intersection between both groups of polygons, that compromises the 3 polygons in the red group, and 2 of the polygons in the green group. Since the solution is going to be later used for several groups each with over 300.000 polygons, the idea is that the solution generates a pre calculated sf, where all the polygons that are not intersecting with the other group are left us such.
+
+## Expected results
+
+### Total area 
+
+This should always get you:
+
+```{r}
+st_area(st_union(st_union(red_sf), st_union(green_sf)))
+```
+
+Which is the area of the following polygon:
+
+```{r, echo = FALSE}
+st_union(st_union(red_sf), st_union(green_sf)) %>% plot
+```
+
+
+### Red area 
+
+This should always get you:
+
+```{r}
+st_area(st_union(red_sf))
+```
+
+Which is the area of the following polygon:
+
+```{r, echo = FALSE}
+st_union(st_union(red_sf)) %>% plot(border = "red")
+```
+
+### Green area 
+
+This should always get you:
+
+```{r}
+st_area(st_union(green_sf))
+```
+
+Which is the area of the following polygon:
+
+```{r, echo = FALSE}
+st_union(st_union(green_sf)) %>% plot(border = "green")
+```
+
+
+# With SF package
+
+## Tests
+
+### Intersection
+
+```{r, out.width= "100%"}
+P0 <- ggplot() + geom_sf(data = green_sf, alpha = 0.5, fill = "green") + geom_sf(data = red_sf, alpha = 0.5, fill = "red") + theme_bw()  + ggtitle("Both datasets") + labs(x = NULL, y = NULL) + geom_sf_text(data = green_sf, aes(label = NameGreen)) + geom_sf_text(data = red_sf, aes(label = NameRed))
+
+P1 <- ggplot(st_intersection(green_sf, red_sf)) + geom_sf() + theme_bw() + geom_sf_text(aes(label = NameGreen)) + ggtitle("Intersection name green") + labs(x = NULL, y = NULL)
+
+P2 <- ggplot(green_sf) + geom_sf(alpha = 0.5, fill = "green") + theme_bw() + geom_sf_text(aes(label = NameGreen)) + ggtitle("Green only") + labs(x = NULL, y = NULL)
+
+
+
+P0  + P1 + P2
+```
+
+### Difference
+
+
+
+```{r, out.width= "100%"}
+P5 <- ggplot(st_intersection(red_sf, st_difference(st_union(red_sf), st_union(green_sf)))) + geom_sf(fill = "red", alpha = 0.5) + geom_sf_text(aes(label = NameRed)) + theme_bw() +  ggtitle("Red minus Green") + labs(x = NULL, y = NULL)
+
+P6 <- ggplot(st_intersection(green_sf, st_difference(st_union(green_sf), st_union(red_sf)))) + geom_sf(fill = "green", alpha = 0.5)  + geom_sf_text(aes(label = NameGreen))+ theme_bw() + ggtitle("Green minus Red") + labs(x = NULL, y = NULL)
+
+P0  + P5 + P6
+```
+
+### All Together
+
+```{r}
+
+Intersection <- st_intersection(green_sf, red_sf)
+OnlyRed <- st_intersection(red_sf, st_difference(st_union(red_sf), st_union(green_sf)))
+OnlyGreen <- st_intersection(green_sf, st_difference(st_union(green_sf), st_union(red_sf)))
+
+All <- list(Intersection, OnlyRed, OnlyGreen) %>% 
+  purrr::reduce(bind_rows) %>% 
+  tidyr::replace_na(list(Green = 0, Red = 0))
+
+All$Area <- st_area(All)
+
+
+ggplot(All) + geom_sf(aes(color = as.factor(Green), lty = as.factor(Red))) + theme_bw()
+```
+
+
+## Final test
+
+Total Area:
+
+```{r}
+All$Area %>% sum()
+```
+
+Area Green:
+
+```{r}
+All %>% dplyr::filter(Green == 1) %>% pull(Area) %>% sum()
+```
+
+Area Red:
+
+```{r}
+All %>% dplyr::filter(Red == 1) %>% pull(Area) %>% sum()
+```
+
+# With terra package
+
+```{r}
+red_vect <- red_sf %>% vect()
+green_vect <- green_sf %>% vect()
+
+All_Terra <- terra::union(red_vect, green_vect)
+
+All_Terra$Area <- All_Terra %>% terra::expanse()
+```
+
+
+## Tests
+
+Total Area:
+
+```{r}
+sum(All_Terra$Area)
+```
+
+Green Area:
+
+```{r}
+sum(All_Terra[All_Terra$Green == 1,]$Area)
+```
+
+Red Area:
+
+```{r}
+sum(All_Terra[All_Terra$Red == 1,]$Area)
+```
