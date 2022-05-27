@@ -58,5 +58,5 @@ Map of preasures for each polygon
 * Natura 2000
 * BES_NATURETYPER_SHAPE
 * NATUR_VILDT_RESERVATER
-
+* Markblokke2021 Overlap with natura 2000 and paragraph 3
 ## How interactive should we make this

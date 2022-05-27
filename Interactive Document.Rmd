@@ -1,0 +1,21 @@
+---
+title: "Summary of landuse proportions"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, error = FALSE)
+library(terra)
+library(sf)
+library(tidyverse)
+library(geodata)
+library(crosstalk)
+
+```
+
+```{r}
+DK <- geodata::gadm(country = "Denmark", level = 0, path = getwd(), version = "4.0")
+Area_DK <- terra::expanse(DK)
+```
+
+# Denmark

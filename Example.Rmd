@@ -1,0 +1,138 @@
+---
+title: "Some examples"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+library(terra)
+library(sf)
+library(tidyverse)
+library(geodata)
+library(crosstalk)
+```
+
+```{r DKKAREA}
+DK <- geodata::gadm(country = "Denmark", level = 0, path = getwd())
+Area_DK <- terra::expanse(DK) %>% round()
+```
+
+This is an example for the calculation of perentange of area, taking into account the paragraph 3, dataset (BES_NATURTYPER_SHAPE), 
+
+
+```{r dissolve, cache = T}
+Paragraph3 <-  vect("O:/Nat_BDR-data/Arealanalyse/RAW/BES_NATURTYPER_SHAPE")
+
+Paragraph3 <- Paragraph3[,c("Objekt_id", "Natyp_navn")]
+
+Paragraph3_by_nature <- aggregate(Paragraph3, by='Natyp_navn')
+
+terra::writeVector(Paragraph3_by_nature, "O:/Nat_BDR-data/Arealanalyse/PROCESSED/Aggregated/Paragraph3_by_nature.shp", overwrite = T)
+```
+
+
+```{r uniteparagraph3, cache = T}
+Paragraph3_by_nature <-  vect("O:/Nat_BDR-data/Arealanalyse/PROCESSED/Aggregated/Paragraph3_by_nature.shp")
+
+Paragraph3_by_nature <- Paragraph3_by_nature[,1]
+
+Paragraph3_by_nature_union <- terra::union(Paragraph3_by_nature)
+```
+
+
+```{r uniteparagraph3Names, cache = T}
+names(Paragraph3_by_nature_union) <- Paragraph3_by_nature$Natyp_navn  %>% janitor::make_clean_names()
+
+Paragraph3_by_nature_union$Area <- terra::expanse(Paragraph3_by_nature_union) %>% round() %>% as.integer()
+
+Paragraph3_by_nature_union$Percentage <- (Paragraph3_by_nature_union$Area/Area_DK)*100
+
+Paragraph3_by_nature_union$Database <- "Paragraph 3"
+
+```
+
+
+```{r UniteParagraph3DF, cache=TRUE}
+Paragraph3_DF <- as.data.frame(Paragraph3_by_nature_union)
+write_csv(Paragraph3_DF, "O:/Nat_BDR-data/Arealanalyse/PROCESSED/Summarized/Paragraph3.csv")
+saveRDS(Paragraph3_DF, "O:/Nat_BDR-data/Arealanalyse/PROCESSED/Summarized/Paragraph3.rds")
+```
+
+```{r writeFinalParagraph3, cache=TRUE}
+terra::writeVector(Paragraph3_by_nature_union, "O:/Nat_BDR-data/Arealanalyse/PROCESSED/Aggregated/Paragraph3_by_nature_union.shp", overwrite = T)
+```
+
+```{r}
+knitr::kable(Paragraph3_DF, digits = 3)
+```
+
+
+```{r areas, cache=T}
+P3 <- terra::expanse(Paragraph3_by_nature)
+
+P3Un <- terra::expanse(Paragraph3_by_nature_union)
+
+```
+
+
+Taking out the overlaps reduces the total area from  `r `prettyNum(big.mark = ",", sum(P3))` square meters to `r `prettyNum(big.mark = ",", sum(P3Un))`
+
+## Harmonize according to priority
+
+```{r}
+Paragraph3_DF <- readRDS("O:/Nat_BDR-data/Arealanalyse/PROCESSED/Summarized/Paragraph3.rds") %>% dplyr::mutate(Harmonized_Nature = case_when(overdrev == 1 ~ "overdrev",
+                                                                                                                                             overdrev == 0 & strandeng == 1 ~ "strandeng",
+                                                                                                                                             overdrev == 0 & strandeng == 0 & so == 1 ~ "so",
+                                                                                                                                             overdrev == 0 & strandeng == 0 & so == 0 & hede == 1 ~ "hede",
+                                                                                                                                             overdrev == 0 & strandeng == 0 & so == 0 & hede == 0 & mose == 1 ~ "mose",
+                                                                                                                                             overdrev == 0 & strandeng == 0 & so == 0 & hede == 0 & mose == 0 & eng == 1 ~ "eng",
+                                                                                                                                             overdrev == 0 & strandeng == 0 & so == 0 & hede == 0 & mose == 0 & eng == 0 ~ "ukendt"))
+
+Paragraph3_by_nature_union$Harmonized_Nature <- Paragraph3_DF$Harmonized_Nature
+```
+
+
+```{r Harmonized, cache = T}
+Paragraph3_harmonized_nature <- aggregate(Paragraph3_by_nature_union, by='Harmonized_Nature')
+
+Paragraph3_harmonized_nature$Area <- terra::expanse(Paragraph3_harmonized_nature) %>% round() %>% as.integer()
+
+Paragraph3_harmonized_nature$Percentage <- (Paragraph3_harmonized_nature$Area/Area_DK)*100
+
+Paragraph3_harmonized_nature$Database <- "Paragraph 3"
+```
+
+
+```{r writeharmonized, cache = T}
+terra::writeVector(Paragraph3_harmonized_nature, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Paragraph3_Harmonized.shp", overwrite = T)
+```
+
+
+# Natura2000 intersection with markblokkort2021
+
+```{r readnaturaAndMark, cache = T}
+Natura2000 <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/NATURA 2000/pg-natura_2000_omraader_natura2000.shp")
+
+Natura2000 <- Natura2000[,3]
+
+Natura2000_Aggregated <- aggregate(Natura2000, by='temanavn')
+```
+
+
+```{r readnaturaAndMark2, cache = T}
+markblokkort <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/Markblokke2021/Markblokke2021.shp")
+
+markblokkort <- markblokkort[(markblokkort$MB_TYPE %in% c("OMD", "PGR")),7]
+
+markblokkort_Aggregated <- aggregate(markblokkort, by='MB_TYPE')
+
+```
+
+```{r UniteNatura2000andMarkblokkort, cache = T}
+NaturaAndMark <- terra::union(markblokkort_Aggregated, Natura2000_Aggregated)
+```
+
+
+```{r WriteNatura2000andMarkblokkort, cache = T}
+terra::writeVector(NaturaAndMark, "O:/Nat_BDR-data/Arealanalyse/PROCESSED/Aggregated/NaturaAndMark.shp")
+```
