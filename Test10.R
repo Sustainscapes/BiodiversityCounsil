@@ -37,6 +37,20 @@ Area_DK <- terra::expanse(DK)
 
 ALL <- terra::mask(All, DK)
 
+writeRaster(ALL, "AllIntersections.tif", overwrite=TRUE, gdal=c("COMPRESS=NONE", "TFW=YES","of=COG"))
+
+writeRaster(ALL[[1]], "Paragraph3.tif", overwrite=TRUE, gdal=c("COMPRESS=NONE", "TFW=YES","of=COG"))
+
+sf::gdal_utils("warp",
+           source = "Paragraph3.tif",
+           destination = "Paragraph3_Optimized.tif",
+           options = c(
+             "-of", "COG",
+             "-co", "RESAMPLING=NEAREST",
+             "-co", "TILING_SCHEME=GoogleMapsCompatible",
+             "-co", "COMPRESS=DEFLATE",
+             "-co", "NUM_THREADS=46"
+           ))
 
 message(paste("Start crosstab", Sys.time()))
 
