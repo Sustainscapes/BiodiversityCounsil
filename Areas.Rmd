@@ -1,0 +1,49 @@
+---
+title: "Areas"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, error = F)
+library(crosstalk)
+library(tidyverse)
+library(leaflet)
+library(summarywidget)
+library(DT)
+library(plotly)
+
+Areas_Test <- readRDS("Area_summary.rds") %>% 
+  mutate(Habitats_P3 = ifelse(is.na(Habitats_P3), "Not paragraph 3", Habitats_P3),
+         Natura_2000 = ifelse(is.na(Natura_2000), "No", Natura_2000),
+         Types_markblokkort = ifelse(is.na(Types_markblokkort), "Other", Types_markblokkort))
+
+
+shared_Areas <- SharedData$new(Areas_Test)
+```
+
+```{r}
+
+filter_checkbox("Habitats_P3", "Habitats Par 3", shared_Areas, ~Habitats_P3, inline = TRUE)
+
+filter_checkbox("Natura_2000", "Natura 2000", shared_Areas, ~Natura_2000, inline = TRUE)
+
+filter_checkbox("Types_markblokkort", "Types markblokkort", shared_Areas, ~Types_markblokkort, inline = TRUE)
+
+Percent <- summarywidget(shared_Areas, statistic = "sum", column = "Proportion", digits = 2, elementId = "Percent")
+
+```
+
+The selected areas are `r Percent` percent of Denmark
+
+```{r}
+DT::datatable(shared_Areas, extensions = 'Buttons', filter = 'top', 
+            options = list(dom = 'Blfrtip',
+                           scrollX='400px',
+                           scrollY='200px',
+                           buttons = c('copy', 'csv', 'excel',I('colvis')),
+                           lengthMenu = list(c(25,50,-1),
+                                             c(25,50,"All"))))  %>%
+    formatRound(columns=c("Area_Sq_Mt", "Proportion"), digits=3)
+```
+
+
