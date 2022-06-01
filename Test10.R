@@ -2,7 +2,47 @@ library(terra)
 library(dplyr)
 library(geodata)
 
+## Template
+
+Canopy_Cover <- list.files(path = "O:/Nat_Ecoinformatics/C_Write/_Archive/Assmann_etal_EcoDes-DK15/EcoDes-DK15_v1.1.0/canopy_height/", full.names = T, pattern = ".vrt") %>%
+  terra::rast()
+
+## join this 2
 Habs <- terra::vect("O:/Nat_BDR-data/Arealanalyse/PROCESSED/Aggregated/Paragraph3_by_nature.shp")
+
+Klits <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/MATRIKELKORT/DK_SHAPE_UTM32-EUREF89/MINIMAKS/TEMA/KLIT.shp")
+
+Klits$Natyp_navn <- "Klit"
+
+Klits <- terra::aggregate(Klits, by = "Natyp_navn") %>% terra::project(terra::crs(Habs))
+
+### Check overlap
+
+HabsRast <- terra::rasterize(Habs, Canopy_Cover, field = "Natyp_navn")
+
+KlitsRast <- terra::rasterize(Klits, Canopy_Cover, field = "Natyp_navn")
+
+HabsKlits <- crosstab(c(HabsRast, KlitsRast), useNA=T, long=TRUE)
+
+
+Paragraph3_DF <- data.frame(Natyp_navn = 0:(length(levels(HabsRast)[[1]]) - 1), Habitats_P3 = levels(HabsRast)[[1]])
+
+Klits_DF <- data.frame(Natyp_navn.1 = 0:(length(levels(KlitsRast)[[1]]) - 1), Habitats_Klit = levels(KlitsRast)[[1]])
+
+
+HabsKlits2 <- HabsKlits %>% full_join(Paragraph3_DF) %>%
+  full_join(Klits_DF) %>%
+  dplyr::filter(!(is.na(Habitats_P3) & is.na(Habitats_Klit))) %>%
+  dplyr::select(-"Natyp_navn", -"Natyp_navn.1") %>%
+  mutate(Area_Sq_Mt = 100*Freq,
+         Proportion = 100*(Area_Sq_Mt/Area_DK)) %>%
+  dplyr::select(-Freq) %>%
+  ungroup()
+
+
+## What withing paragraph 3 Klit intersects with
+Habs2 <- rbind(Habs, Klits)
+## join this 2
 
 Natura2000 <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/HABITAT_OMRAADER/HABITAT_OMRAADER.shp")
 
@@ -10,15 +50,75 @@ Natura2000 <- Natura2000[,7]
 
 Natura2000 <- terra::aggregate(Natura2000, by = "Temanavn")
 
+Natura2000b <-terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/FUGLE_BESKYTTELSE_OMRAADER/FUGLE_BESKYTTELSE_OMRAADER.shp")
+
 markblokkort <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/Markblokke2021/Markblokke2021.shp")
 
 markblokkort <- markblokkort[(markblokkort$MB_TYPE %in% c("OMD", "PGR")),7]
 
 markblokkort_Aggregated <- terra::aggregate(markblokkort, by='MB_TYPE')
 
+### Nature restecet
 
-Canopy_Cover <- list.files(path = "O:/Nat_Ecoinformatics/C_Write/_Archive/Assmann_etal_EcoDes-DK15/EcoDes-DK15_v1.1.0/canopy_height/", full.names = T, pattern = ".vrt") %>%
-  terra::rast()
+
+Wildreserve <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/NATUR_VILDT_RESERVATER/NATUR_VILDT_RESERVATER.shp")
+
+NaturaOgVildtreservater <- Wildreserve[(!Wildreserve$Beken_navn %in% c("Agerø og Skibsted Fjord", "Agger Tange", "Anholt",
+                                                           "Ertholmene", "Fanefjord-Grønsund", "Fredericia", "Gamborg Inddæmning",
+                                                           "Guldborgsund", "Gyldensteen Strand", "Haderslev Fjord", "Hals-Egense",
+                                                           "Hanstholm", "Harboøre Tange m.v.", "Hejlsminde Nor", "Helleholm Vejle",
+                                                           "Hesselø", "Hirsholmene", "Hjarbæk Fjord", "Hobro", "Holsteinborg Nor",
+                                                           "Horsens Nørrestrand", "Hov Røn", "Hov Vig", "Hyllekrog", "Kalundborg",
+                                                           "Kalvø", "Kolding Inderfjord", "Lerdrup Bugt", "Linderum", "Livø Bredning",
+                                                           "Løgstør Bredning", "Lønnerup Fjord", "Majbølle", "Mariager Fjord",
+                                                           "Maribo", "Mejlø", "Mølle- og Svanegrunden", "Mågeøerne", "Nakskov Fjord",
+                                                           "Nexø", "Nibe og Gjøl Bredning", "Nissum Fjord", "Norsminde Fjord",
+                                                           "Nysted Nor", "Nærå-Agernæs", "Nørremaj", "Nørskov Vig", "Odense Fjord",
+                                                           "Præstø Fjord", "Ribe", "Ringkøbing Fjord", "Roskilde Fjord",
+                                                           "Rotholmene", "Rødsand", "Rågø", "Saltholm", "Selsø Sø", "Skarrehage",
+                                                           "Skælskør", "Stavns Fjord", "Struer", "Svendborg", "Sydfynske Ø-hav",
+                                                           "Søby Rev", "Sødring", "Tihøje og Vind", "Tissø", "Tårs Vig",
+                                                           "Ulvedybet", "Ulvshale-Nyord", "Vadehavet", "Vejle Inderfjord",
+                                                           "Vejlerne", "Vest Stadil Fjord", "Voerså-Stensnæs", "Vorsø",
+                                                           "Vresen", "Ølene", "Ølsemagle Revle", "Årø Kalv")),]
+
+IUCN <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/IUCN REVISED FREDNINGER/Fredninger_IUCNKat_2018_25832.shp")
+
+## Untouched forest join
+
+Urort_Skov <- list.files(path = "O:/Nat_BDR-data/Arealanalyse/RAW/Uroert skov NST Feb2022/", full.names = T, pattern = "shp")
+
+private_Urort_Skov <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/PRIVATE_UNTOUCHED_FOREST/aftale_natur_tinglyst.shp")
+private_Urort_Skov <- private_Urort_Skov[private_Urort_Skov$tilskudsor== "Privat urørt skov", ]
+
+
+#### National parks not to be shown results only
+
+National_Parks <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/GIS filer - de 5/GIS filer - de 5/Naturnationalparker.shp")
+
+
+### Combine subsidy schemes
+
+
+
+stoettte_Skov <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/PRIVATE_UNTOUCHED_FOREST/aftale_natur_tinglyst.shp")
+stoettte_Skov <- stoettte_Skov[stoettte_Skov$tilskudsor== "Privat urørt skov", ]
+
+stoettte_sammenhaengende <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/PRIVATE_UNTOUCHED_FOREST/aftale_natur_tinglyst.shp")
+stoettte_sammenhaengende <- stoettte_sammenhaengende[stoettte_sammenhaengende$tilskudsor== "Sammenhængende arealer", ]
+
+stoette_egekrat <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/EGEKRAT/egekrat.shp")
+
+stoette_egekrat <- stoette_egekrat[stoette_egekrat$vurdering_ %in% c(1,2),]
+stoette_egekrat <- stoette_egekrat[stoette_egekrat$sikret %in% c("ja"),]
+#### Total Skov - Uroet skov = Drevet Skov
+
+Total_Forest <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/SKOV_GeoDanmark_April2022/SKOV_GeoDanmark_April2022.shp")
+
+#### TEMPLATE
+
+
+
 
 Sys.time()
 Test <- terra::rasterize(Habs, Canopy_Cover, field = "Natyp_navn")
@@ -30,6 +130,8 @@ message(paste("markblokkort 3 ready", Sys.time()))
 
 
 All <- c(Test, Test2, Test3)
+
+SeaOfDenmark <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/Dansk EEZ/Dansk EEZ/Dansk_EEZ.shp")
 
 DK <- geodata::gadm(country = "Denmark", level = 0, path = getwd()) %>%
   terra::project(terra::crs(Habs))
