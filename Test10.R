@@ -568,31 +568,30 @@ Paragraph3_Table1 <- full_join(Paragraph3_Table1_Totals, Paragraph3_Table1_Appar
 
 #
 
-Paragraph3_Table1a <- Area2 %>%
-  dplyr::filter(!is.na(Habitats_P3)) %>%
-  mutate(Overlaped = case_when(is.na(Natura_2000) & is.na(Types_markblokkort) & is.na(IUCN) & is.na(Urort_Skov) & is.na(Stoette) & is.na(NaturaOgVildtreservater) & is.na(Naturnationalparker) ~ "No",
-                               TRUE ~ "Yes"),
-         Paragrah3 = "yes") %>%
-  group_by(Paragrah3, Overlaped) %>%
+NaturaOgVildtreservater_Table1a <- Area2 %>%
+  dplyr::filter(!is.na(NaturaOgVildtreservater)) %>%
+  mutate(Overlaped = case_when(is.na(Natura_2000) & is.na(Types_markblokkort) & is.na(IUCN) & is.na(Urort_Skov) & is.na(Stoette) & is.na(Habitats_P3) & is.na(Naturnationalparker) ~ "No",
+                               TRUE ~ "Yes")) %>%
+  group_by(NaturaOgVildtreservater, Overlaped) %>%
   summarise_if(is.numeric, sum)
 
-Paragraph3_Table1_Totals <- Paragraph3_Table1a %>%
+NaturaOgVildtreservater_Table1_Totals <- NaturaOgVildtreservater_Table1a %>%
   ungroup() %>%
   summarise_if(is.numeric, sum) %>%
-  mutate(Class = "Paragraph_3")
+  mutate(Class = "NaturaOgVildtreservater")
 
-Paragraph3_Table1_Appart <- Paragraph3_Table1a %>%
-  mutate(Class = "Paragraph_3") %>%
+NaturaOgVildtreservater_Table1_Appart <- NaturaOgVildtreservater_Table1a %>%
+  mutate(Class = "NaturaOgVildtreservater") %>%
   ungroup() %>%
-  dplyr::select(-Proportion, -Paragrah3) %>%
+  dplyr::select(-Proportion, -NaturaOgVildtreservater) %>%
   tidyr::pivot_wider(names_from = Overlaped, values_from = Area_Sq_Mt) %>%
   rename(Area_Overlapped = Yes, Area_Exclusive = No)
 
-Paragraph3_Table1 <- full_join(Paragraph3_Table1_Totals, Paragraph3_Table1_Appart) %>%
+NaturaOgVildtreservater_Table1 <- full_join(NaturaOgVildtreservater_Table1_Totals, NaturaOgVildtreservater_Table1_Appart) %>%
   relocate(Class, .before = everything())
 
 
-Table1 <- list(Natura2000_Table1, Paragraph3_Table1) %>%
+Table1 <- list(Natura2000_Table1, Paragraph3_Table1, NaturaOgVildtreservater_Table1) %>%
   purrr::reduce(bind_rows)
 
 readr::write_csv(Table1, "Table1.csv")
