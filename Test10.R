@@ -82,6 +82,8 @@ sf::gdal_utils("warp",
 
 Natura2000 <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/HABITAT_OMRAADER/HABITAT_OMRAADER.shp")
 
+Natura2000 <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/Natura2000 MiljøGIS Maj2022/pg-natura_2000_omraader_natura2000.shp")
+
 Natura2000 <- Natura2000[,7]
 
 Natura2000 <- terra::aggregate(Natura2000, by = "Temanavn")
@@ -350,16 +352,83 @@ sf::gdal_utils("warp",
 stoettte_Skov <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/PRIVATE_UNTOUCHED_FOREST/aftale_natur_tinglyst.shp")
 stoettte_Skov <- stoettte_Skov[stoettte_Skov$tilskudsor== "Privat urørt skov", ]
 
+stoettte_Skov$Type <- "Skov"
 stoettte_sammenhaengende <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/PRIVATE_UNTOUCHED_FOREST/aftale_natur_tinglyst.shp")
 stoettte_sammenhaengende <- stoettte_sammenhaengende[stoettte_sammenhaengende$tilskudsor== "Sammenhængende arealer", ]
+stoettte_sammenhaengende$Type <- "sammenhaengende"
+
 
 stoette_egekrat <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/EGEKRAT/egekrat.shp")
 
 stoette_egekrat <- stoette_egekrat[stoette_egekrat$vurdering_ %in% c(1,2),]
 stoette_egekrat <- stoette_egekrat[stoette_egekrat$sikret %in% c("ja"),]
+stoette_egekrat$Type <- "egekrat"
+
+stoette <- list(stoettte_Skov, stoettte_sammenhaengende, stoette_egekrat) %>% purrr::reduce(rbind) %>%
+  terra::project(crs(Habs2))
+
+
+stoette <- stoette[,"Type"]
+stoette_Aggregated <- terra::aggregate(stoette, by='Type')
+
+Sys.time()
+Rast_stoette  <- terra::rasterize(stoette_Aggregated, Canopy_Cover, field = "Type")
+Sys.time()
+
+Rast_stoette_Croped <- terra::mask(Rast_stoette, DK)
+
+writeRaster(Rast_stoette, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_stoette.tif", overwrite=TRUE, gdal=c("COMPRESS=NONE", "TFW=YES","of=COG"))
+
+writeRaster(Rast_stoette_Croped, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_stoette_Croped.tif", overwrite=TRUE, gdal=c("COMPRESS=NONE", "TFW=YES","of=COG"))
+
+sf::gdal_utils("warp",
+               source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_stoette.tif",
+               destination = "RasterizedCOG/Rast_stoette.tif",
+               options = c(
+                 "-of", "COG",
+                 "-co", "RESAMPLING=NEAREST",
+                 "-co", "TILING_SCHEME=GoogleMapsCompatible",
+                 "-co", "COMPRESS=DEFLATE",
+                 "-co", "NUM_THREADS=46"
+               ))
+
+sf::gdal_utils("warp",
+               source ="O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_stoette_Croped.tif",
+               destination = "RasterizedCOG/Rast_stoette_Croped.tif",
+               options = c(
+                 "-of", "COG",
+                 "-co", "RESAMPLING=NEAREST",
+                 "-co", "TILING_SCHEME=GoogleMapsCompatible",
+                 "-co", "COMPRESS=DEFLATE",
+                 "-co", "NUM_THREADS=46"
+               ))
 #### Total Skov - Uroet skov = Drevet Skov
 
-Total_Forest <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/SKOV_GeoDanmark_April2022/SKOV_GeoDanmark_April2022.shp")
+Total_Forest <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/SKOV_GeoDanmark_April2022/SKOV_GeoDanmark_April2022.shp") %>%
+  terra::project(crs(Habs2))
+
+Total_Forest$Data <- "Total Forest"
+
+Total_Forest <- Total_Forest[,"Data"]
+
+Total_Forest_Aggregated <- terra::aggregate(Total_Forest, by='Data')
+
+Sys.time()
+Total_Forest  <- terra::rasterize(Total_Forest_Aggregated, Canopy_Cover, field = "Data")
+Total_Forest_Croped <- terra::mask(Total_Forest, DK)
+Sys.time()
+
+
+Negativo <- Rast_Urort_Skov_Croped
+Negativo[is.na(Negativo)] <- 3
+
+m <- c(0, 0.25, 1,
+       0.25, 0.5, 2,
+       0.5, 1, 3)
+rclmat <- matrix(m, ncol=3, byrow=TRUE)
+rc1 <- classify(r, rclmat, include.lowest=TRUE)
+
+Negative <-
 
 #### TEMPLATE
 
@@ -367,60 +436,169 @@ Total_Forest <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/SKOV_GeoDanmark_Ap
 
 
 
-Test2 <- terra::rasterize(Natura2000, Canopy_Cover, field = "Temanavn")
-message(paste("Natura 2000 ready", Sys.time()))
-Test3 <- terra::rasterize(markblokkort_Aggregated, Canopy_Cover, field = "MB_TYPE")
-message(paste("markblokkort 3 ready", Sys.time()))
 
 
-All <- c(Test, Test2, Test3)
+All <- c(Rast_Urort_Skov_Croped, Rast_stoette_Croped, Rast_p3_klit_Croped, Rast_markblokkort_Croped, Rast_NaturaOgVildtreservater_Croped, Rast_Natura2000_Croped, Rast_National_Parks_Croped, Rast_IUCN_Croped)
 
-SeaOfDenmark <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/Dansk EEZ/Dansk EEZ/Dansk_EEZ.shp")
+#SeaOfDenmark <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/Dansk EEZ/Dansk EEZ/Dansk_EEZ.shp")
 
 
-
-ALL <- terra::mask(All, DK)
-
-writeRaster(ALL, "AllIntersections.tif", overwrite=TRUE, gdal=c("COMPRESS=NONE", "TFW=YES","of=COG"))
-
-writeRaster(ALL[[1]], "Paragraph3.tif", overwrite=TRUE, gdal=c("COMPRESS=NONE", "TFW=YES","of=COG"))
-
-sf::gdal_utils("warp",
-           source = "Paragraph3.tif",
-           destination = "Paragraph3_Optimized.tif",
-           options = c(
-             "-of", "COG",
-             "-co", "RESAMPLING=NEAREST",
-             "-co", "TILING_SCHEME=GoogleMapsCompatible",
-             "-co", "COMPRESS=DEFLATE",
-             "-co", "NUM_THREADS=46"
-           ))
 
 message(paste("Start crosstab", Sys.time()))
 
 
-Area <- crosstab(ALL, useNA=T, long=TRUE)
+Area <- crosstab(All, useNA=T, long=TRUE)
 
+saveRDS(Area, "Area_Total.rds")
 
 message(paste("End crosstab", Sys.time()))
 
-Paragraph3_DF <- data.frame(Natyp_navn = 0:(length(levels(Test)[[1]]) - 1), Habitats_P3 = levels(Test)[[1]])
+Area2 <- Area[!(rowSums(is.na(Area)) == max(rowSums(is.na(Area)))),]
 
-Natura2000_DF <- data.frame(Temanavn = 0, Natura_2000 = "Yes")
 
-markblokkort_DF <- data.frame(MB_TYPE = 0:(length(levels(Test3)[[1]]) - 1), Types_markblokkort = levels(Test3)[[1]])
+Paragraph3_DF <- data.frame(Natyp_navn = 0:(length(levels(Rast_p3_klit_Croped)[[1]]) - 1), Habitats_P3 = levels(Rast_p3_klit_Croped)[[1]])
 
-Area2 <- full_join(Area, Paragraph3_DF) %>%
+Area2 <- Area2 %>%
+  full_join(Paragraph3_DF) %>%
+  dplyr::select(-Natyp_navn)
+
+Natura2000_DF <- data.frame(Natura2000 = 0, Natura_2000 = "Yes")
+
+Area2 <- Area2 %>%
   full_join(Natura2000_DF) %>%
+  dplyr::select(-Natura2000)
+
+markblokkort_DF <- data.frame(MB_TYPE = 0:(length(levels(Rast_markblokkort_Croped)[[1]]) - 1), Types_markblokkort = levels(Rast_markblokkort_Croped)[[1]])
+
+Area2 <- Area2 %>%
   full_join(markblokkort_DF) %>%
-  dplyr::filter(!(is.na(Natyp_navn) & is.na(Temanavn) & is.na(MB_TYPE))) %>%
-  dplyr::select(-"Natyp_navn", -"Temanavn", -"MB_TYPE") %>%
+  dplyr::select(-"MB_TYPE") %>%
   mutate(Area_Sq_Mt = 100*Freq,
          Proportion = 100*(Area_Sq_Mt/Area_DK)) %>%
   dplyr::select(-Freq) %>%
   ungroup()
 
+IUCN_DF <- data.frame(IUCN = 0, IS_IUCN = "Yes")
+
+Area2 <- Area2 %>%
+  full_join(IUCN_DF) %>%
+  dplyr::select(-IUCN) %>%
+  rename(IUCN= IS_IUCN)
+
+Urort_Skov_DF <- data.frame(Owned = 0:(length(levels(Rast_Urort_Skov_Croped)[[1]]) - 1), Urort_Skov = levels(Rast_Urort_Skov_Croped)[[1]])
+
+Area2 <- Area2 %>%
+  full_join(Urort_Skov_DF) %>%
+  dplyr::select(-Owned)
+
+
+stoette_DF <- data.frame(Type  = 0:(length(levels(Rast_stoette_Croped)[[1]]) - 1), Stoette = levels(Rast_stoette_Croped)[[1]])
+
+Area2 <- Area2 %>%
+  full_join(stoette_DF) %>%
+  dplyr::select(-Type)
+
+NaturaOgVildtreservater_DF <- data.frame(Temanavn  = 0, NaturaOgVildtreservater = "Yes")
+
+Area2 <- Area2 %>%
+  full_join(NaturaOgVildtreservater_DF) %>%
+  dplyr::select(-Temanavn)
+
+Naturnationalparker_DF <- data.frame(ID  = 0, Naturnationalparker = "Yes")
+
+Area2 <- Area2 %>%
+  full_join(Naturnationalparker_DF) %>%
+  dplyr::select(-ID) %>%
+  dplyr::relocate(Proportion, .after = everything()) %>%
+  dplyr::relocate(Area_Sq_Mt, .after = everything())
+
 saveRDS(Area2, "Area_summary.rds")
+
+## For table 1
+
+
+
+Natura2000_Table1a <- Area2 %>%
+  dplyr::filter(!is.na(Natura_2000)) %>%
+  mutate(Overlaped = case_when(is.na(Habitats_P3) & is.na(Types_markblokkort) & is.na(IUCN) & is.na(Urort_Skov) & is.na(Stoette) & is.na(NaturaOgVildtreservater) & is.na(Naturnationalparker) ~ "No",
+                               TRUE ~ "Yes")) %>%
+  group_by(Natura_2000, Overlaped) %>%
+    summarise_if(is.numeric, sum)
+
+Natura2000_Table1_Totals <- Natura2000_Table1a %>%
+  ungroup() %>%
+  summarise_if(is.numeric, sum) %>%
+  mutate(Class = "Nautra_2000")
+
+Natura2000_Table1_Appart <- Natura2000_Table1a %>%
+  mutate(Class = "Nautra_2000") %>%
+  ungroup() %>%
+  dplyr::select(-Proportion, -Natura_2000) %>%
+  tidyr::pivot_wider(names_from = Overlaped, values_from = Area_Sq_Mt) %>%
+    rename(Area_Overlapped = Yes, Area_Exclusive = No)
+
+Natura2000_Table1 <- full_join(Natura2000_Table1_Totals, Natura2000_Table1_Appart) %>%
+  relocate(Class, .before = everything())
+
+#
+
+
+Paragraph3_Table1a <- Area2 %>%
+  dplyr::filter(!is.na(Habitats_P3)) %>%
+  mutate(Overlaped = case_when(is.na(Natura_2000) & is.na(Types_markblokkort) & is.na(IUCN) & is.na(Urort_Skov) & is.na(Stoette) & is.na(NaturaOgVildtreservater) & is.na(Naturnationalparker) ~ "No",
+                               TRUE ~ "Yes"),
+         Paragrah3 = "yes") %>%
+  group_by(Paragrah3, Overlaped) %>%
+  summarise_if(is.numeric, sum)
+
+Paragraph3_Table1_Totals <- Paragraph3_Table1a %>%
+  ungroup() %>%
+  summarise_if(is.numeric, sum) %>%
+  mutate(Class = "Paragraph_3")
+
+Paragraph3_Table1_Appart <- Paragraph3_Table1a %>%
+  mutate(Class = "Paragraph_3") %>%
+  ungroup() %>%
+  dplyr::select(-Proportion, -Paragrah3) %>%
+  tidyr::pivot_wider(names_from = Overlaped, values_from = Area_Sq_Mt) %>%
+  rename(Area_Overlapped = Yes, Area_Exclusive = No)
+
+Paragraph3_Table1 <- full_join(Paragraph3_Table1_Totals, Paragraph3_Table1_Appart) %>%
+  relocate(Class, .before = everything())
+
+#
+
+Paragraph3_Table1a <- Area2 %>%
+  dplyr::filter(!is.na(Habitats_P3)) %>%
+  mutate(Overlaped = case_when(is.na(Natura_2000) & is.na(Types_markblokkort) & is.na(IUCN) & is.na(Urort_Skov) & is.na(Stoette) & is.na(NaturaOgVildtreservater) & is.na(Naturnationalparker) ~ "No",
+                               TRUE ~ "Yes"),
+         Paragrah3 = "yes") %>%
+  group_by(Paragrah3, Overlaped) %>%
+  summarise_if(is.numeric, sum)
+
+Paragraph3_Table1_Totals <- Paragraph3_Table1a %>%
+  ungroup() %>%
+  summarise_if(is.numeric, sum) %>%
+  mutate(Class = "Paragraph_3")
+
+Paragraph3_Table1_Appart <- Paragraph3_Table1a %>%
+  mutate(Class = "Paragraph_3") %>%
+  ungroup() %>%
+  dplyr::select(-Proportion, -Paragrah3) %>%
+  tidyr::pivot_wider(names_from = Overlaped, values_from = Area_Sq_Mt) %>%
+  rename(Area_Overlapped = Yes, Area_Exclusive = No)
+
+Paragraph3_Table1 <- full_join(Paragraph3_Table1_Totals, Paragraph3_Table1_Appart) %>%
+  relocate(Class, .before = everything())
+
+
+Table1 <- list(Natura2000_Table1, Paragraph3_Table1) %>%
+  purrr::reduce(bind_rows)
+
+readr::write_csv(Table1, "Table1.csv")
+
+###
+
 
 SUM <- Area2 %>% group_by(Habitats_P3) %>%
   summarise_if(is.numeric, sum) %>%
@@ -434,7 +612,3 @@ SUM2 <- Area2 %>% group_by(Natura_2000) %>%
 SUM3 <- Area2 %>% group_by(Types_markblokkort) %>%
   summarise_if(is.numeric, sum) %>%
   dplyr::filter(!is.na(Types_markblokkort))
-
-Sys.time()
-Area <- expanse(Test)
-Sys.time()
