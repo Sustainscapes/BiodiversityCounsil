@@ -590,8 +590,116 @@ NaturaOgVildtreservater_Table1_Appart <- NaturaOgVildtreservater_Table1a %>%
 NaturaOgVildtreservater_Table1 <- full_join(NaturaOgVildtreservater_Table1_Totals, NaturaOgVildtreservater_Table1_Appart) %>%
   relocate(Class, .before = everything())
 
+##
 
-Table1 <- list(Natura2000_Table1, Paragraph3_Table1, NaturaOgVildtreservater_Table1) %>%
+IUCN_Table1a <- Area2 %>%
+  dplyr::filter(!is.na(IUCN)) %>%
+  mutate(Overlaped = case_when(is.na(Natura_2000) & is.na(Types_markblokkort) & is.na(NaturaOgVildtreservater) & is.na(Urort_Skov) & is.na(Stoette) & is.na(Habitats_P3) & is.na(Naturnationalparker) ~ "No",
+                               TRUE ~ "Yes")) %>%
+  group_by(IUCN, Overlaped) %>%
+  summarise_if(is.numeric, sum)
+
+IUCN_Table1_Totals <- IUCN_Table1a %>%
+  ungroup() %>%
+  summarise_if(is.numeric, sum) %>%
+  mutate(Class = "IUCN")
+
+IUCN_Table1_Appart <- IUCN_Table1a %>%
+  mutate(Class = "IUCN") %>%
+  ungroup() %>%
+  dplyr::select(-Proportion, -IUCN) %>%
+  tidyr::pivot_wider(names_from = Overlaped, values_from = Area_Sq_Mt) %>%
+  rename(Area_Overlapped = Yes, Area_Exclusive = No)
+
+IUCN_Table1 <- full_join(IUCN_Table1_Totals, IUCN_Table1_Appart) %>%
+  relocate(Class, .before = everything())
+
+##
+
+
+Urort_Skov_Table1a <- Area2 %>%
+  dplyr::filter(!is.na(Urort_Skov)) %>%
+  mutate(Overlaped = case_when(is.na(Natura_2000) & is.na(Types_markblokkort) & is.na(NaturaOgVildtreservater) & is.na(IUCN) & is.na(Stoette) & is.na(Habitats_P3) & is.na(Naturnationalparker) ~ "No",
+                               TRUE ~ "Yes")) %>%
+  mutate(Urort_Skov = "Yes") %>%
+  group_by(Urort_Skov, Overlaped) %>%
+  summarise_if(is.numeric, sum)
+
+Urort_Skov_Table1_Totals <- Urort_Skov_Table1a %>%
+  ungroup() %>%
+  summarise_if(is.numeric, sum) %>%
+  mutate(Class = "Urort_Skov")
+
+Urort_Skov_Table1_Appart <- Urort_Skov_Table1a %>%
+  mutate(Class = "Urort_Skov") %>%
+  ungroup() %>%
+  dplyr::select(-Proportion, -Urort_Skov) %>%
+  tidyr::pivot_wider(names_from = Overlaped, values_from = Area_Sq_Mt) %>%
+  rename(Area_Overlapped = Yes, Area_Exclusive = No)
+
+Urort_Skov_Table1 <- full_join(Urort_Skov_Table1_Totals, Urort_Skov_Table1_Appart) %>%
+  relocate(Class, .before = everything())
+
+###
+
+Stoette_Table1a <- Area2 %>%
+  dplyr::filter(!is.na(Stoette)) %>%
+  mutate(Overlaped = case_when(is.na(Natura_2000) & is.na(Types_markblokkort) & is.na(NaturaOgVildtreservater) & is.na(IUCN) & is.na(Urort_Skov) & is.na(Habitats_P3) & is.na(Naturnationalparker) ~ "No",
+                               TRUE ~ "Yes")) %>%
+  mutate(Stoette = "Yes") %>%
+  group_by(Stoette, Overlaped) %>%
+  summarise_if(is.numeric, sum)
+
+Stoette_Table1_Totals <- Stoette_Table1a %>%
+  ungroup() %>%
+  summarise_if(is.numeric, sum) %>%
+  mutate(Class = "Stoette")
+
+Stoette_Table1_Appart <- Stoette_Table1a %>%
+  mutate(Class = "Stoette") %>%
+  ungroup() %>%
+  dplyr::select(-Proportion, -Stoette) %>%
+  tidyr::pivot_wider(names_from = Overlaped, values_from = Area_Sq_Mt) %>%
+  rename(Area_Overlapped = Yes, Area_Exclusive = No)
+
+Stoette_Table1 <- full_join(Stoette_Table1_Totals, Stoette_Table1_Appart) %>%
+  relocate(Class, .before = everything())
+
+##
+
+Naturnationalparker_Table1a <- Area2 %>%
+  dplyr::filter(!is.na(Naturnationalparker)) %>%
+  mutate(Overlaped = case_when(is.na(Natura_2000) & is.na(Types_markblokkort) & is.na(NaturaOgVildtreservater) & is.na(IUCN) & is.na(Urort_Skov) & is.na(Habitats_P3) & is.na(Stoette) ~ "No",
+                               TRUE ~ "Yes")) %>%
+  group_by(Naturnationalparker, Overlaped) %>%
+  summarise_if(is.numeric, sum)
+
+Naturnationalparker_Table1_Totals <- Naturnationalparker_Table1a %>%
+  ungroup() %>%
+  summarise_if(is.numeric, sum) %>%
+  mutate(Class = "Naturnationalparker")
+
+Naturnationalparker_Table1_Appart <- Naturnationalparker_Table1a %>%
+  mutate(Class = "Naturnationalparker") %>%
+  ungroup() %>%
+  dplyr::select(-Proportion, -Naturnationalparker) %>%
+  tidyr::pivot_wider(names_from = Overlaped, values_from = Area_Sq_Mt) %>%
+  rename(Area_Overlapped = Yes, Area_Exclusive = No)
+
+Naturnationalparker_Table1 <- full_join(Naturnationalparker_Table1_Totals, Naturnationalparker_Table1_Appart) %>%
+  relocate(Class, .before = everything())
+
+
+Total_Area__Table1a <- Area2 %>%
+  dplyr::filter(!is.na(Naturnationalparker)) %>%
+  mutate(Overlaped = case_when(is.na(Natura_2000) & is.na(Types_markblokkort) & is.na(NaturaOgVildtreservater) & is.na(IUCN) & is.na(Urort_Skov) & is.na(Habitats_P3) & is.na(Stoette) ~ "No",
+                               TRUE ~ "Yes")) %>%
+  group_by(Naturnationalparker, Overlaped) %>%
+  summarise_if(is.numeric, sum)
+
+##
+
+Table1 <- list(Natura2000_Table1, Paragraph3_Table1, NaturaOgVildtreservater_Table1, IUCN_Table1, Urort_Skov_Table1, Stoette_Table1, Naturnationalparker_Table1) %>%
   purrr::reduce(bind_rows)
 
 readr::write_csv(Table1, "Table1.csv")
