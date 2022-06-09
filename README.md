@@ -3,6 +3,25 @@ Dataset generation for the Danish Biodiversity council
 Derek Corcoran
 09/06, 2022
 
+-   [1 Objective](#1-objective)
+-   [2 Packages needed](#2-packages-needed)
+-   [3 Terrestrial ecosystems](#3-terrestrial-ecosystems)
+    -   [3.1 Data generation](#31-data-generation)
+        -   [3.1.1 Raster template](#311-raster-template)
+        -   [3.1.2 Denmark’s Area](#312-denmarks-area)
+        -   [3.1.3 Paragraph 3](#313-paragraph-3)
+    -   [3.2 Results](#32-results)
+-   [4 Ocean ecosystems](#4-ocean-ecosystems)
+    -   [4.1 Potential areas](#41-potential-areas)
+    -   [4.2 For each layer](#42-for-each-layer)
+    -   [4.3 For sea](#43-for-sea)
+    -   [4.4 Deadlines](#44-deadlines)
+    -   [4.5 Test files](#45-test-files)
+    -   [4.6 How interactive should we make
+        this](#46-how-interactive-should-we-make-this)
+-   [5 Session info](#5-session-info)
+-   [6 References](#6-references)
+
 # 1 Objective
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -19,14 +38,16 @@ the code that the reader needs to see can be extended.
 All calculations were done using the R software (R Core Team 2021), and
 all the geospatial transformations and calculations where performed
 using the terra package (Hijmans 2022). There are some datasets
-extracted from the geodata package (Hijmans, Ghosh, and Mandel 2021).
+extracted from the geodata package (Hijmans, Ghosh, and Mandel 2022).
 The magrittr package was use for piping (Bache and Wickham 2020), and
 finally the SF package was used to generate the Cloud Optimized Rasters
 (Pebesma 2018).
 
 <details style="\&quot;margin-bottom:10px;\&quot;">
 <summary>
+
 Load packages
+
 </summary>
 
 ``` r
@@ -38,6 +59,72 @@ library(sf)
 
 </details>
 
+# 3 Terrestrial ecosystems
+
+## 3.1 Data generation
+
+In this Section we will try to solve for intersections within the data
+and incongruencies within the data, some of the polygons provided have
+topological issues so we need to rasterize them in order to resolve this
+issues easily.
+
+### 3.1.1 Raster template
+
+In order to align all datasets together a template raster will be
+generated using a 10 by 10 meter grid equal area using the following
+code.
+
+<details style="\&quot;margin-bottom:10px;\&quot;">
+<summary>
+
+Template raster
+
+</summary>
+
+``` r
+Template <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_markblokkort_Croped.tif")
+
+values(Template) <- 1
+```
+
+</details>
+
+### 3.1.2 Denmark’s Area
+
+To both crop the areas (some include ocean and terrestrial ecosystems)
+and to have a value of the total area of Denmark, we need to have a
+polygon of the coastline of the country. We used the GADM dataset
+version 4.0 using the geodata package (Global Administrative Areas 2022
+; Hijmans, Ghosh, and Mandel 2022) using the following code, the
+resulting polygon is shown in figure <a href="#fig:PlotDenmark">3.1</a>
+
+<details style="\&quot;margin-bottom:10px;\&quot;">
+<summary>
+
+Denmark Area
+
+</summary>
+
+``` r
+DK <- geodata::gadm(country = "Denmark", level = 0, path = getwd(), version = "4.0") %>%
+  terra::project(terra::crs(Template))
+Area_DK <- terra::expanse(DK)
+```
+
+</details>
+
+![Figure 3.1: Polygon of Denmark according to GADM
+4.0](README_files/figure-gfm/PlotDenmark-1.png)
+
+The total area for Denmark according to that is 43,144,848,183 Square
+meters
+
+### 3.1.3 Paragraph 3
+
+## 3.2 Results
+
+# 4 Ocean ecosystems
+
 Sea and land are treated separately
 
 -   How much is 30% and 10% according to EU
@@ -46,14 +133,14 @@ Sea and land are treated separately
     (Biodiversitetsradet)
     -   What has to be improved for natura 2.000 can be part of the 30%
 
-## 2.1 Potential areas
+## 4.1 Potential areas
 
 -   NATURA 2000
     -   Habitat types
     -   How much is paragraph 3
     -   how much area of different categories
 
-## 2.2 For each layer
+## 4.2 For each layer
 
 -   Total Area by habitat type (SqKm or meters)
 -   Proportion of Denmark
@@ -64,28 +151,30 @@ Sea and land are treated separately
 -   Column 30% protected Biodiversitetsradet
 -   Intersection (matrix NxN intersections?)
 
-## 2.3 For sea
+## 4.3 For sea
 
 Map of preasures for each polygon
 
-## 2.4 Deadlines
+## 4.4 Deadlines
 
 -   **31 may:** First figures
 
-## 2.5 Test files
+## 4.5 Test files
 
 -   Natura 2000
 -   BES_NATURETYPER_SHAPE
 -   NATUR_VILDT_RESERVATER
 -   Markblokke2021 Overlap with natura 2000 and paragraph 3
 
-## 2.6 How interactive should we make this
+## 4.6 How interactive should we make this
 
-# 3 Session info
+# 5 Session info
 
 <details style="\&quot;margin-bottom:10px;\&quot;">
 <summary>
+
 Session info
+
 </summary>
 
 ``` r
@@ -106,7 +195,7 @@ sessioninfo::session_info()
 #> - Packages -------------------------------------------------------------------
 #>  package     * version date (UTC) lib source
 #>  assertthat    0.2.1   2019-03-21 [1] CRAN (R 4.1.2)
-#>  bookdown      0.24    2021-09-02 [1] CRAN (R 4.1.2)
+#>  bookdown      0.26    2022-04-15 [1] CRAN (R 4.1.3)
 #>  class         7.3-19  2021-05-03 [2] CRAN (R 4.1.2)
 #>  classInt      0.4-3   2020-04-07 [1] CRAN (R 4.1.2)
 #>  cli           3.1.0   2021-10-27 [1] CRAN (R 4.1.2)
@@ -117,15 +206,16 @@ sessioninfo::session_info()
 #>  dplyr         1.0.7   2021-06-18 [1] CRAN (R 4.1.2)
 #>  e1071         1.7-9   2021-09-16 [1] CRAN (R 4.1.2)
 #>  ellipsis      0.3.2   2021-04-29 [1] CRAN (R 4.1.2)
-#>  evaluate      0.14    2019-05-28 [1] CRAN (R 4.1.2)
+#>  evaluate      0.15    2022-02-18 [1] CRAN (R 4.1.3)
 #>  fansi         0.5.0   2021-05-25 [1] CRAN (R 4.1.2)
 #>  fastmap       1.1.0   2021-01-25 [1] CRAN (R 4.1.2)
 #>  generics      0.1.1   2021-10-25 [1] CRAN (R 4.1.2)
-#>  geodata     * 0.3-5   2021-12-03 [1] CRAN (R 4.1.2)
+#>  geodata     * 0.4-6   2022-04-09 [1] CRAN (R 4.1.3)
 #>  glue          1.5.1   2021-11-30 [1] CRAN (R 4.1.2)
+#>  highr         0.9     2021-04-16 [1] CRAN (R 4.1.2)
 #>  htmltools     0.5.2   2021-08-25 [1] CRAN (R 4.1.2)
 #>  KernSmooth    2.23-20 2021-05-03 [2] CRAN (R 4.1.2)
-#>  knitr         1.37    2021-12-16 [1] CRAN (R 4.1.2)
+#>  knitr         1.39    2022-04-26 [1] CRAN (R 4.1.3)
 #>  lifecycle     1.0.1   2021-09-24 [1] CRAN (R 4.1.2)
 #>  magrittr    * 2.0.1   2020-11-17 [1] CRAN (R 4.1.2)
 #>  pillar        1.6.4   2021-10-18 [1] CRAN (R 4.1.2)
@@ -135,7 +225,7 @@ sessioninfo::session_info()
 #>  R6            2.5.1   2021-08-19 [1] CRAN (R 4.1.2)
 #>  Rcpp          1.0.7   2021-07-07 [1] CRAN (R 4.1.2)
 #>  rlang         0.4.12  2021-10-18 [1] CRAN (R 4.1.2)
-#>  rmarkdown     2.11    2021-09-14 [1] CRAN (R 4.1.2)
+#>  rmarkdown     2.14    2022-04-25 [1] CRAN (R 4.1.3)
 #>  rstudioapi    0.13    2020-11-12 [1] CRAN (R 4.1.2)
 #>  sessioninfo   1.2.2   2021-12-06 [1] CRAN (R 4.1.2)
 #>  sf          * 1.0-4   2021-11-14 [1] CRAN (R 4.1.2)
@@ -158,7 +248,7 @@ sessioninfo::session_info()
 
 </details>
 
-# 4 References
+# 6 References
 
 <div id="refs" class="references csl-bib-body hanging-indent">
 
@@ -167,6 +257,14 @@ sessioninfo::session_info()
 Bache, Stefan Milton, and Hadley Wickham. 2020. *Magrittr: A
 Forward-Pipe Operator for r*.
 <https://CRAN.R-project.org/package=magrittr>.
+
+</div>
+
+<div id="ref-global2022gadm" class="csl-entry">
+
+Global Administrative Areas, G. 2022. “GADM Database of Global
+Administrative Areas, Version 4.0.” *University of Berkeley, Museum of
+Vertebrate Zoology and the International Rice Research Institute (CA)*.
 
 </div>
 
@@ -179,7 +277,7 @@ Hijmans, Robert J. 2022. *Terra: Spatial Data Analysis*.
 
 <div id="ref-Hijmans2021" class="csl-entry">
 
-Hijmans, Robert J., Aniruddha Ghosh, and Alex Mandel. 2021. *Geodata:
+Hijmans, Robert J., Aniruddha Ghosh, and Alex Mandel. 2022. *Geodata:
 Download Geographic Data*. <https://CRAN.R-project.org/package=geodata>.
 
 </div>

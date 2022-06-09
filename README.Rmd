@@ -5,33 +5,10 @@ date: "`r format(Sys.time(), '%d/%m, %Y')`"
 output:
   bookdown::github_document2:
     fig_caption: true
-    toc: false
+    toc: true
 bibliography: biblio.bib
 ---
 
-```{css, echo=FALSE}
-.book .book-body .page-wrapper .page-inner section.normal {
-  counter-reset: counter-rchunks;
-}
-
-.book .book-body .page-wrapper .page-inner section.normal div.section div.sourceCode {
-  padding-right: 5em;
-}
-
-.book .book-body .page-wrapper .page-inner section.normal div.section div.sourceCode pre.demor {
-  counter-increment: counter-rchunks;
-  position: relative;
-  overflow: visible;
-}
-
-.book .book-body .page-wrapper .page-inner section.normal div.section div.sourceCode pre.demor::after {
-  content: '[' counter(counter-rchunks) ']';
-  display: inline-block;
-  position: absolute;
-  right: -5em;
-  color: rgb(48, 63, 159);
-}
-```
 
 # Objective
 
@@ -44,7 +21,8 @@ knitr::opts_chunk$set(
   echo = T,
   warning = F,
   message = F,
-  error = F
+  error = F,
+  tidy = T
 )
 knitr::read_chunk('ReusableCode.R')
 ```
@@ -67,7 +45,47 @@ All calculations were done using the R software [@Cran2021], and all the geospat
 ```
 </details>
 
+# Terrestrial ecosystems
 
+## Data generation
+
+In this Section we will try to solve for intersections within the data and incongruencies within the data, some of the polygons provided have topological issues so we need to rasterize them in order to resolve this issues easily.
+
+### Raster template
+
+In order to align all datasets together a template raster will be generated using a 10 by 10 meter grid equal area using the following code.
+
+<details style=\"margin-bottom:10px;\">
+<summary>Template raster</summary>
+```{r TemplateRaster}
+
+```
+</details>
+
+### Denmark's Area
+
+To both crop the areas (some include ocean and terrestrial ecosystems) and to have a value of the total area of Denmark, we need to have a polygon of the coastline of the country. We used the GADM dataset version 4.0 using the geodata package [@global2022gadm ; @Hijmans2021] using the following code, the resulting polygon is shown in figure \@ref(fig:PlotDenmark)
+
+<details style=\"margin-bottom:10px;\">
+<summary>Denmark Area</summary>
+```{r DenmarkArea}
+
+```
+</details>
+
+
+```{r PlotDenmark,fig.cap="Polygon of Denmark according to GADM 4.0", echo = F}
+
+```
+
+
+The total area for Denmark according to that is `r prettyNum(round(Area_DK), big.mark = ",")` Square meters
+
+### Paragraph 3
+
+## Results
+
+# Ocean ecosystems
 
 Sea and land are treated separately
 
