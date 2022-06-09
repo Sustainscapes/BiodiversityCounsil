@@ -9,6 +9,30 @@ output:
 bibliography: biblio.bib
 ---
 
+```{css, echo=FALSE}
+.book .book-body .page-wrapper .page-inner section.normal {
+  counter-reset: counter-rchunks;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal div.section div.sourceCode {
+  padding-right: 5em;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal div.section div.sourceCode pre.demor {
+  counter-increment: counter-rchunks;
+  position: relative;
+  overflow: visible;
+}
+
+.book .book-body .page-wrapper .page-inner section.normal div.section div.sourceCode pre.demor::after {
+  content: '[' counter(counter-rchunks) ']';
+  display: inline-block;
+  position: absolute;
+  right: -5em;
+  color: rgb(48, 63, 159);
+}
+```
+
 # Objective
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -29,17 +53,27 @@ knitr::read_chunk('ReusableCode.R')
 <!-- badges: start -->
 <!-- badges: end -->
 
+
+The goal of this repository is to generate the data sets necessary to evaluate the current and potential area that is strictly and partially protected in Denmark, note that all codes will be collapsed so that only the code that the reader needs to see can be extended.
+
+# Packages needed
+
+All calculations were done using the R software [@Cran2021], and all the geospatial transformations and calculations where performed using the terra package [@Hijmans2022]. There are some datasets extracted from the geodata package [@Hijmans2021]. The magrittr package was use for piping [@Milton2020], and finally the SF package was used to generate the Cloud Optimized Rasters [@Pebesma2018].
+
+<details style=\"margin-bottom:10px;\">
+<summary>Load packages</summary>
 ```{r LoadPackages}
 
 ```
+</details>
 
 
-The goal of this repository is to generate the data sets necessary to evaluate the current and potential area that is strictly and partially protected in Denmark
 
 Sea and land are treated separately
 
 * How much is 30% and 10% according to EU
   - All natura 2.000 is in the 30%
+  
 * How much is 30% and 10% according to Biodiversity counsel (Biodiversitetsradet)
   - What has to be improved for natura 2.000 can be part of the 30%
 
@@ -80,9 +114,13 @@ Map of preasures for each polygon
 
 ## How interactive should we make this
 
+# Session info
+
 <details style=\"margin-bottom:10px;\">
 <summary>Session info</summary>
 ```{r }
 sessioninfo::session_info()
 ```
 </details>
+
+# References

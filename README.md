@@ -9,6 +9,26 @@ Derek Corcoran
 <!-- badges: start -->
 <!-- badges: end -->
 
+The goal of this repository is to generate the data sets necessary to
+evaluate the current and potential area that is strictly and partially
+protected in Denmark, note that all codes will be collapsed so that only
+the code that the reader needs to see can be extended.
+
+# 2 Packages needed
+
+All calculations were done using the R software (R Core Team 2021), and
+all the geospatial transformations and calculations where performed
+using the terra package (Hijmans 2022). There are some datasets
+extracted from the geodata package (Hijmans, Ghosh, and Mandel 2021).
+The magrittr package was use for piping (Bache and Wickham 2020), and
+finally the SF package was used to generate the Cloud Optimized Rasters
+(Pebesma 2018).
+
+<details style="\&quot;margin-bottom:10px;\&quot;">
+<summary>
+Load packages
+</summary>
+
 ``` r
 library(terra)
 library(magrittr)
@@ -16,9 +36,7 @@ library(geodata)
 library(sf)
 ```
 
-The goal of this repository is to generate the data sets necessary to
-evaluate the current and potential area that is strictly and partially
-protected in Denmark
+</details>
 
 Sea and land are treated separately
 
@@ -28,14 +46,14 @@ Sea and land are treated separately
     (Biodiversitetsradet)
     -   What has to be improved for natura 2.000 can be part of the 30%
 
-## 1.1 Potential areas
+## 2.1 Potential areas
 
 -   NATURA 2000
     -   Habitat types
     -   How much is paragraph 3
     -   how much area of different categories
 
-## 1.2 For each layer
+## 2.2 For each layer
 
 -   Total Area by habitat type (SqKm or meters)
 -   Proportion of Denmark
@@ -46,22 +64,24 @@ Sea and land are treated separately
 -   Column 30% protected Biodiversitetsradet
 -   Intersection (matrix NxN intersections?)
 
-## 1.3 For sea
+## 2.3 For sea
 
 Map of preasures for each polygon
 
-## 1.4 Deadlines
+## 2.4 Deadlines
 
 -   **31 may:** First figures
 
-## 1.5 Test files
+## 2.5 Test files
 
 -   Natura 2000
 -   BES_NATURETYPER_SHAPE
 -   NATUR_VILDT_RESERVATER
 -   Markblokke2021 Overlap with natura 2000 and paragraph 3
 
-## 1.6 How interactive should we make this
+## 2.6 How interactive should we make this
+
+# 3 Session info
 
 <details style="\&quot;margin-bottom:10px;\&quot;">
 <summary>
@@ -137,3 +157,47 @@ sessioninfo::session_info()
 ```
 
 </details>
+
+# 4 References
+
+<div id="refs" class="references csl-bib-body hanging-indent">
+
+<div id="ref-Milton2020" class="csl-entry">
+
+Bache, Stefan Milton, and Hadley Wickham. 2020. *Magrittr: A
+Forward-Pipe Operator for r*.
+<https://CRAN.R-project.org/package=magrittr>.
+
+</div>
+
+<div id="ref-Hijmans2022" class="csl-entry">
+
+Hijmans, Robert J. 2022. *Terra: Spatial Data Analysis*.
+<https://rspatial.org/terra/>.
+
+</div>
+
+<div id="ref-Hijmans2021" class="csl-entry">
+
+Hijmans, Robert J., Aniruddha Ghosh, and Alex Mandel. 2021. *Geodata:
+Download Geographic Data*. <https://CRAN.R-project.org/package=geodata>.
+
+</div>
+
+<div id="ref-Pebesma2018" class="csl-entry">
+
+Pebesma, Edzer. 2018. “<span class="nocase">Simple Features for R:
+Standardized Support for Spatial Vector Data</span>.” *The R Journal* 10
+(1): 439–46. <https://doi.org/10.32614/RJ-2018-009>.
+
+</div>
+
+<div id="ref-Cran2021" class="csl-entry">
+
+R Core Team. 2021. *R: A Language and Environment for Statistical
+Computing*. Vienna, Austria: R Foundation for Statistical Computing.
+<https://www.R-project.org/>.
+
+</div>
+
+</div>
