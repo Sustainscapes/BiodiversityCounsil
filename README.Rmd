@@ -81,7 +81,26 @@ To both crop the areas (some include ocean and terrestrial ecosystems) and to ha
 
 The total area for Denmark according to that is `r prettyNum(round(Area_DK), big.mark = ",")` Square meters
 
-### Paragraph 3
+### Paragraph 3 and dunes
+
+Within paragraph 3 [@miljoportalP3] and dunes there are several overlaps, so the next code joins these two data sets and resolves overlaps. 
+
+<details style=\"margin-bottom:10px;\">
+<summary>Join paragraph 3 with klit and rasterize</summary>
+```{r Paragraph-3-Klit-raster}
+
+```
+</details>
+
+And then saves it first as a geotiff and then exports it to a Cloud Optimized Geotiff with a deflate compression which is a lossless compression. as seen in the following code
+
+<details style=\"margin-bottom:10px;\">
+<summary>Write paragraph 3 and klit</summary>
+```{r Write-Paragraph-3-Klit}
+
+```
+</details>
+
 
 ## Results
 

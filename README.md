@@ -121,6 +121,98 @@ meters
 
 ### 3.1.3 Paragraph 3
 
+Within paragraph 3 and dunes there are several overlaps, so the next
+code joins these two data sets and resolves overlaps.
+
+<details style="\&quot;margin-bottom:10px;\&quot;">
+<summary>
+
+Join paragraph 3 with klit and rasterize
+
+</summary>
+
+``` r
+# read Paragraph 3
+
+Paragraph3 <-  vect("O:/Nat_BDR-data/Arealanalyse/RAW/BES_NATURTYPER_SHAPE")
+
+Paragraph3 <- Paragraph3[,c("Objekt_id", "Natyp_navn")]
+
+Paragraph3_by_nature <- aggregate(Paragraph3, by='Natyp_navn')
+
+terra::writeVector(Paragraph3_by_nature, "O:/Nat_BDR-data/Arealanalyse/PROCESSED/Aggregated/Paragraph3_by_nature.shp", overwrite = T)
+
+Habs <- terra::vect("O:/Nat_BDR-data/Arealanalyse/PROCESSED/Aggregated/Paragraph3_by_nature.shp")
+
+# read klits
+
+Klits <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/MATRIKELKORT/DK_SHAPE_UTM32-EUREF89/MINIMAKS/TEMA/KLIT.shp")
+
+Klits$Natyp_navn <- "Klit"
+
+
+Klits <- terra::aggregate(Klits, by = "Natyp_navn") %>% terra::project(terra::crs(Habs))
+
+# joint both polygons
+
+Habs2 <- rbind(Habs, Klits)
+
+# rasterize to take out overlaps
+
+Rast_p3_klit  <- terra::rasterize(Habs2, Template, field = "Natyp_navn")
+```
+
+</details>
+
+And then saves it first as a geotiff and then exports it to a Cloud
+Optimized Geotiff with a deflate compression which is a lossless
+compression. as seen in the following code
+
+<details style="\&quot;margin-bottom:10px;\&quot;">
+<summary>
+
+Write paragraph 3 and klit
+
+</summary>
+
+``` r
+# Write raw rasters to disk
+
+writeRaster(Rast_p3_klit, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_p3_klit.tif", overwrite=TRUE, gdal=c("COMPRESS=NONE", "TFW=YES","of=COG"))
+Rast_p3_klit_Croped <- terra::mask(Rast_p3_klit, DK)
+
+# Write croped rasters to disk
+
+writeRaster(Rast_p3_klit_Croped, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_p3_klit_Croped.tif", overwrite=TRUE, gdal=c("COMPRESS=NONE", "TFW=YES","of=COG"))
+
+
+# save as cloud optimized rasters
+
+sf::gdal_utils("warp",
+               source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_p3_klit.tif",
+               destination = "RasterizedCOG/Rast_COG_p3_klit.tif",
+               options = c(
+                 "-of", "COG",
+                 "-co", "RESAMPLING=NEAREST",
+                 "-co", "TILING_SCHEME=GoogleMapsCompatible",
+                 "-co", "COMPRESS=DEFLATE",
+                 "-co", "NUM_THREADS=46"
+               ))
+
+sf::gdal_utils("warp",
+               source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_p3_klit_Croped.tif",
+               destination = "RasterizedCOG/Rast_COG_p3_klit_Croped.tif",
+               options = c(
+                 "-of", "COG",
+                 "-co", "RESAMPLING=NEAREST",
+                 "-co", "TILING_SCHEME=GoogleMapsCompatible",
+                 "-co", "COMPRESS=DEFLATE",
+                 "-co", "NUM_THREADS=46"
+               ))
+```
+
+</details>
+
 ## 3.2 Results
 
 # 4 Ocean ecosystems
