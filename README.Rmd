@@ -1,22 +1,40 @@
 ---
-output: github_document
+title: "Dataset generation for the Danish Biodiversity council"
+author: "Derek Corcoran"
+date: "`r format(Sys.time(), '%d/%m, %Y')`"
+output:
+  bookdown::github_document2:
+    fig_caption: true
+    toc: false
+bibliography: biblio.bib
 ---
+
+# Objective
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-```{r, include = FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  echo = T,
+  warning = F,
+  message = F,
+  error = F
 )
+knitr::read_chunk('ReusableCode.R')
 ```
 
-# BiodiversityCounsil
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of Biodiversity Counsel is to find out
+```{r LoadPackages}
+
+```
+
+
+The goal of this repository is to generate the data sets necessary to evaluate the current and potential area that is strictly and partially protected in Denmark
 
 Sea and land are treated separately
 
@@ -59,4 +77,12 @@ Map of preasures for each polygon
 * BES_NATURETYPER_SHAPE
 * NATUR_VILDT_RESERVATER
 * Markblokke2021 Overlap with natura 2000 and paragraph 3
+
 ## How interactive should we make this
+
+<details style=\"margin-bottom:10px;\">
+<summary>Session info</summary>
+```{r }
+sessioninfo::session_info()
+```
+</details>
