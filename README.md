@@ -1,7 +1,7 @@
 Dataset generation for the Danish Biodiversity council
 ================
 Derek Corcoran
-09/06, 2022
+10/06, 2022
 
 -   [1 Objective](#1-objective)
 -   [2 Packages needed](#2-packages-needed)
@@ -9,16 +9,10 @@ Derek Corcoran
     -   [3.1 Data generation](#31-data-generation)
         -   [3.1.1 Raster template](#311-raster-template)
         -   [3.1.2 Denmark’s Area](#312-denmarks-area)
-        -   [3.1.3 Paragraph 3](#313-paragraph-3)
+        -   [3.1.3 Paragraph 3 and dunes](#313-paragraph-3-and-dunes)
+        -   [3.1.4 Natura 2000](#314-natura-2000)
     -   [3.2 Results](#32-results)
 -   [4 Ocean ecosystems](#4-ocean-ecosystems)
-    -   [4.1 Potential areas](#41-potential-areas)
-    -   [4.2 For each layer](#42-for-each-layer)
-    -   [4.3 For sea](#43-for-sea)
-    -   [4.4 Deadlines](#44-deadlines)
-    -   [4.5 Test files](#45-test-files)
-    -   [4.6 How interactive should we make
-        this](#46-how-interactive-should-we-make-this)
 -   [5 Session info](#5-session-info)
 -   [6 References](#6-references)
 
@@ -119,10 +113,11 @@ Area_DK <- terra::expanse(DK)
 The total area for Denmark according to that is 43,144,848,183 Square
 meters
 
-### 3.1.3 Paragraph 3
+### 3.1.3 Paragraph 3 and dunes
 
-Within paragraph 3 and dunes there are several overlaps, so the next
-code joins these two data sets and resolves overlaps.
+Within paragraph 3 (miljoportal 2022) and dunes there are several
+overlaps, so the next code joins these two data sets and resolves
+overlaps.
 
 <details style="\&quot;margin-bottom:10px;\&quot;">
 <summary>
@@ -213,52 +208,111 @@ sf::gdal_utils("warp",
 
 </details>
 
+the results can be seen in figure <a href="#fig:PlotP3klit">3.2</a>
+
+![Figure 3.2: Plot of the areas of Paragraph 3 and klit habitat
+types](README_files/figure-gfm/PlotP3klit-1.png)
+
+### 3.1.4 Natura 2000
+
+As it was done with Paragraph 3 before this, we rasterized and cropped
+this polygons to the area of Denmark as seen in the following code
+
+<details style="\&quot;margin-bottom:10px;\&quot;">
+<summary>
+
+rasterize natura 2000
+
+</summary>
+
+``` r
+# Read the layer
+
+Natura2000 <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/Natura2000 MiljøGIS Maj2022/pg-natura_2000_omraader_natura2000.shp")
+
+# Get the layer
+
+Natura2000 <- Natura2000[,"temanavn"]
+
+# Aggregate to multypolygon
+
+Natura2000 <- terra::aggregate(Natura2000, by = "temanavn")
+
+# Select feature
+
+Natura2000 <- Natura2000[,"temanavn"]
+
+# change feature name
+
+names(Natura2000) <- "Temanavn"
+
+# Add a feature for subsetting
+
+Natura2000$Natura2000 <- "yes"
+
+# Rasterize
+
+Rast_Natura2000  <- terra::rasterize(Natura2000, Template, field = "Natura2000")
+
+
+# Crop to Denmark
+
+Rast_Natura2000_Croped <- terra::mask(Rast_Natura2000, DK)
+```
+
+</details>
+
+And then this is saved first as a geotiff and then exports it to a Cloud
+Optimized Geotiff with a deflate compression which is a lossless
+compression. as seen in the following code
+
+<details style="\&quot;margin-bottom:10px;\&quot;">
+<summary>
+
+Write natura 2000
+
+</summary>
+
+``` r
+writeRaster(Rast_Natura2000, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Natura2000.tif", overwrite=TRUE, gdal=c("COMPRESS=NONE", "TFW=YES","of=COG"))
+
+writeRaster(Rast_Natura2000_Croped, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Natura2000_Croped.tif", overwrite=TRUE, gdal=c("COMPRESS=NONE", "TFW=YES","of=COG"))
+
+# Save as cloud optimized raster
+
+sf::gdal_utils("warp",
+               source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Natura2000.tif",
+               destination = "RasterizedCOG/Rast_Natura2000.tif",
+               options = c(
+                 "-of", "COG",
+                 "-co", "RESAMPLING=NEAREST",
+                 "-co", "TILING_SCHEME=GoogleMapsCompatible",
+                 "-co", "COMPRESS=DEFLATE",
+                 "-co", "NUM_THREADS=46"
+               ))
+
+sf::gdal_utils("warp",
+               source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Natura2000_Croped.tif",
+               destination = "RasterizedCOG/Rast_Natura2000_Croped.tif",
+               options = c(
+                 "-of", "COG",
+                 "-co", "RESAMPLING=NEAREST",
+                 "-co", "TILING_SCHEME=GoogleMapsCompatible",
+                 "-co", "COMPRESS=DEFLATE",
+                 "-co", "NUM_THREADS=46"
+               ))
+```
+
+</details>
+
+the results can be seen in figure <a href="#fig:PlotNatura-2000">3.3</a>
+
+![Figure 3.3: Plot of the areas of Natura
+2000](README_files/figure-gfm/PlotNatura-2000-1.png)
+
 ## 3.2 Results
 
 # 4 Ocean ecosystems
-
-Sea and land are treated separately
-
--   How much is 30% and 10% according to EU
-    -   All natura 2.000 is in the 30%
--   How much is 30% and 10% according to Biodiversity counsel
-    (Biodiversitetsradet)
-    -   What has to be improved for natura 2.000 can be part of the 30%
-
-## 4.1 Potential areas
-
--   NATURA 2000
-    -   Habitat types
-    -   How much is paragraph 3
-    -   how much area of different categories
-
-## 4.2 For each layer
-
--   Total Area by habitat type (SqKm or meters)
--   Proportion of Denmark
--   Source
--   Column 10% strictly protected EU
--   Column 10% strictly protected Biodiversitetsradet
--   Column 30% protected EU
--   Column 30% protected Biodiversitetsradet
--   Intersection (matrix NxN intersections?)
-
-## 4.3 For sea
-
-Map of preasures for each polygon
-
-## 4.4 Deadlines
-
--   **31 may:** First figures
-
-## 4.5 Test files
-
--   Natura 2000
--   BES_NATURETYPER_SHAPE
--   NATUR_VILDT_RESERVATER
--   Markblokke2021 Overlap with natura 2000 and paragraph 3
-
-## 4.6 How interactive should we make this
 
 # 5 Session info
 
@@ -281,7 +335,7 @@ sessioninfo::session_info()
 #>  collate  Danish_Denmark.1252
 #>  ctype    Danish_Denmark.1252
 #>  tz       Europe/Paris
-#>  date     2022-06-09
+#>  date     2022-06-10
 #>  pandoc   2.14.0.3 @ C:/Program Files/RStudio/bin/pandoc/ (via rmarkdown)
 #> 
 #> - Packages -------------------------------------------------------------------
@@ -371,6 +425,15 @@ Hijmans, Robert J. 2022. *Terra: Spatial Data Analysis*.
 
 Hijmans, Robert J., Aniruddha Ghosh, and Alex Mandel. 2022. *Geodata:
 Download Geographic Data*. <https://CRAN.R-project.org/package=geodata>.
+
+</div>
+
+<div id="ref-miljoportalP3" class="csl-entry">
+
+miljoportal. 2022. “Danmarks Miljøportal Paragraph 3 Naturetypes.”
+[https://arealdata-api.miljoeportal.dk/download/dai/BES_NATURTYPER_SHAPE.zip
+](https://arealdata-api.miljoeportal.dk/download/dai/BES_NATURTYPER_SHAPE.zip
+).
 
 </div>
 

@@ -15,13 +15,25 @@ values(Template) <- 1
 
 ## ---- DenmarkArea --------
 
-DK <- geodata::gadm(country = "Denmark", level = 0, path = getwd()) %>%
-  terra::project(terra::crs(Canopy_Cover))
+DK <- geodata::gadm(country = "Denmark", level = 0, path = getwd(), version = "4.0") %>%
+  terra::project(terra::crs(Template))
 Area_DK <- terra::expanse(DK)
+
+## ---- PlotDenmark --------
+
+plot(DK, col = "grey")
 
 ## ---- Paragraph-3-Klit-raster --------
 
 # read Paragraph 3
+
+Paragraph3 <-  vect("O:/Nat_BDR-data/Arealanalyse/RAW/BES_NATURTYPER_SHAPE")
+
+Paragraph3 <- Paragraph3[,c("Objekt_id", "Natyp_navn")]
+
+Paragraph3_by_nature <- aggregate(Paragraph3, by='Natyp_navn')
+
+terra::writeVector(Paragraph3_by_nature, "O:/Nat_BDR-data/Arealanalyse/PROCESSED/Aggregated/Paragraph3_by_nature.shp", overwrite = T)
 
 Habs <- terra::vect("O:/Nat_BDR-data/Arealanalyse/PROCESSED/Aggregated/Paragraph3_by_nature.shp")
 
@@ -38,7 +50,7 @@ Klits <- terra::aggregate(Klits, by = "Natyp_navn") %>% terra::project(terra::cr
 
 Habs2 <- rbind(Habs, Klits)
 
-# rasterize to take out ties
+# rasterize to take out overlaps
 
 Rast_p3_klit  <- terra::rasterize(Habs2, Template, field = "Natyp_navn")
 
@@ -78,6 +90,11 @@ sf::gdal_utils("warp",
                  "-co", "NUM_THREADS=46"
                ))
 
+## ---- PlotP3klit --------
+
+plot(DK, col = "grey")
+plot(Rast_p3_klit_Croped, add =T)
+
 
 ## ---- Rasterize-Natura2000 --------
 
@@ -97,7 +114,7 @@ Natura2000 <- terra::aggregate(Natura2000, by = "temanavn")
 
 Natura2000 <- Natura2000[,"temanavn"]
 
-# Select feature
+# change feature name
 
 names(Natura2000) <- "Temanavn"
 
@@ -143,3 +160,8 @@ sf::gdal_utils("warp",
                  "-co", "COMPRESS=DEFLATE",
                  "-co", "NUM_THREADS=46"
                ))
+
+## ---- PlotNatura-2000 --------
+
+plot(DK, col = "grey")
+plot(Rast_Natura2000_Croped, add =T)

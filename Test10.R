@@ -4,8 +4,11 @@ library(geodata)
 library(sf)
 ## Template
 
-Canopy_Cover <- list.files(path = "O:/Nat_Ecoinformatics/C_Write/_Archive/Assmann_etal_EcoDes-DK15/EcoDes-DK15_v1.1.0/canopy_height/", full.names = T, pattern = ".vrt") %>%
-  terra::rast()
+Template <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_markblokkort_Croped.tif")
+
+values(Template) <- 1
+
+list.files(path = "O:/Nat_Ecoinformatics/B_Read/LegacyData/Denmark/", full.names = T, pattern = ".vrt")
 
 DK <- geodata::gadm(country = "Denmark", level = 0, path = getwd()) %>%
   terra::project(terra::crs(Habs))
@@ -22,9 +25,9 @@ Klits <- terra::aggregate(Klits, by = "Natyp_navn") %>% terra::project(terra::cr
 
 ### Check overlap
 
-#HabsRast <- terra::rasterize(Habs, Canopy_Cover, field = "Natyp_navn")
+#HabsRast <- terra::rasterize(Habs, Template, field = "Natyp_navn")
 
-#KlitsRast <- terra::rasterize(Klits, Canopy_Cover, field = "Natyp_navn")
+#KlitsRast <- terra::rasterize(Klits, Template, field = "Natyp_navn")
 
 #HabsKlits <- crosstab(c(HabsRast, KlitsRast), useNA=T, long=TRUE)
 
@@ -48,7 +51,7 @@ Klits <- terra::aggregate(Klits, by = "Natyp_navn") %>% terra::project(terra::cr
 Habs2 <- rbind(Habs, Klits)
 
 Sys.time()
-Rast_p3_klit  <- terra::rasterize(Habs2, Canopy_Cover, field = "Natyp_navn")
+Rast_p3_klit  <- terra::rasterize(Habs2, Template, field = "Natyp_navn")
 message(paste("Paragraph 3 ready", Sys.time()))
 
 writeRaster(Rast_p3_klit, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_p3_klit.tif", overwrite=TRUE, gdal=c("COMPRESS=NONE", "TFW=YES","of=COG"))
@@ -97,7 +100,7 @@ Natura2000 <- rbind(Natura2000, Natura2000b)
 Natura2000$Natura2000 <- "yes"
 
 Sys.time()
-Rast_Natura2000  <- terra::rasterize(Natura2000, Canopy_Cover, field = "Natura2000")
+Rast_Natura2000  <- terra::rasterize(Natura2000, Template, field = "Natura2000")
 Sys.time()
 
 Rast_Natura2000_Croped <- terra::mask(Rast_Natura2000, DK)
@@ -136,7 +139,7 @@ markblokkort <- markblokkort[(markblokkort$MB_TYPE %in% c("OMD", "PGR")),7]
 markblokkort_Aggregated <- terra::aggregate(markblokkort, by='MB_TYPE')
 
 Sys.time()
-Rast_markblokkort  <- terra::rasterize(markblokkort_Aggregated, Canopy_Cover, field = "MB_TYPE")
+Rast_markblokkort  <- terra::rasterize(markblokkort_Aggregated, Template, field = "MB_TYPE")
 Sys.time()
 
 Rast_markblokkort_Croped <- terra::mask(Rast_markblokkort, DK)
@@ -179,7 +182,7 @@ NaturaOgVildtreservater <- Wildreserve[!(Wildreserve$Beken_navn %in% c("Agerø o
 NaturaOgVildtreservater_Aggregated <- terra::aggregate(NaturaOgVildtreservater, by='Temanavn')
 
 Sys.time()
-Rast_NaturaOgVildtreservater  <- terra::rasterize(NaturaOgVildtreservater_Aggregated, Canopy_Cover, field = "Temanavn")
+Rast_NaturaOgVildtreservater  <- terra::rasterize(NaturaOgVildtreservater_Aggregated, Template, field = "Temanavn")
 Sys.time()
 
 Rast_NaturaOgVildtreservater_Croped <- terra::mask(Rast_NaturaOgVildtreservater, DK)
@@ -218,7 +221,7 @@ IUCN$IUCN <- "Yes"
 IUCN_Aggregated <- terra::aggregate(IUCN, by='IUCN')
 
 Sys.time()
-Rast_IUCN  <- terra::rasterize(IUCN_Aggregated, Canopy_Cover, field = "IUCN")
+Rast_IUCN  <- terra::rasterize(IUCN_Aggregated, Template, field = "IUCN")
 Sys.time()
 
 Rast_IUCN_Croped <- terra::mask(Rast_IUCN, DK)
@@ -271,7 +274,7 @@ Urort_Skov <- Urort_Skov %>% terra::makeValid()
 Urort_Skov_Aggregated <- terra::aggregate(Urort_Skov, by='Owned')
 
 Sys.time()
-Rast_Urort_Skov  <- terra::rasterize(Urort_Skov_Aggregated, Canopy_Cover, field = "Owned")
+Rast_Urort_Skov  <- terra::rasterize(Urort_Skov_Aggregated, Template, field = "Owned")
 Sys.time()
 
 Rast_Urort_Skov_Croped <- terra::mask(Rast_Urort_Skov, DK)
@@ -313,7 +316,7 @@ National_Parks$ID <- "NationalParks"
 National_Parks_Aggregated <- terra::aggregate(National_Parks, by='ID')
 
 Sys.time()
-Rast_National_Parks  <- terra::rasterize(National_Parks_Aggregated, Canopy_Cover, field = "ID")
+Rast_National_Parks  <- terra::rasterize(National_Parks_Aggregated, Template, field = "ID")
 Sys.time()
 
 Rast_National_Parks_Croped <- terra::mask(Rast_National_Parks, DK)
@@ -372,7 +375,7 @@ stoette <- stoette[,"Type"]
 stoette_Aggregated <- terra::aggregate(stoette, by='Type')
 
 Sys.time()
-Rast_stoette  <- terra::rasterize(stoette_Aggregated, Canopy_Cover, field = "Type")
+Rast_stoette  <- terra::rasterize(stoette_Aggregated, Template, field = "Type")
 Sys.time()
 
 Rast_stoette_Croped <- terra::mask(Rast_stoette, DK)
@@ -414,7 +417,7 @@ Total_Forest <- Total_Forest[,"Data"]
 Total_Forest_Aggregated <- terra::aggregate(Total_Forest, by='Data')
 
 Sys.time()
-Total_Forest  <- terra::rasterize(Total_Forest_Aggregated, Canopy_Cover, field = "Data")
+Total_Forest  <- terra::rasterize(Total_Forest_Aggregated, Template, field = "Data")
 Total_Forest_Croped <- terra::mask(Total_Forest, DK)
 Sys.time()
 

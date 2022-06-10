@@ -74,7 +74,7 @@ To both crop the areas (some include ocean and terrestrial ecosystems) and to ha
 </details>
 
 
-```{r PlotDenmark,fig.cap="Polygon of Denmark according to GADM 4.0", echo = F}
+```{r PlotDenmark,fig.cap="Polygon of Denmark according to GADM 4.0", echo = F, cache = T}
 
 ```
 
@@ -96,60 +96,48 @@ And then saves it first as a geotiff and then exports it to a Cloud Optimized Ge
 
 <details style=\"margin-bottom:10px;\">
 <summary>Write paragraph 3 and klit</summary>
-```{r Write-Paragraph-3-Klit}
+```{r Write-Paragraph-3-Klit, cache = T}
 
 ```
 </details>
 
+the results can be seen in figure \@ref(fig:PlotP3klit)
+
+```{r PlotP3klit, fig.cap= "Plot of the areas of Paragraph 3 and klit habitat types", echo=FALSE, cache=TRUE}
+
+```
+
+
+### Natura 2000
+
+As it was done with Paragraph 3 before this, we rasterized and cropped this polygons to the area of Denmark as seen in the following code
+
+
+<details style=\"margin-bottom:10px;\">
+<summary>rasterize natura 2000</summary>
+```{r Rasterize-Natura2000}
+
+```
+</details>
+
+And then this is saved first as a geotiff and then exports it to a Cloud Optimized Geotiff with a deflate compression which is a lossless compression. as seen in the following code
+
+<details style=\"margin-bottom:10px;\">
+<summary>Write natura 2000</summary>
+```{r Write-Natura2000, cache = T}
+
+```
+</details>
+
+the results can be seen in figure \@ref(fig:PlotNatura-2000)
+
+```{r PlotNatura-2000, fig.cap= "Plot of the areas of Natura 2000", echo=FALSE, cache=TRUE}
+
+```
 
 ## Results
 
 # Ocean ecosystems
-
-Sea and land are treated separately
-
-* How much is 30% and 10% according to EU
-  - All natura 2.000 is in the 30%
-  
-* How much is 30% and 10% according to Biodiversity counsel (Biodiversitetsradet)
-  - What has to be improved for natura 2.000 can be part of the 30%
-
-## Potential areas
-
-* NATURA 2000
-  - Habitat types
-  - How much is paragraph 3
-  - how much area of different categories
-  
-  
-## For each layer
-
-* Total Area by habitat type (SqKm or meters)
-* Proportion of Denmark
-* Source
-* Column 10% strictly protected EU
-* Column 10% strictly protected Biodiversitetsradet
-* Column 30% protected EU
-* Column 30% protected Biodiversitetsradet
-* Intersection (matrix NxN intersections?)
-
-## For sea
-
-Map of preasures for each polygon
-
-## Deadlines
-
-* **31 may:** First figures
-
-
-## Test files
-
-* Natura 2000
-* BES_NATURETYPER_SHAPE
-* NATUR_VILDT_RESERVATER
-* Markblokke2021 Overlap with natura 2000 and paragraph 3
-
-## How interactive should we make this
 
 # Session info
 
