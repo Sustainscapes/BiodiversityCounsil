@@ -135,6 +135,58 @@ the results can be seen in figure \@ref(fig:PlotNatura-2000)
 
 ```
 
+### Markblokkort
+
+For this layer we also rasterized to 10 by 10 meters as seen in the code bellow
+
+<details style=\"margin-bottom:10px;\">
+<summary>rasterize Markblokkort</summary>
+```{r Rasterize-markblokkort}
+
+```
+</details>
+
+And then this is saved first as a geotiff and then exports it to a Cloud Optimized Geotiff with a deflate compression which is a lossless compression. as seen in the following code
+
+<details style=\"margin-bottom:10px;\">
+<summary>Write markblokkort</summary>
+```{r Write-markblokkort, cache = T}
+
+```
+</details>
+
+the results can be seen in figure \@ref(fig:Plotmarkblokkort)
+
+```{r Plotmarkblokkort, fig.cap= "Plot of permanent grasslands and plough areas in markblokkort", echo=FALSE, cache=TRUE}
+
+```
+
+### Nature and wildlife reserves
+
+For this layer we also rasterized to 10 by 10 meters as seen in the code bellow
+
+<details style=\"margin-bottom:10px;\">
+<summary>rasterize Nature and wildlife reserves</summary>
+```{r Rasterize-NaturaOgVildtreservater}
+
+```
+</details>
+
+And then this is saved first as a geotiff and then exports it to a Cloud Optimized Geotiff with a deflate compression which is a lossless compression. as seen in the following code
+
+<details style=\"margin-bottom:10px;\">
+<summary>Write Nature and wildlife reserves</summary>
+```{r Write-NaturaOgVildtreservater, cache = T}
+
+```
+</details>
+
+the results can be seen in figure \@ref(fig:PlotNaturaOgVildtreservater)
+
+```{r PlotNaturaOgVildtreservater, fig.cap= "Plot of Nature and wildlife reserves", echo=FALSE, cache=TRUE}
+
+```
+
 ## Results
 
 # Ocean ecosystems

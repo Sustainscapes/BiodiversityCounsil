@@ -11,6 +11,7 @@ Derek Corcoran
         -   [3.1.2 Denmark’s Area](#312-denmarks-area)
         -   [3.1.3 Paragraph 3 and dunes](#313-paragraph-3-and-dunes)
         -   [3.1.4 Natura 2000](#314-natura-2000)
+        -   [3.1.5 Markblokkort](#315-markblokkort)
     -   [3.2 Results](#32-results)
 -   [4 Ocean ecosystems](#4-ocean-ecosystems)
 -   [5 Session info](#5-session-info)
@@ -309,6 +310,89 @@ the results can be seen in figure <a href="#fig:PlotNatura-2000">3.3</a>
 
 ![Figure 3.3: Plot of the areas of Natura
 2000](README_files/figure-gfm/PlotNatura-2000-1.png)
+
+### 3.1.5 Markblokkort
+
+For this layer we also rasterized to 10 by 10 meters as seen in the code
+bellow
+
+<details style="\&quot;margin-bottom:10px;\&quot;">
+<summary>
+
+rasterize Markblokkort
+
+</summary>
+
+``` r
+# read the poltygons
+
+markblokkort <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/Markblokke2021/Markblokke2021.shp")
+
+# Select only permanent grasslands "PGR" and plough area "OMD"
+
+markblokkort <- markblokkort[(markblokkort$MB_TYPE %in% c("OMD", "PGR")),7]
+
+# Transform to multipolygon
+
+markblokkort_Aggregated <- terra::aggregate(markblokkort, by='MB_TYPE')
+
+# Rasterize
+
+Rast_markblokkort  <- terra::rasterize(markblokkort_Aggregated, Template, field = "MB_TYPE")
+
+# Crop to Denmark
+
+Rast_markblokkort_Croped <- terra::mask(Rast_markblokkort, DK)
+```
+
+</details>
+
+And then this is saved first as a geotiff and then exports it to a Cloud
+Optimized Geotiff with a deflate compression which is a lossless
+compression. as seen in the following code
+
+<details style="\&quot;margin-bottom:10px;\&quot;">
+<summary>
+
+Write markblokkort
+
+</summary>
+
+``` r
+writeRaster(Rast_markblokkort, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_markblokkort.tif", overwrite=TRUE, gdal=c("COMPRESS=NONE", "TFW=YES","of=COG"))
+
+writeRaster(Rast_markblokkort_Croped, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_markblokkort_Croped.tif", overwrite=TRUE, gdal=c("COMPRESS=NONE", "TFW=YES","of=COG"))
+
+sf::gdal_utils("warp",
+               source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_markblokkort.tif",
+               destination = "RasterizedCOG/Rast_markblokkort.tif",
+               options = c(
+                 "-of", "COG",
+                 "-co", "RESAMPLING=NEAREST",
+                 "-co", "TILING_SCHEME=GoogleMapsCompatible",
+                 "-co", "COMPRESS=DEFLATE",
+                 "-co", "NUM_THREADS=46"
+               ))
+
+sf::gdal_utils("warp",
+               source ="O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_markblokkort_Croped.tif",
+               destination = "RasterizedCOG/Rast_markblokkort_Croped.tif",
+               options = c(
+                 "-of", "COG",
+                 "-co", "RESAMPLING=NEAREST",
+                 "-co", "TILING_SCHEME=GoogleMapsCompatible",
+                 "-co", "COMPRESS=DEFLATE",
+                 "-co", "NUM_THREADS=46"
+               ))
+```
+
+</details>
+
+the results can be seen in figure
+<a href="#fig:Plotmarkblokkort">3.4</a>
+
+![Figure 3.4: Plot of permanent grasslands and plough areas in
+markblokkort](README_files/figure-gfm/Plotmarkblokkort-1.png)
 
 ## 3.2 Results
 
