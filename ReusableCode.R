@@ -812,4 +812,17 @@ saveRDS(Table1, "Table1.rds")
 
 ## ---- table-overlap-summarized --------
 
-knitr::kable(Table1, digits = 3, caption = "Areas that are exclusive or overlapped between different groups")
+Area_summary <- readRDS("Area_summary.rds")
+
+ForTotal <- Area_summary %>% dplyr::select(-Types_markblokkort)
+
+ForTotal <- ForTotal[rowSums(is.na(ForTotal)) != 7,]
+
+TotalProtected <- ForTotal %>% summarise_if(is.numeric, sum)
+
+TotalProtected <- ForTotal %>% summarise_if(is.numeric, sum) %>%
+  mutate(Class = "Total") %>%
+  relocate(Class, .before = everything())
+
+knitr::kable(dplyr::arrange(bind_rows(Table1, TotalProtected), desc(Proportion)), digits = 3, caption = "Areas that are exclusive or overlapped between different groups")
+

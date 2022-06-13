@@ -330,7 +330,7 @@ From this we can generate a summary table with the general overlap as follows:
 This generates a summarized table shown in table \@ref(tab:table-overlap-summarized)
 
 <details style=\"margin-bottom:10px;\">
-<summary>Long table of overlap</summary>
+<summary>General table of overlap</summary>
 ```{r table-overlap-summarized, cache = T, echo=F}
 
 ```
