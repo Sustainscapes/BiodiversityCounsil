@@ -1,7 +1,7 @@
 Dataset generation for the Danish Biodiversity council
 ================
 Derek Corcoran
-13/06, 2022
+14/06, 2022
 
 -   [1 Objective](#1-objective)
 -   [2 Packages needed](#2-packages-needed)
@@ -1824,15 +1824,17 @@ Long table of overlap
 
 </summary>
 
-| Class                   | Proportion | Area_Sq_Mt | Area_Exclusive | Area_Overlapped |
-|:------------------------|-----------:|-----------:|---------------:|----------------:|
-| Nautra_2000             |      8.990 | 3878619900 |      654566600 |      3224053300 |
-| Paragraph_3             |     10.516 | 4537103500 |     1589174800 |      2947928700 |
-| NaturaOgVildtreservater |      1.019 |  439605300 |       11983600 |       427621700 |
-| IUCN                    |      2.531 | 1091783700 |      103659500 |       988124200 |
-| Urort_Skov              |      1.617 |  697724000 |      160153600 |       537570400 |
-| Stoette                 |      0.131 |   56735000 |        9164800 |        47570200 |
-| Naturnationalparker     |      0.225 |   97267500 |       24235400 |        73032100 |
+| Class                   | Proportion | Area_Sq_Mt | Area_Exclusive | Area_Overlapped | Naturnationalparker | Overlaped |
+|:------------------------|-----------:|-----------:|---------------:|----------------:|:--------------------|:----------|
+| Nautra_2000             |      8.990 | 3878619900 |      654566600 |      3224053300 | NA                  | NA        |
+| Paragraph_3             |     10.516 | 4537103500 |     1589174800 |      2947928700 | NA                  | NA        |
+| NaturaOgVildtreservater |      1.019 |  439605300 |       11983600 |       427621700 | NA                  | NA        |
+| IUCN                    |      2.531 | 1091783700 |      103659500 |       988124200 | NA                  | NA        |
+| Urort_Skov              |      1.617 |  697724000 |      160153600 |       537570400 | NA                  | NA        |
+| Stoette                 |      0.131 |   56735000 |        9164800 |        47570200 | NA                  | NA        |
+| Naturnationalparker     |      0.225 |   97267500 |       24235400 |        73032100 | NA                  | NA        |
+| NA                      |      0.056 |   24235400 |             NA |              NA | Yes                 | No        |
+| NA                      |      0.169 |   73032100 |             NA |              NA | Yes                 | Yes       |
 
 Table 3.2: Areas that are exclusive or overlapped between different
 groups
