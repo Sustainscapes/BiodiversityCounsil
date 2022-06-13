@@ -1,7 +1,7 @@
 Dataset generation for the Danish Biodiversity council
 ================
 Derek Corcoran
-10/06, 2022
+13/06, 2022
 
 -   [1 Objective](#1-objective)
 -   [2 Packages needed](#2-packages-needed)
@@ -12,6 +12,9 @@ Derek Corcoran
         -   [3.1.3 Paragraph 3 and dunes](#313-paragraph-3-and-dunes)
         -   [3.1.4 Natura 2000](#314-natura-2000)
         -   [3.1.5 Markblokkort](#315-markblokkort)
+        -   [3.1.6 Nature and wildlife
+            reserves](#316-nature-and-wildlife-reserves)
+        -   [3.1.7 IUCN](#317-iucn)
     -   [3.2 Results](#32-results)
 -   [4 Ocean ecosystems](#4-ocean-ecosystems)
 -   [5 Session info](#5-session-info)
@@ -102,7 +105,7 @@ Denmark Area
 
 ``` r
 DK <- geodata::gadm(country = "Denmark", level = 0, path = getwd(), version = "4.0") %>%
-  terra::project(terra::crs(Template))
+    terra::project(terra::crs(Template))
 Area_DK <- terra::expanse(DK)
 ```
 
@@ -130,13 +133,14 @@ Join paragraph 3 with klit and rasterize
 ``` r
 # read Paragraph 3
 
-Paragraph3 <-  vect("O:/Nat_BDR-data/Arealanalyse/RAW/BES_NATURTYPER_SHAPE")
+Paragraph3 <- vect("O:/Nat_BDR-data/Arealanalyse/RAW/BES_NATURTYPER_SHAPE")
 
-Paragraph3 <- Paragraph3[,c("Objekt_id", "Natyp_navn")]
+Paragraph3 <- Paragraph3[, c("Objekt_id", "Natyp_navn")]
 
-Paragraph3_by_nature <- aggregate(Paragraph3, by='Natyp_navn')
+Paragraph3_by_nature <- aggregate(Paragraph3, by = "Natyp_navn")
 
-terra::writeVector(Paragraph3_by_nature, "O:/Nat_BDR-data/Arealanalyse/PROCESSED/Aggregated/Paragraph3_by_nature.shp", overwrite = T)
+terra::writeVector(Paragraph3_by_nature, "O:/Nat_BDR-data/Arealanalyse/PROCESSED/Aggregated/Paragraph3_by_nature.shp",
+    overwrite = T)
 
 Habs <- terra::vect("O:/Nat_BDR-data/Arealanalyse/PROCESSED/Aggregated/Paragraph3_by_nature.shp")
 
@@ -147,7 +151,8 @@ Klits <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/MATRIKELKORT/DK_SHAPE_UTM
 Klits$Natyp_navn <- "Klit"
 
 
-Klits <- terra::aggregate(Klits, by = "Natyp_navn") %>% terra::project(terra::crs(Habs))
+Klits <- terra::aggregate(Klits, by = "Natyp_navn") %>%
+    terra::project(terra::crs(Habs))
 
 # joint both polygons
 
@@ -155,7 +160,7 @@ Habs2 <- rbind(Habs, Klits)
 
 # rasterize to take out overlaps
 
-Rast_p3_klit  <- terra::rasterize(Habs2, Template, field = "Natyp_navn")
+Rast_p3_klit <- terra::rasterize(Habs2, Template, field = "Natyp_navn")
 ```
 
 </details>
@@ -233,7 +238,7 @@ Natura2000 <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/Natura2000 MiljøGIS
 
 # Get the layer
 
-Natura2000 <- Natura2000[,"temanavn"]
+Natura2000 <- Natura2000[, "temanavn"]
 
 # Aggregate to multypolygon
 
@@ -241,7 +246,7 @@ Natura2000 <- terra::aggregate(Natura2000, by = "temanavn")
 
 # Select feature
 
-Natura2000 <- Natura2000[,"temanavn"]
+Natura2000 <- Natura2000[, "temanavn"]
 
 # change feature name
 
@@ -253,7 +258,7 @@ Natura2000$Natura2000 <- "yes"
 
 # Rasterize
 
-Rast_Natura2000  <- terra::rasterize(Natura2000, Template, field = "Natura2000")
+Rast_Natura2000 <- terra::rasterize(Natura2000, Template, field = "Natura2000")
 
 
 # Crop to Denmark
@@ -328,17 +333,17 @@ rasterize Markblokkort
 
 markblokkort <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/Markblokke2021/Markblokke2021.shp")
 
-# Select only permanent grasslands "PGR" and plough area "OMD"
+# Select only permanent grasslands 'PGR' and plough area 'OMD'
 
-markblokkort <- markblokkort[(markblokkort$MB_TYPE %in% c("OMD", "PGR")),7]
+markblokkort <- markblokkort[(markblokkort$MB_TYPE %in% c("OMD", "PGR")), 7]
 
 # Transform to multipolygon
 
-markblokkort_Aggregated <- terra::aggregate(markblokkort, by='MB_TYPE')
+markblokkort_Aggregated <- terra::aggregate(markblokkort, by = "MB_TYPE")
 
 # Rasterize
 
-Rast_markblokkort  <- terra::rasterize(markblokkort_Aggregated, Template, field = "MB_TYPE")
+Rast_markblokkort <- terra::rasterize(markblokkort_Aggregated, Template, field = "MB_TYPE")
 
 # Crop to Denmark
 
@@ -394,6 +399,150 @@ the results can be seen in figure
 ![Figure 3.4: Plot of permanent grasslands and plough areas in
 markblokkort](README_files/figure-gfm/Plotmarkblokkort-1.png)
 
+### 3.1.6 Nature and wildlife reserves
+
+For this layer we also rasterized to 10 by 10 meters as seen in the code
+bellow
+
+<details style="\&quot;margin-bottom:10px;\&quot;">
+<summary>
+
+rasterize Nature and wildlife reserves
+
+</summary>
+
+``` r
+# read the polygons
+
+Wildreserve <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/NATUR_VILDT_RESERVATER/NATUR_VILDT_RESERVATER.shp")
+
+# Eliminate the some of the reserves
+
+NaturaOgVildtreservater <- Wildreserve[!(Wildreserve$Beken_navn %in% c("Agerø og Skibsted Fjord",
+    "Agger Tange", "Anholt", "Ertholmene", "Hesselø", "Hirsholmene", "Horsens Nørrestrand",
+    "Vorsø")), ]
+
+# Transform to multipolygon
+
+NaturaOgVildtreservater_Aggregated <- terra::aggregate(NaturaOgVildtreservater, by = "Temanavn")
+
+# Rasterize
+
+Rast_NaturaOgVildtreservater <- terra::rasterize(NaturaOgVildtreservater_Aggregated,
+    Template, field = "Temanavn")
+
+# And crop
+
+Rast_NaturaOgVildtreservater_Croped <- terra::mask(Rast_NaturaOgVildtreservater,
+    DK)
+```
+
+</details>
+
+And then this is saved first as a geotiff and then exports it to a Cloud
+Optimized Geotiff with a deflate compression which is a lossless
+compression. as seen in the following code
+
+<details style="\&quot;margin-bottom:10px;\&quot;">
+<summary>
+
+Write Nature and wildlife reserves
+
+</summary>
+
+``` r
+writeRaster(Rast_NaturaOgVildtreservater, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_NaturaOgVildtreservater.tif",
+    overwrite = TRUE, gdal = c("COMPRESS=NONE", "TFW=YES", "of=COG"))
+
+writeRaster(Rast_NaturaOgVildtreservater_Croped, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_NaturaOgVildtreservater_Croped.tif",
+    overwrite = TRUE, gdal = c("COMPRESS=NONE", "TFW=YES", "of=COG"))
+
+sf::gdal_utils("warp", source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_NaturaOgVildtreservater.tif",
+    destination = "RasterizedCOG/Rast_NaturaOgVildtreservater.tif", options = c("-of",
+        "COG", "-co", "RESAMPLING=NEAREST", "-co", "TILING_SCHEME=GoogleMapsCompatible",
+        "-co", "COMPRESS=DEFLATE", "-co", "NUM_THREADS=46"))
+
+sf::gdal_utils("warp", source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_NaturaOgVildtreservater_Croped.tif",
+    destination = "RasterizedCOG/Rast_NaturaOgVildtreservater_Croped.tif", options = c("-of",
+        "COG", "-co", "RESAMPLING=NEAREST", "-co", "TILING_SCHEME=GoogleMapsCompatible",
+        "-co", "COMPRESS=DEFLATE", "-co", "NUM_THREADS=46"))
+```
+
+</details>
+
+the results can be seen in figure
+<a href="#fig:PlotNaturaOgVildtreservater">3.5</a>
+
+![Figure 3.5: Plot of Nature and wildlife
+reserves](README_files/figure-gfm/PlotNaturaOgVildtreservater-1.png)
+
+### 3.1.7 IUCN
+
+For this layer we also rasterized to 10 by 10 meters as seen in the code
+bellow
+
+<details style="\&quot;margin-bottom:10px;\&quot;">
+<summary>
+
+rasterize IUCN
+
+</summary>
+
+``` r
+# Read
+
+IUCN <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/IUCN REVISED FREDNINGER/Fredninger_IUCNKat_2018_25832.shp")
+IUCN$IUCN <- "Yes"
+
+IUCN_Aggregated <- terra::aggregate(IUCN, by = "IUCN")
+
+Sys.time()
+#> [1] "2022-06-13 08:29:27 CEST"
+Rast_IUCN <- terra::rasterize(IUCN_Aggregated, Template, field = "IUCN")
+Sys.time()
+#> [1] "2022-06-13 08:30:48 CEST"
+
+Rast_IUCN_Croped <- terra::mask(Rast_IUCN, DK)
+```
+
+</details>
+
+And then this is saved first as a geotiff and then exports it to a Cloud
+Optimized Geotiff with a deflate compression which is a lossless
+compression. as seen in the following code
+
+<details style="\&quot;margin-bottom:10px;\&quot;">
+<summary>
+
+Write IUCN reserves
+
+</summary>
+
+``` r
+writeRaster(Rast_IUCN, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_IUCN.tif",
+    overwrite = TRUE, gdal = c("COMPRESS=NONE", "TFW=YES", "of=COG"))
+
+writeRaster(Rast_IUCN_Croped, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_IUCN_Croped.tif",
+    overwrite = TRUE, gdal = c("COMPRESS=NONE", "TFW=YES", "of=COG"))
+
+sf::gdal_utils("warp", source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_IUCN.tif",
+    destination = "RasterizedCOG/Rast_IUCN.tif", options = c("-of", "COG", "-co",
+        "RESAMPLING=NEAREST", "-co", "TILING_SCHEME=GoogleMapsCompatible", "-co",
+        "COMPRESS=DEFLATE", "-co", "NUM_THREADS=46"))
+
+sf::gdal_utils("warp", source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_IUCN_Croped.tif",
+    destination = "RasterizedCOG/Rast_IUCN_Croped.tif", options = c("-of", "COG",
+        "-co", "RESAMPLING=NEAREST", "-co", "TILING_SCHEME=GoogleMapsCompatible",
+        "-co", "COMPRESS=DEFLATE", "-co", "NUM_THREADS=46"))
+```
+
+</details>
+
+the results can be seen in figure <a href="#fig:PlotIUCN">3.6</a>
+
+![Figure 3.6: Plot of IUCN
+areas](README_files/figure-gfm/PlotIUCN-1.png)
+
 ## 3.2 Results
 
 # 4 Ocean ecosystems
@@ -419,7 +568,7 @@ sessioninfo::session_info()
 #>  collate  Danish_Denmark.1252
 #>  ctype    Danish_Denmark.1252
 #>  tz       Europe/Paris
-#>  date     2022-06-10
+#>  date     2022-06-13
 #>  pandoc   2.14.0.3 @ C:/Program Files/RStudio/bin/pandoc/ (via rmarkdown)
 #> 
 #> - Packages -------------------------------------------------------------------
@@ -439,6 +588,7 @@ sessioninfo::session_info()
 #>  evaluate      0.15    2022-02-18 [1] CRAN (R 4.1.3)
 #>  fansi         0.5.0   2021-05-25 [1] CRAN (R 4.1.2)
 #>  fastmap       1.1.0   2021-01-25 [1] CRAN (R 4.1.2)
+#>  formatR       1.12    2022-03-31 [1] CRAN (R 4.1.3)
 #>  generics      0.1.1   2021-10-25 [1] CRAN (R 4.1.2)
 #>  geodata     * 0.4-6   2022-04-09 [1] CRAN (R 4.1.3)
 #>  glue          1.5.1   2021-11-30 [1] CRAN (R 4.1.2)
