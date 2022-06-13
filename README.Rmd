@@ -41,7 +41,7 @@ All calculations were done using the R software [@Cran2021], and all the geospat
 
 <details style=\"margin-bottom:10px;\">
 <summary>Load packages</summary>
-```{r LoadPackages}
+```{r LoadPackages, cache = F}
 
 ```
 </details>
@@ -216,9 +216,125 @@ the results can be seen in figure \@ref(fig:PlotIUCN)
 
 ### Untouched forest
 
+For this layer we also rasterized to 10 by 10 meters as seen in the code bellow
 
+<details style=\"margin-bottom:10px;\">
+<summary>rasterize Untouched forest</summary>
+```{r Rasterize-Urort-Skov}
+
+```
+</details>
+
+And then this is saved first as a geotiff and then exports it to a Cloud Optimized Geotiff with a deflate compression which is a lossless compression. as seen in the following code
+
+<details style=\"margin-bottom:10px;\">
+<summary>Write untouched forest</summary>
+```{r Write-Urort-skov, cache = T}
+
+```
+</details>
+
+the results can be seen in figure \@ref(fig:PlotUrortSkov)
+
+```{r PlotUrortSkov, fig.cap= "Plot of untouched forests", echo=FALSE, cache=TRUE}
+
+```
+
+### Nature National Parks
+
+For this layer we also rasterized to 10 by 10 meters as seen in the code bellow
+
+<details style=\"margin-bottom:10px;\">
+<summary>rasterize Nature National Parks</summary>
+```{r Rasterize-naturnationalpark}
+
+```
+</details>
+
+And then this is saved first as a geotiff and then exports it to a Cloud Optimized Geotiff with a deflate compression which is a lossless compression. as seen in the following code
+
+<details style=\"margin-bottom:10px;\">
+<summary>Write Nature National Parks</summary>
+```{r Write-naturnationalpark, cache = T}
+
+```
+</details>
+
+### Subsidy schemes
+
+For this layer we also rasterized to 10 by 10 meters as seen in the code bellow
+
+<details style=\"margin-bottom:10px;\">
+<summary>rasterize Subsidy</summary>
+```{r Rasterize-stoette}
+
+```
+</details>
+
+And then this is saved first as a geotiff and then exports it to a Cloud Optimized Geotiff with a deflate compression which is a lossless compression. as seen in the following code
+
+<details style=\"margin-bottom:10px;\">
+<summary>Write subsidies</summary>
+```{r Write-stoette, cache = T}
+
+```
+</details>
+
+the results can be seen in figure \@ref(fig:Plotstoette)
+
+```{r Plotstoette, fig.cap= "Plot of subisdy areas", echo=FALSE, cache=TRUE}
+
+```
 
 ## Results
+
+To get the results we need to make a stack of all the layers
+
+```{r AllStack}
+
+```
+
+and then we crosstabulate to solve for all the intersections
+
+```{r crosstab}
+
+```
+
+The table generated with crosstab will have names that are not understandable, hence a lot of the columns must be renamed:
+
+<details style=\"margin-bottom:10px;\">
+<summary>Generate 1st summary table</summary>
+```{r summary-table, cache = T}
+
+```
+</details>
+
+This leads to the table \@ref(tab:table-overlap)
+
+<details style=\"margin-bottom:10px;\">
+<summary>Long table of overlap</summary>
+```{r table-overlap, cache = T, echo=F}
+
+```
+</details>
+
+From this we can generate a summary table with the general overlap as follows:
+
+<details style=\"margin-bottom:10px;\">
+<summary>Code for summary of general overlap</summary>
+```{r table-general-overlap-creation, cache = T}
+
+```
+</details>
+
+This generates a summarized table shown in table \@ref(tab:table-overlap-summarized)
+
+<details style=\"margin-bottom:10px;\">
+<summary>Long table of overlap</summary>
+```{r table-overlap-summarized, cache = T, echo=F}
+
+```
+</details>
 
 # Ocean ecosystems
 
