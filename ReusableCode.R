@@ -614,7 +614,9 @@ saveRDS(Area2, "Area_summary.rds")
 
 ## ---- table-overlap --------
 
-knitr::kable(Area2, digits = 3, caption = "Number of cells that are shared by different groups of rastercells")
+Area2 <- Area2 %>% dplyr::arrange(desc(Proportion))
+
+knitr::kable(Area2, digits = 3, caption = "Number of cells that are shared by different groups of rastercells", format.args	= list(big.mark = ','))
 
 ## ---- table-general-overlap-creation --------
 
@@ -824,5 +826,5 @@ TotalProtected <- ForTotal %>% summarise_if(is.numeric, sum) %>%
   mutate(Class = "Total") %>%
   relocate(Class, .before = everything())
 
-knitr::kable(dplyr::arrange(bind_rows(Table1, TotalProtected), desc(Proportion)), digits = 3, caption = "Areas that are exclusive or overlapped between different groups")
+knitr::kable(dplyr::arrange(bind_rows(Table1, TotalProtected), desc(Proportion)), digits = 3, caption = "Areas that are exclusive or overlapped between different groups", format.args	= list(big.mark = ','))
 
