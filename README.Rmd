@@ -336,6 +336,23 @@ This generates a summarized table shown in table \@ref(tab:table-overlap-summari
 ```
 </details>
 
+To check the overlap between de different protected and potentially protected layers we generate a new table with the following code
+
+<details style=\"margin-bottom:10px;\">
+<summary>Code for summary of specific overlaps</summary>
+```{r generate-second-table, cache = T}
+
+```
+</details>
+
+The results of this code are seen in table \@ref(tab:show-second-table)
+
+<details style=\"margin-bottom:10px;\">
+<summary>Specific table of overlap</summary>
+```{r show-second-table, cache = T, echo=F}
+
+```
+</details>
 # Ocean ecosystems
 
 # Session info
