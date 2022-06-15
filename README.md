@@ -1,7 +1,7 @@
 Dataset generation for the Danish Biodiversity council
 ================
 Derek Corcoran
-14/06, 2022
+15/06, 2022
 
 -   [1 Objective](#1-objective)
 -   [2 Packages needed](#2-packages-needed)
@@ -20,6 +20,9 @@ Derek Corcoran
         -   [3.1.10 Subsidy schemes](#3110-subsidy-schemes)
     -   [3.2 Results](#32-results)
 -   [4 Ocean ecosystems](#4-ocean-ecosystems)
+    -   [4.1 Data generation](#41-data-generation)
+        -   [4.1.1 Denmark’s Exclusive Economic Zone
+            (EEZ)](#411-denmarks-exclusive-economic-zone-eez)
 -   [5 Session info](#5-session-info)
 -   [6 References](#6-references)
 
@@ -57,6 +60,7 @@ library(magrittr)
 library(geodata)
 library(sf)
 library(tidyverse)
+library(mregions)
 ```
 
 </details>
@@ -118,8 +122,7 @@ Area_DK <- terra::expanse(DK)
 ![Figure 3.1: Polygon of Denmark according to GADM
 4.0](README_files/figure-gfm/PlotDenmark-1.png)
 
-The total area for Denmark according to that is 43,144,848,183 Square
-meters
+The total area for Denmark according to that is 43,145 Square kilometers
 
 ### 3.1.3 Paragraph 3 and dunes
 
@@ -892,700 +895,700 @@ Long table of overlap
 
 </summary>
 
-| Habitats_P3 | Natura_2000 | Types_markblokkort | IUCN | Urort_Skov | Stoette         | NaturaOgVildtreservater | Naturnationalparker | Proportion |     Area_Sq_Mt |
-|:------------|:------------|:-------------------|:-----|:-----------|:----------------|:------------------------|:--------------------|-----------:|---------------:|
-| NA          | NA          | OMD                | NA   | NA         | NA              | NA                      | NA                  |     51.377 | 22,166,314,800 |
-| NA          | NA          | PGR                | NA   | NA         | NA              | NA                      | NA                  |      3.109 |  1,341,422,000 |
-| NA          | Yes         | NA                 | NA   | NA         | NA              | NA                      | NA                  |      1.517 |    654,566,600 |
-| Mose        | NA          | NA                 | NA   | NA         | NA              | NA                      | NA                  |      1.257 |    542,236,200 |
-| NA          | Yes         | OMD                | NA   | NA         | NA              | NA                      | NA                  |      1.236 |    533,389,900 |
-| Eng         | NA          | PGR                | NA   | NA         | NA              | NA                      | NA                  |      1.065 |    459,573,400 |
-| Hede        | NA          | NA                 | NA   | NA         | NA              | NA                      | NA                  |      0.707 |    305,092,500 |
-| Sø          | NA          | NA                 | NA   | NA         | NA              | NA                      | NA                  |      0.687 |    296,212,600 |
-| NA          | Yes         | NA                 | NA   | State      | NA              | NA                      | NA                  |      0.656 |    283,161,400 |
-| Eng         | NA          | NA                 | NA   | NA         | NA              | NA                      | NA                  |      0.550 |    237,474,700 |
-| Sø          | Yes         | NA                 | NA   | NA         | NA              | NA                      | NA                  |      0.463 |    199,761,000 |
-| NA          | NA          | NA                 | NA   | State      | NA              | NA                      | NA                  |      0.371 |    160,153,600 |
-| Hede        | Yes         | NA                 | NA   | NA         | NA              | NA                      | NA                  |      0.370 |    159,660,000 |
-| Mose        | Yes         | NA                 | NA   | NA         | NA              | NA                      | NA                  |      0.353 |    152,130,700 |
-| Overdrev    | NA          | NA                 | NA   | NA         | NA              | NA                      | NA                  |      0.280 |    120,658,800 |
-| NA          | Yes         | PGR                | NA   | NA         | NA              | NA                      | NA                  |      0.271 |    117,002,100 |
-| Eng         | Yes         | PGR                | NA   | NA         | NA              | NA                      | NA                  |      0.259 |    111,837,600 |
-| Overdrev    | NA          | PGR                | NA   | NA         | NA              | NA                      | NA                  |      0.251 |    108,364,700 |
-| NA          | NA          | NA                 | Yes  | NA         | NA              | NA                      | NA                  |      0.240 |    103,659,500 |
-| Hede        | Yes         | NA                 | Yes  | NA         | NA              | NA                      | NA                  |      0.240 |    103,496,800 |
-| Mose        | NA          | PGR                | NA   | NA         | NA              | NA                      | NA                  |      0.221 |     95,466,400 |
-| Mose        | Yes         | NA                 | Yes  | NA         | NA              | NA                      | NA                  |      0.211 |     90,979,600 |
-| NA          | Yes         | NA                 | Yes  | NA         | NA              | NA                      | NA                  |      0.199 |     85,826,100 |
-| Strandeng   | Yes         | NA                 | NA   | NA         | NA              | NA                      | NA                  |      0.187 |     80,665,200 |
-| NA          | Yes         | NA                 | NA   | NA         | NA              | Yes                     | NA                  |      0.184 |     79,220,700 |
-| Eng         | NA          | OMD                | NA   | NA         | NA              | NA                      | NA                  |      0.179 |     77,334,400 |
-| NA          | NA          | OMD                | Yes  | NA         | NA              | NA                      | NA                  |      0.171 |     73,862,600 |
-| Strandeng   | Yes         | PGR                | NA   | NA         | NA              | NA                      | NA                  |      0.165 |     71,388,700 |
-| Sø          | Yes         | NA                 | Yes  | NA         | NA              | NA                      | NA                  |      0.142 |     61,431,100 |
-| Eng         | Yes         | NA                 | NA   | NA         | NA              | NA                      | NA                  |      0.130 |     55,992,200 |
-| Sø          | Yes         | NA                 | NA   | NA         | NA              | Yes                     | NA                  |      0.125 |     54,059,800 |
-| Strandeng   | NA          | NA                 | NA   | NA         | NA              | NA                      | NA                  |      0.104 |     45,074,600 |
-| Hede        | Yes         | PGR                | Yes  | NA         | NA              | NA                      | NA                  |      0.103 |     44,537,300 |
-| Klit        | NA          | NA                 | NA   | NA         | NA              | NA                      | NA                  |      0.098 |     42,425,000 |
-| NA          | Yes         | OMD                | Yes  | NA         | NA              | NA                      | NA                  |      0.094 |     40,643,700 |
-| Mose        | Yes         | PGR                | NA   | NA         | NA              | NA                      | NA                  |      0.092 |     39,643,600 |
-| Hede        | NA          | PGR                | NA   | NA         | NA              | NA                      | NA                  |      0.092 |     39,579,600 |
-| Hede        | Yes         | PGR                | NA   | NA         | NA              | NA                      | NA                  |      0.084 |     36,123,400 |
-| Klit        | Yes         | NA                 | Yes  | NA         | NA              | NA                      | NA                  |      0.080 |     34,314,700 |
-| Strandeng   | Yes         | NA                 | NA   | NA         | NA              | Yes                     | NA                  |      0.079 |     34,066,000 |
-| Eng         | Yes         | PGR                | Yes  | NA         | NA              | NA                      | NA                  |      0.075 |     32,284,500 |
-| Strandeng   | Yes         | PGR                | Yes  | NA         | NA              | Yes                     | NA                  |      0.075 |     32,260,900 |
-| Strandeng   | Yes         | PGR                | NA   | NA         | NA              | Yes                     | NA                  |      0.067 |     29,077,300 |
-| Overdrev    | Yes         | NA                 | NA   | NA         | NA              | NA                      | NA                  |      0.065 |     28,162,100 |
-| Strandeng   | NA          | PGR                | NA   | NA         | NA              | NA                      | NA                  |      0.060 |     25,757,200 |
-| Klit        | Yes         | NA                 | NA   | NA         | NA              | NA                      | NA                  |      0.059 |     25,552,500 |
-| Mose        | Yes         | NA                 | NA   | State      | NA              | NA                      | NA                  |      0.057 |     24,770,200 |
-| Klit        | Yes         | NA                 | NA   | NA         | NA              | Yes                     | NA                  |      0.056 |     24,371,200 |
-| NA          | NA          | NA                 | NA   | NA         | NA              | NA                      | Yes                 |      0.056 |     24,235,400 |
-| Overdrev    | Yes         | PGR                | NA   | NA         | NA              | NA                      | NA                  |      0.055 |     23,577,500 |
-| Eng         | Yes         | OMD                | NA   | NA         | NA              | NA                      | NA                  |      0.053 |     22,817,200 |
-| NA          | Yes         | NA                 | NA   | State      | NA              | NA                      | Yes                 |      0.050 |     21,775,900 |
-| Mose        | NA          | OMD                | NA   | NA         | NA              | NA                      | NA                  |      0.046 |     19,978,200 |
-| Hede        | Yes         | NA                 | Yes  | NA         | NA              | Yes                     | NA                  |      0.044 |     18,771,000 |
-| Strandeng   | Yes         | OMD                | NA   | NA         | NA              | NA                      | NA                  |      0.042 |     18,171,900 |
-| NA          | NA          | PGR                | Yes  | NA         | NA              | NA                      | NA                  |      0.042 |     17,980,700 |
-| NA          | Yes         | PGR                | Yes  | NA         | NA              | NA                      | NA                  |      0.042 |     17,920,900 |
-| Mose        | Yes         | NA                 | NA   | NA         | NA              | Yes                     | NA                  |      0.038 |     16,353,000 |
-| Sø          | NA          | NA                 | Yes  | NA         | NA              | NA                      | NA                  |      0.037 |     16,119,200 |
-| Strandeng   | Yes         | PGR                | Yes  | NA         | NA              | NA                      | NA                  |      0.037 |     15,750,500 |
-| Overdrev    | NA          | OMD                | NA   | NA         | NA              | NA                      | NA                  |      0.036 |     15,740,300 |
-| Eng         | Yes         | NA                 | Yes  | NA         | NA              | NA                      | NA                  |      0.033 |     14,161,100 |
-| Strandeng   | Yes         | NA                 | Yes  | NA         | NA              | NA                      | NA                  |      0.032 |     13,770,600 |
-| NA          | Yes         | NA                 | Yes  | State      | NA              | NA                      | NA                  |      0.031 |     13,292,800 |
-| Sø          | Yes         | NA                 | Yes  | NA         | NA              | Yes                     | NA                  |      0.030 |     12,965,200 |
-| Sø          | NA          | PGR                | NA   | NA         | NA              | NA                      | NA                  |      0.029 |     12,444,200 |
-| Strandeng   | Yes         | PGR                | Yes  | State      | NA              | Yes                     | NA                  |      0.028 |     12,276,200 |
-| Overdrev    | Yes         | PGR                | Yes  | NA         | NA              | NA                      | NA                  |      0.028 |     12,013,300 |
-| NA          | NA          | NA                 | NA   | NA         | NA              | Yes                     | NA                  |      0.028 |     11,983,600 |
-| Mose        | NA          | NA                 | Yes  | NA         | NA              | NA                      | NA                  |      0.028 |     11,937,600 |
-| Hede        | NA          | NA                 | Yes  | NA         | NA              | NA                      | NA                  |      0.028 |     11,878,400 |
-| Sø          | Yes         | NA                 | NA   | State      | NA              | NA                      | NA                  |      0.027 |     11,820,400 |
-| Mose        | Yes         | PGR                | Yes  | NA         | NA              | NA                      | NA                  |      0.026 |     11,087,400 |
-| Sø          | NA          | OMD                | NA   | NA         | NA              | NA                      | NA                  |      0.025 |     10,747,100 |
-| NA          | Yes         | NA                 | NA   | NA         | NA              | NA                      | Yes                 |      0.024 |     10,185,700 |
-| Strandeng   | Yes         | NA                 | Yes  | NA         | NA              | Yes                     | NA                  |      0.023 |      9,776,000 |
-| NA          | Yes         | NA                 | Yes  | NA         | NA              | Yes                     | NA                  |      0.022 |      9,532,700 |
-| Overdrev    | Yes         | NA                 | Yes  | NA         | NA              | NA                      | NA                  |      0.021 |      9,255,900 |
-| NA          | NA          | NA                 | NA   | NA         | egekrat         | NA                      | NA                  |      0.021 |      9,106,600 |
-| NA          | NA          | OMD                | NA   | State      | NA              | NA                      | NA                  |      0.021 |      9,078,200 |
-| NA          | Yes         | PGR                | NA   | State      | NA              | NA                      | NA                  |      0.021 |      9,029,500 |
-| Strandeng   | Yes         | OMD                | NA   | NA         | NA              | Yes                     | NA                  |      0.021 |      9,015,300 |
-| Eng         | Yes         | PGR                | NA   | NA         | NA              | Yes                     | NA                  |      0.020 |      8,702,200 |
-| NA          | NA          | NA                 | NA   | Private    | Skov            | NA                      | NA                  |      0.020 |      8,596,600 |
-| Hede        | Yes         | NA                 | NA   | NA         | NA              | NA                      | Yes                 |      0.020 |      8,562,800 |
-| NA          | NA          | PGR                | NA   | State      | NA              | NA                      | NA                  |      0.019 |      8,311,400 |
-| Mose        | NA          | NA                 | NA   | State      | NA              | NA                      | NA                  |      0.019 |      8,301,600 |
-| Overdrev    | NA          | PGR                | Yes  | NA         | NA              | NA                      | NA                  |      0.018 |      7,881,500 |
-| NA          | Yes         | OMD                | NA   | NA         | NA              | Yes                     | NA                  |      0.018 |      7,611,600 |
-| Klit        | Yes         | PGR                | NA   | NA         | NA              | NA                      | NA                  |      0.017 |      7,319,200 |
-| Overdrev    | Yes         | PGR                | NA   | State      | NA              | NA                      | NA                  |      0.016 |      6,751,500 |
-| Hede        | NA          | OMD                | NA   | NA         | NA              | NA                      | NA                  |      0.015 |      6,588,200 |
-| Eng         | NA          | PGR                | Yes  | NA         | NA              | NA                      | NA                  |      0.014 |      6,191,900 |
-| Overdrev    | NA          | NA                 | Yes  | NA         | NA              | NA                      | NA                  |      0.014 |      5,991,300 |
-| Sø          | NA          | NA                 | NA   | State      | NA              | NA                      | NA                  |      0.014 |      5,981,000 |
-| Eng         | Yes         | PGR                | NA   | State      | NA              | NA                      | NA                  |      0.013 |      5,788,400 |
-| Klit        | Yes         | NA                 | Yes  | NA         | NA              | Yes                     | NA                  |      0.013 |      5,700,200 |
-| Hede        | NA          | PGR                | Yes  | NA         | NA              | NA                      | NA                  |      0.013 |      5,544,300 |
-| Mose        | Yes         | OMD                | NA   | NA         | NA              | NA                      | NA                  |      0.012 |      5,348,700 |
-| NA          | Yes         | PGR                | NA   | NA         | NA              | Yes                     | NA                  |      0.012 |      5,268,000 |
-| Klit        | Yes         | PGR                | NA   | NA         | NA              | Yes                     | NA                  |      0.012 |      5,121,100 |
-| NA          | Yes         | NA                 | NA   | Private    | Skov            | NA                      | NA                  |      0.012 |      5,110,500 |
-| Mose        | Yes         | NA                 | Yes  | NA         | NA              | Yes                     | NA                  |      0.011 |      4,943,500 |
-| Sø          | Yes         | NA                 | Yes  | State      | NA              | NA                      | NA                  |      0.011 |      4,933,600 |
-| Strandeng   | NA          | OMD                | NA   | NA         | NA              | NA                      | NA                  |      0.011 |      4,850,900 |
-| Overdrev    | Yes         | NA                 | NA   | State      | NA              | NA                      | NA                  |      0.011 |      4,595,900 |
-| NA          | Yes         | PGR                | Yes  | State      | NA              | NA                      | NA                  |      0.010 |      4,465,900 |
-| Hede        | Yes         | OMD                | NA   | NA         | NA              | NA                      | NA                  |      0.010 |      4,198,300 |
-| Eng         | NA          | NA                 | Yes  | NA         | NA              | NA                      | NA                  |      0.009 |      3,853,100 |
-| Overdrev    | NA          | PGR                | NA   | State      | NA              | NA                      | NA                  |      0.008 |      3,652,600 |
-| NA          | NA          | NA                 | Yes  | State      | NA              | NA                      | NA                  |      0.008 |      3,640,700 |
-| Hede        | Yes         | NA                 | Yes  | State      | NA              | NA                      | NA                  |      0.008 |      3,544,600 |
-| NA          | Yes         | NA                 | Yes  | State      | NA              | Yes                     | NA                  |      0.008 |      3,528,700 |
-| Overdrev    | Yes         | OMD                | NA   | NA         | NA              | NA                      | NA                  |      0.008 |      3,524,700 |
-| Hede        | Yes         | NA                 | NA   | NA         | NA              | Yes                     | Yes                 |      0.008 |      3,482,300 |
-| NA          | Yes         | NA                 | Yes  | NA         | egekrat         | NA                      | NA                  |      0.008 |      3,409,400 |
-| Mose        | Yes         | NA                 | Yes  | State      | NA              | NA                      | NA                  |      0.008 |      3,336,400 |
-| Klit        | NA          | NA                 | Yes  | NA         | NA              | NA                      | NA                  |      0.008 |      3,323,300 |
-| Klit        | Yes         | PGR                | Yes  | NA         | NA              | NA                      | NA                  |      0.008 |      3,288,700 |
-| Mose        | Yes         | OMD                | Yes  | NA         | NA              | NA                      | NA                  |      0.008 |      3,276,600 |
-| Overdrev    | Yes         | PGR                | Yes  | State      | NA              | NA                      | NA                  |      0.008 |      3,262,300 |
-| Hede        | Yes         | OMD                | Yes  | NA         | NA              | NA                      | NA                  |      0.007 |      3,100,800 |
-| NA          | Yes         | NA                 | Yes  | Private    | Skov            | NA                      | NA                  |      0.007 |      3,054,900 |
-| NA          | Yes         | NA                 | NA   | NA         | egekrat         | NA                      | NA                  |      0.007 |      3,028,500 |
-| Hede        | Yes         | PGR                | Yes  | State      | NA              | NA                      | NA                  |      0.007 |      3,000,900 |
-| Hede        | Yes         | NA                 | Yes  | NA         | NA              | NA                      | Yes                 |      0.007 |      2,859,200 |
-| Eng         | Yes         | NA                 | NA   | NA         | NA              | Yes                     | NA                  |      0.006 |      2,773,300 |
-| Eng         | Yes         | OMD                | Yes  | NA         | NA              | NA                      | NA                  |      0.006 |      2,722,300 |
-| Eng         | Yes         | PGR                | Yes  | State      | NA              | NA                      | NA                  |      0.006 |      2,714,100 |
-| Strandeng   | Yes         | OMD                | Yes  | NA         | NA              | NA                      | NA                  |      0.006 |      2,646,100 |
-| Sø          | Yes         | PGR                | NA   | NA         | NA              | NA                      | NA                  |      0.006 |      2,519,800 |
-| NA          | Yes         | OMD                | NA   | State      | NA              | NA                      | NA                  |      0.006 |      2,436,600 |
-| Strandeng   | Yes         | NA                 | Yes  | State      | NA              | Yes                     | NA                  |      0.006 |      2,435,400 |
-| Sø          | Yes         | NA                 | NA   | NA         | NA              | NA                      | Yes                 |      0.005 |      2,345,400 |
-| NA          | Yes         | NA                 | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.005 |      2,331,300 |
-| NA          | NA          | NA                 | Yes  | NA         | NA              | Yes                     | NA                  |      0.005 |      2,246,600 |
-| Hede        | Yes         | PGR                | Yes  | NA         | NA              | Yes                     | NA                  |      0.005 |      2,244,000 |
-| Mose        | Yes         | PGR                | Yes  | NA         | NA              | Yes                     | NA                  |      0.005 |      2,192,500 |
-| Hede        | Yes         | PGR                | Yes  | NA         | NA              | NA                      | Yes                 |      0.005 |      2,179,100 |
-| NA          | Yes         | NA                 | Yes  | State      | egekrat         | NA                      | NA                  |      0.005 |      2,177,600 |
-| Sø          | Yes         | NA                 | Yes  | State      | NA              | Yes                     | NA                  |      0.005 |      2,151,800 |
-| Mose        | NA          | PGR                | Yes  | NA         | NA              | NA                      | NA                  |      0.005 |      2,123,000 |
-| Klit        | NA          | PGR                | NA   | NA         | NA              | NA                      | NA                  |      0.005 |      2,070,100 |
-| Eng         | NA          | PGR                | NA   | State      | NA              | NA                      | NA                  |      0.005 |      2,064,100 |
-| Overdrev    | Yes         | OMD                | Yes  | NA         | NA              | NA                      | NA                  |      0.005 |      2,062,200 |
-| Eng         | Yes         | NA                 | NA   | State      | NA              | NA                      | NA                  |      0.005 |      2,053,800 |
-| Mose        | Yes         | NA                 | Yes  | Private    | Skov            | NA                      | NA                  |      0.005 |      2,012,000 |
-| Klit        | NA          | OMD                | NA   | NA         | NA              | NA                      | NA                  |      0.005 |      2,005,600 |
-| Mose        | Yes         | PGR                | NA   | NA         | NA              | Yes                     | NA                  |      0.005 |      1,960,600 |
-| Overdrev    | Yes         | NA                 | Yes  | State      | NA              | NA                      | NA                  |      0.004 |      1,915,200 |
-| Eng         | NA          | NA                 | NA   | State      | NA              | NA                      | NA                  |      0.004 |      1,912,900 |
-| Hede        | Yes         | PGR                | NA   | NA         | NA              | Yes                     | NA                  |      0.004 |      1,794,200 |
-| Eng         | Yes         | PGR                | Yes  | NA         | NA              | NA                      | Yes                 |      0.004 |      1,790,400 |
-| Mose        | Yes         | PGR                | NA   | State      | NA              | NA                      | NA                  |      0.004 |      1,786,800 |
-| Mose        | Yes         | NA                 | NA   | State      | NA              | NA                      | Yes                 |      0.004 |      1,772,600 |
-| Hede        | Yes         | NA                 | NA   | State      | NA              | NA                      | NA                  |      0.004 |      1,766,000 |
-| Overdrev    | NA          | NA                 | NA   | State      | NA              | NA                      | NA                  |      0.004 |      1,619,400 |
-| NA          | NA          | PGR                | NA   | NA         | NA              | NA                      | Yes                 |      0.004 |      1,609,000 |
-| Hede        | NA          | NA                 | NA   | NA         | NA              | NA                      | Yes                 |      0.004 |      1,595,100 |
-| Mose        | NA          | NA                 | NA   | Private    | Skov            | NA                      | NA                  |      0.004 |      1,548,700 |
-| Hede        | Yes         | PGR                | NA   | State      | NA              | NA                      | NA                  |      0.003 |      1,508,800 |
-| Klit        | Yes         | PGR                | Yes  | NA         | NA              | Yes                     | NA                  |      0.003 |      1,505,400 |
-| Overdrev    | Yes         | PGR                | Yes  | NA         | NA              | Yes                     | NA                  |      0.003 |      1,467,800 |
-| Strandeng   | Yes         | OMD                | Yes  | NA         | NA              | Yes                     | NA                  |      0.003 |      1,451,900 |
-| Eng         | Yes         | NA                 | Yes  | State      | NA              | NA                      | NA                  |      0.003 |      1,438,500 |
-| NA          | NA          | OMD                | NA   | NA         | NA              | Yes                     | NA                  |      0.003 |      1,419,900 |
-| Mose        | Yes         | NA                 | NA   | Private    | Skov            | NA                      | NA                  |      0.003 |      1,159,500 |
-| Hede        | Yes         | PGR                | NA   | NA         | NA              | NA                      | Yes                 |      0.003 |      1,128,400 |
-| NA          | NA          | NA                 | Yes  | NA         | egekrat         | NA                      | NA                  |      0.003 |      1,109,100 |
-| NA          | Yes         | NA                 | NA   | State      | egekrat         | NA                      | NA                  |      0.003 |      1,091,600 |
-| Overdrev    | NA          | PGR                | Yes  | State      | NA              | NA                      | NA                  |      0.002 |      1,044,900 |
-| Eng         | Yes         | PGR                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.002 |      1,001,000 |
-| NA          | NA          | OMD                | Yes  | State      | NA              | NA                      | NA                  |      0.002 |        971,300 |
-| NA          | Yes         | PGR                | NA   | NA         | NA              | NA                      | Yes                 |      0.002 |        938,300 |
-| NA          | Yes         | PGR                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.002 |        932,600 |
-| Strandeng   | Yes         | PGR                | NA   | State      | NA              | NA                      | NA                  |      0.002 |        912,000 |
-| Eng         | NA          | OMD                | Yes  | NA         | NA              | NA                      | NA                  |      0.002 |        880,200 |
-| NA          | Yes         | OMD                | Yes  | NA         | NA              | Yes                     | NA                  |      0.002 |        865,200 |
-| NA          | Yes         | OMD                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.002 |        837,000 |
-| Mose        | NA          | PGR                | NA   | State      | NA              | NA                      | NA                  |      0.002 |        830,500 |
-| Eng         | Yes         | NA                 | Yes  | NA         | NA              | Yes                     | NA                  |      0.002 |        821,100 |
-| NA          | Yes         | PGR                | NA   | State      | NA              | Yes                     | NA                  |      0.002 |        817,200 |
-| Eng         | Yes         | PGR                | NA   | NA         | NA              | NA                      | Yes                 |      0.002 |        815,800 |
-| Hede        | Yes         | OMD                | Yes  | NA         | NA              | NA                      | Yes                 |      0.002 |        729,800 |
-| Mose        | NA          | NA                 | NA   | NA         | NA              | NA                      | Yes                 |      0.002 |        723,300 |
-| Eng         | Yes         | NA                 | NA   | State      | NA              | Yes                     | NA                  |      0.002 |        721,600 |
-| Strandeng   | NA          | NA                 | Yes  | NA         | NA              | NA                      | NA                  |      0.002 |        713,100 |
-| NA          | Yes         | PGR                | Yes  | NA         | NA              | Yes                     | NA                  |      0.002 |        712,400 |
-| Hede        | NA          | NA                 | NA   | State      | NA              | NA                      | NA                  |      0.002 |        708,000 |
-| Sø          | Yes         | OMD                | NA   | NA         | NA              | NA                      | NA                  |      0.002 |        678,500 |
-| Eng         | Yes         | NA                 | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.001 |        645,400 |
-| Sø          | NA          | PGR                | Yes  | NA         | NA              | NA                      | NA                  |      0.001 |        626,900 |
-| Sø          | Yes         | PGR                | Yes  | State      | NA              | Yes                     | NA                  |      0.001 |        617,100 |
-| NA          | Yes         | PGR                | NA   | State      | NA              | NA                      | Yes                 |      0.001 |        617,100 |
-| Overdrev    | Yes         | NA                 | Yes  | NA         | NA              | Yes                     | NA                  |      0.001 |        600,600 |
-| Eng         | Yes         | OMD                | NA   | NA         | NA              | Yes                     | NA                  |      0.001 |        600,000 |
-| Strandeng   | Yes         | NA                 | NA   | State      | NA              | NA                      | NA                  |      0.001 |        598,400 |
-| Mose        | Yes         | PGR                | Yes  | State      | NA              | NA                      | NA                  |      0.001 |        591,100 |
-| NA          | Yes         | OMD                | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.001 |        574,800 |
-| Klit        | Yes         | OMD                | NA   | NA         | NA              | NA                      | NA                  |      0.001 |        570,600 |
-| NA          | NA          | OMD                | NA   | NA         | NA              | NA                      | Yes                 |      0.001 |        564,500 |
-| Klit        | Yes         | NA                 | Yes  | NA         | NA              | NA                      | Yes                 |      0.001 |        561,700 |
-| NA          | Yes         | PGR                | Yes  | State      | NA              | Yes                     | NA                  |      0.001 |        553,700 |
-| Sø          | NA          | NA                 | NA   | NA         | NA              | Yes                     | NA                  |      0.001 |        543,200 |
-| Strandeng   | Yes         | PGR                | Yes  | State      | NA              | NA                      | NA                  |      0.001 |        541,200 |
-| Klit        | Yes         | NA                 | Yes  | State      | NA              | NA                      | NA                  |      0.001 |        530,300 |
-| Eng         | Yes         | NA                 | NA   | NA         | NA              | NA                      | Yes                 |      0.001 |        527,300 |
-| Strandeng   | Yes         | NA                 | Yes  | State      | NA              | NA                      | NA                  |      0.001 |        525,000 |
-| Mose        | NA          | NA                 | Yes  | State      | NA              | NA                      | NA                  |      0.001 |        524,900 |
-| NA          | Yes         | NA                 | NA   | State      | NA              | Yes                     | NA                  |      0.001 |        522,800 |
-| Strandeng   | NA          | PGR                | Yes  | NA         | NA              | NA                      | NA                  |      0.001 |        518,800 |
-| Overdrev    | Yes         | PGR                | NA   | NA         | NA              | NA                      | Yes                 |      0.001 |        508,900 |
-| Eng         | NA          | OMD                | NA   | NA         | NA              | NA                      | Yes                 |      0.001 |        506,100 |
-| Overdrev    | Yes         | OMD                | Yes  | NA         | NA              | Yes                     | NA                  |      0.001 |        483,200 |
-| Sø          | Yes         | PGR                | Yes  | NA         | NA              | NA                      | NA                  |      0.001 |        481,000 |
-| Hede        | NA          | NA                 | NA   | NA         | egekrat         | NA                      | NA                  |      0.001 |        480,600 |
-| Eng         | Yes         | NA                 | Yes  | NA         | NA              | NA                      | Yes                 |      0.001 |        479,800 |
-| NA          | NA          | PGR                | Yes  | State      | NA              | NA                      | NA                  |      0.001 |        478,200 |
-| Overdrev    | NA          | OMD                | Yes  | NA         | NA              | NA                      | NA                  |      0.001 |        471,000 |
-| Hede        | NA          | PGR                | NA   | NA         | NA              | NA                      | Yes                 |      0.001 |        464,900 |
-| Mose        | Yes         | OMD                | NA   | State      | NA              | NA                      | NA                  |      0.001 |        463,600 |
-| Eng         | Yes         | PGR                | Yes  | State      | NA              | Yes                     | NA                  |      0.001 |        461,800 |
-| Mose        | Yes         | NA                 | NA   | NA         | NA              | NA                      | Yes                 |      0.001 |        453,300 |
-| Sø          | NA          | NA                 | Yes  | State      | NA              | NA                      | NA                  |      0.001 |        433,500 |
-| Overdrev    | Yes         | NA                 | NA   | NA         | NA              | Yes                     | NA                  |      0.001 |        428,200 |
-| Overdrev    | Yes         | OMD                | NA   | State      | NA              | NA                      | NA                  |      0.001 |        426,200 |
-| NA          | Yes         | NA                 | NA   | NA         | NA              | Yes                     | Yes                 |      0.001 |        425,500 |
-| Sø          | Yes         | NA                 | NA   | State      | NA              | NA                      | Yes                 |      0.001 |        406,400 |
-| NA          | NA          | NA                 | NA   | State      | egekrat         | NA                      | NA                  |      0.001 |        394,900 |
-| Eng         | Yes         | PGR                | Yes  | NA         | NA              | Yes                     | NA                  |      0.001 |        394,700 |
-| Strandeng   | Yes         | PGR                | NA   | State      | NA              | Yes                     | NA                  |      0.001 |        392,300 |
-| Strandeng   | NA          | NA                 | NA   | State      | NA              | NA                      | NA                  |      0.001 |        387,000 |
-| Overdrev    | Yes         | PGR                | NA   | NA         | NA              | Yes                     | NA                  |      0.001 |        380,600 |
-| NA          | Yes         | NA                 | Yes  | Private    | Skov            | Yes                     | NA                  |      0.001 |        373,700 |
-| Hede        | NA          | NA                 | NA   | Private    | Skov            | NA                      | NA                  |      0.001 |        368,100 |
-| Eng         | Yes         | OMD                | NA   | State      | NA              | NA                      | NA                  |      0.001 |        364,900 |
-| Strandeng   | NA          | NA                 | NA   | NA         | NA              | Yes                     | NA                  |      0.001 |        352,800 |
-| Overdrev    | Yes         | OMD                | Yes  | State      | NA              | NA                      | NA                  |      0.001 |        350,400 |
-| Hede        | Yes         | OMD                | NA   | NA         | NA              | NA                      | Yes                 |      0.001 |        347,900 |
-| Hede        | NA          | OMD                | Yes  | NA         | NA              | NA                      | NA                  |      0.001 |        346,200 |
-| Strandeng   | Yes         | NA                 | NA   | State      | NA              | Yes                     | NA                  |      0.001 |        341,500 |
-| NA          | Yes         | OMD                | Yes  | State      | NA              | NA                      | NA                  |      0.001 |        341,300 |
-| Strandeng   | NA          | NA                 | Yes  | State      | NA              | NA                      | NA                  |      0.001 |        338,000 |
-| NA          | NA          | PGR                | Yes  | NA         | NA              | Yes                     | NA                  |      0.001 |        332,000 |
-| Sø          | Yes         | PGR                | NA   | NA         | NA              | Yes                     | NA                  |      0.001 |        325,600 |
-| Mose        | Yes         | NA                 | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.001 |        311,900 |
-| Hede        | NA          | PGR                | NA   | NA         | NA              | Yes                     | NA                  |      0.001 |        310,900 |
-| Klit        | Yes         | NA                 | NA   | State      | NA              | NA                      | NA                  |      0.001 |        307,000 |
-| Strandeng   | Yes         | PGR                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.001 |        295,100 |
-| NA          | Yes         | PGR                | Yes  | NA         | NA              | NA                      | Yes                 |      0.001 |        286,600 |
-| Eng         | NA          | PGR                | Yes  | State      | NA              | NA                      | NA                  |      0.001 |        274,500 |
-| Eng         | Yes         | OMD                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.001 |        273,200 |
-| Mose        | Yes         | OMD                | NA   | NA         | NA              | Yes                     | NA                  |      0.001 |        271,500 |
-| NA          | NA          | NA                 | Yes  | Private    | Skov            | NA                      | NA                  |      0.001 |        264,600 |
-| NA          | Yes         | NA                 | Yes  | NA         | NA              | NA                      | Yes                 |      0.001 |        263,700 |
-| Hede        | Yes         | NA                 | NA   | NA         | NA              | Yes                     | NA                  |      0.001 |        259,500 |
-| Mose        | Yes         | NA                 | Yes  | State      | NA              | Yes                     | NA                  |      0.001 |        253,600 |
-| Hede        | Yes         | NA                 | NA   | State      | NA              | NA                      | Yes                 |      0.001 |        248,600 |
-| Eng         | Yes         | OMD                | Yes  | NA         | NA              | NA                      | Yes                 |      0.001 |        245,400 |
-| Mose        | Yes         | PGR                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.001 |        242,300 |
-| Sø          | Yes         | PGR                | Yes  | NA         | NA              | Yes                     | NA                  |      0.001 |        232,800 |
-| NA          | Yes         | PGR                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.001 |        232,700 |
-| Mose        | NA          | OMD                | Yes  | NA         | NA              | NA                      | NA                  |      0.001 |        231,300 |
-| NA          | Yes         | OMD                | NA   | NA         | NA              | NA                      | Yes                 |      0.001 |        229,600 |
-| Eng         | NA          | OMD                | NA   | State      | NA              | NA                      | NA                  |      0.001 |        218,100 |
-| Hede        | Yes         | NA                 | NA   | NA         | egekrat         | NA                      | NA                  |      0.001 |        217,800 |
-| Mose        | Yes         | NA                 | Yes  | Private    | Skov            | Yes                     | NA                  |      0.001 |        215,900 |
-| Hede        | NA          | NA                 | NA   | State      | egekrat         | NA                      | NA                  |      0.000 |        210,200 |
-| Eng         | Yes         | OMD                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |        208,700 |
-| Overdrev    | NA          | NA                 | Yes  | State      | NA              | NA                      | NA                  |      0.000 |        206,300 |
-| Hede        | Yes         | PGR                | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |        204,900 |
-| NA          | NA          | PGR                | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |        204,500 |
-| Overdrev    | Yes         | PGR                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |        203,100 |
-| Strandeng   | NA          | PGR                | NA   | State      | NA              | NA                      | NA                  |      0.000 |        200,700 |
-| Hede        | Yes         | NA                 | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |        198,800 |
-| Mose        | NA          | NA                 | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |        198,700 |
-| Eng         | Yes         | PGR                | NA   | State      | NA              | NA                      | Yes                 |      0.000 |        196,100 |
-| Eng         | Yes         | NA                 | NA   | State      | NA              | NA                      | Yes                 |      0.000 |        194,400 |
-| Eng         | Yes         | OMD                | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |        192,900 |
-| Overdrev    | NA          | OMD                | NA   | State      | NA              | NA                      | NA                  |      0.000 |        190,700 |
-| Hede        | Yes         | NA                 | NA   | State      | egekrat         | NA                      | NA                  |      0.000 |        189,400 |
-| NA          | Yes         | OMD                | NA   | State      | NA              | NA                      | Yes                 |      0.000 |        187,900 |
-| Mose        | NA          | NA                 | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |        181,600 |
-| Eng         | Yes         | OMD                | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |        173,800 |
-| Strandeng   | NA          | NA                 | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |        172,200 |
-| Sø          | Yes         | NA                 | NA   | State      | NA              | Yes                     | NA                  |      0.000 |        171,700 |
-| Mose        | Yes         | NA                 | NA   | State      | NA              | Yes                     | NA                  |      0.000 |        169,800 |
-| Mose        | Yes         | PGR                | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |        168,400 |
-| Eng         | Yes         | OMD                | Yes  | State      | NA              | NA                      | NA                  |      0.000 |        162,900 |
-| NA          | NA          | OMD                | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |        160,600 |
-| Overdrev    | NA          | OMD                | Yes  | State      | NA              | NA                      | NA                  |      0.000 |        151,000 |
-| Mose        | NA          | PGR                | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |        149,800 |
-| NA          | Yes         | NA                 | NA   | Private    | egekrat         | NA                      | NA                  |      0.000 |        146,600 |
-| Hede        | NA          | NA                 | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |        140,800 |
-| Mose        | Yes         | PGR                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |        139,800 |
-| Hede        | NA          | PGR                | NA   | State      | NA              | NA                      | NA                  |      0.000 |        138,900 |
-| Mose        | Yes         | PGR                | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |        137,600 |
-| NA          | NA          | PGR                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |        137,300 |
-| Eng         | Yes         | NA                 | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |        136,600 |
-| Eng         | NA          | NA                 | Yes  | State      | NA              | NA                      | NA                  |      0.000 |        127,100 |
-| Overdrev    | Yes         | OMD                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |        125,600 |
-| NA          | Yes         | PGR                | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |        124,500 |
-| Sø          | Yes         | PGR                | NA   | State      | NA              | NA                      | NA                  |      0.000 |        123,400 |
-| NA          | Yes         | NA                 | Yes  | Private    | egekrat         | NA                      | NA                  |      0.000 |        120,100 |
-| Overdrev    | NA          | PGR                | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |        118,400 |
-| Hede        | Yes         | PGR                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |        115,800 |
-| Eng         | Yes         | OMD                | NA   | State      | NA              | NA                      | Yes                 |      0.000 |        113,600 |
-| Hede        | Yes         | PGR                | NA   | State      | NA              | NA                      | Yes                 |      0.000 |        113,600 |
-| Sø          | Yes         | NA                 | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |        112,400 |
-| Strandeng   | NA          | OMD                | Yes  | NA         | NA              | NA                      | NA                  |      0.000 |        107,700 |
-| NA          | Yes         | PGR                | Yes  | State      | egekrat         | NA                      | NA                  |      0.000 |        106,700 |
-| Strandeng   | Yes         | OMD                | NA   | State      | NA              | NA                      | NA                  |      0.000 |        106,700 |
-| Mose        | Yes         | NA                 | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |        106,700 |
-| NA          | Yes         | OMD                | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |        105,200 |
-| Mose        | Yes         | PGR                | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |        101,900 |
-| NA          | NA          | OMD                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |        100,600 |
-| NA          | NA          | OMD                | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |         99,800 |
-| Mose        | Yes         | OMD                | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |         93,700 |
-| Overdrev    | Yes         | PGR                | NA   | State      | NA              | NA                      | Yes                 |      0.000 |         93,400 |
-| Mose        | NA          | PGR                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |         91,400 |
-| Overdrev    | Yes         | NA                 | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |         88,400 |
-| Mose        | Yes         | NA                 | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |         88,100 |
-| Eng         | NA          | PGR                | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |         87,800 |
-| Sø          | Yes         | PGR                | Yes  | State      | NA              | NA                      | NA                  |      0.000 |         87,500 |
-| NA          | Yes         | PGR                | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |         84,300 |
-| Klit        | NA          | NA                 | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |         84,100 |
-| Hede        | Yes         | NA                 | NA   | State      | egekrat         | NA                      | Yes                 |      0.000 |         83,600 |
-| NA          | Yes         | OMD                | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |         83,100 |
-| Klit        | NA          | NA                 | Yes  | State      | NA              | NA                      | NA                  |      0.000 |         82,700 |
-| Overdrev    | NA          | OMD                | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |         80,300 |
-| Overdrev    | Yes         | OMD                | NA   | State      | NA              | NA                      | Yes                 |      0.000 |         79,800 |
-| NA          | Yes         | NA                 | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |         78,000 |
-| Eng         | Yes         | NA                 | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |         76,400 |
-| Eng         | NA          | NA                 | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |         75,300 |
-| Eng         | NA          | NA                 | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |         74,800 |
-| Mose        | NA          | NA                 | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |         74,500 |
-| Overdrev    | NA          | PGR                | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |         73,500 |
-| Eng         | NA          | PGR                | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |         72,500 |
-| Hede        | Yes         | NA                 | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |         71,000 |
-| Klit        | Yes         | PGR                | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |         70,900 |
-| Overdrev    | NA          | NA                 | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |         69,700 |
-| Eng         | Yes         | NA                 | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |         68,600 |
-| Eng         | NA          | NA                 | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |         68,300 |
-| Klit        | NA          | PGR                | Yes  | NA         | NA              | NA                      | NA                  |      0.000 |         67,100 |
-| Overdrev    | Yes         | NA                 | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |         66,100 |
-| Hede        | NA          | NA                 | Yes  | State      | NA              | NA                      | NA                  |      0.000 |         65,500 |
-| Hede        | NA          | OMD                | NA   | State      | NA              | NA                      | NA                  |      0.000 |         63,700 |
-| Overdrev    | NA          | NA                 | NA   | State      | NA              | Yes                     | NA                  |      0.000 |         63,600 |
-| Strandeng   | NA          | NA                 | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |         62,500 |
-| Sø          | Yes         | OMD                | Yes  | NA         | NA              | NA                      | NA                  |      0.000 |         61,800 |
-| NA          | NA          | OMD                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |         61,400 |
-| Klit        | NA          | NA                 | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |         60,900 |
-| Eng         | NA          | PGR                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |         60,700 |
-| Sø          | Yes         | NA                 | Yes  | Private    | Skov            | Yes                     | NA                  |      0.000 |         59,300 |
-| Sø          | NA          | NA                 | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |         59,100 |
-| NA          | NA          | NA                 | NA   | State      | NA              | Yes                     | NA                  |      0.000 |         58,700 |
-| NA          | NA          | NA                 | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |         58,200 |
-| Strandeng   | Yes         | OMD                | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |         57,700 |
-| Mose        | NA          | PGR                | Yes  | State      | NA              | NA                      | NA                  |      0.000 |         57,000 |
-| Klit        | Yes         | OMD                | Yes  | NA         | NA              | NA                      | NA                  |      0.000 |         56,300 |
-| Hede        | Yes         | NA                 | Yes  | State      | egekrat         | NA                      | NA                  |      0.000 |         56,000 |
-| Sø          | Yes         | OMD                | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |         56,000 |
-| Mose        | NA          | NA                 | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |         55,400 |
-| Eng         | Yes         | PGR                | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |         54,600 |
-| Hede        | Yes         | OMD                | Yes  | State      | NA              | NA                      | NA                  |      0.000 |         54,100 |
-| Strandeng   | Yes         | NA                 | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |         54,000 |
-| Eng         | NA          | PGR                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |         53,000 |
-| Sø          | NA          | NA                 | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |         52,400 |
-| Eng         | Yes         | PGR                | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |         51,900 |
-| Sø          | NA          | PGR                | NA   | State      | NA              | NA                      | NA                  |      0.000 |         51,800 |
-| Klit        | NA          | NA                 | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |         51,500 |
-| NA          | Yes         | NA                 | NA   | Private    | Skov            | Yes                     | NA                  |      0.000 |         51,300 |
-| Mose        | Yes         | NA                 | NA   | Private    | Skov            | Yes                     | NA                  |      0.000 |         49,100 |
-| NA          | NA          | OMD                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |         48,800 |
-| Sø          | Yes         | NA                 | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |         48,600 |
-| Sø          | Yes         | NA                 | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |         47,900 |
-| NA          | Yes         | NA                 | NA   | State      | egekrat         | Yes                     | Yes                 |      0.000 |         47,200 |
-| Hede        | Yes         | OMD                | NA   | State      | NA              | NA                      | NA                  |      0.000 |         46,700 |
-| Strandeng   | Yes         | OMD                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |         46,500 |
-| Hede        | NA          | NA                 | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |         43,300 |
-| Overdrev    | NA          | PGR                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |         43,200 |
-| Eng         | NA          | PGR                | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |         42,900 |
-| Mose        | Yes         | PGR                | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |         42,700 |
-| Strandeng   | NA          | PGR                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |         42,100 |
-| Overdrev    | Yes         | NA                 | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |         42,000 |
-| Overdrev    | Yes         | PGR                | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |         41,800 |
-| Overdrev    | Yes         | NA                 | NA   | State      | NA              | Yes                     | NA                  |      0.000 |         41,600 |
-| Eng         | NA          | NA                 | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |         38,500 |
-| Eng         | Yes         | PGR                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |         38,100 |
-| Mose        | Yes         | OMD                | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |         37,000 |
-| Hede        | Yes         | OMD                | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |         36,300 |
-| Sø          | NA          | OMD                | Yes  | NA         | NA              | NA                      | NA                  |      0.000 |         36,100 |
-| Hede        | NA          | NA                 | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |         35,900 |
-| Hede        | Yes         | PGR                | Yes  | State      | egekrat         | NA                      | NA                  |      0.000 |         35,700 |
-| Overdrev    | Yes         | NA                 | NA   | State      | NA              | NA                      | Yes                 |      0.000 |         35,500 |
-| Overdrev    | Yes         | NA                 | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |         35,000 |
-| Sø          | Yes         | NA                 | NA   | Private    | Skov            | Yes                     | NA                  |      0.000 |         34,700 |
-| Eng         | Yes         | OMD                | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |         34,400 |
-| Mose        | Yes         | PGR                | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |         33,800 |
-| Strandeng   | NA          | NA                 | NA   | State      | NA              | Yes                     | NA                  |      0.000 |         33,400 |
-| Mose        | Yes         | NA                 | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |         32,900 |
-| Overdrev    | Yes         | NA                 | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |         32,900 |
-| Strandeng   | NA          | OMD                | NA   | State      | NA              | NA                      | NA                  |      0.000 |         31,600 |
-| Eng         | NA          | OMD                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |         31,600 |
-| NA          | NA          | NA                 | NA   | State      | NA              | NA                      | Yes                 |      0.000 |         31,200 |
-| NA          | Yes         | OMD                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |         30,800 |
-| Mose        | Yes         | OMD                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |         30,300 |
-| Overdrev    | NA          | NA                 | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |         28,800 |
-| Strandeng   | NA          | PGR                | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |         28,400 |
-| NA          | NA          | NA                 | Yes  | State      | egekrat         | NA                      | NA                  |      0.000 |         28,100 |
-| Hede        | NA          | NA                 | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |         27,800 |
-| Hede        | Yes         | PGR                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |         27,400 |
-| Strandeng   | NA          | OMD                | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |         26,200 |
-| NA          | NA          | PGR                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |         26,000 |
-| Strandeng   | NA          | NA                 | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |         25,900 |
-| Mose        | Yes         | OMD                | Yes  | State      | NA              | NA                      | NA                  |      0.000 |         25,800 |
-| Overdrev    | Yes         | NA                 | NA   | State      | egekrat         | NA                      | NA                  |      0.000 |         25,300 |
-| NA          | NA          | NA                 | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |         24,600 |
-| Mose        | Yes         | OMD                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |         24,500 |
-| Hede        | NA          | OMD                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |         24,300 |
-| NA          | Yes         | PGR                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |         24,000 |
-| Hede        | Yes         | PGR                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |         23,800 |
-| Mose        | NA          | OMD                | NA   | State      | NA              | NA                      | NA                  |      0.000 |         23,500 |
-| NA          | Yes         | OMD                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |         23,200 |
-| Overdrev    | Yes         | OMD                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |         21,700 |
-| Mose        | Yes         | PGR                | NA   | State      | NA              | NA                      | Yes                 |      0.000 |         21,500 |
-| Overdrev    | Yes         | NA                 | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |         21,100 |
-| Hede        | Yes         | OMD                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |         20,800 |
-| Strandeng   | Yes         | OMD                | Yes  | State      | NA              | NA                      | NA                  |      0.000 |         20,700 |
-| Strandeng   | Yes         | NA                 | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |         20,400 |
-| Sø          | Yes         | OMD                | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |         19,400 |
-| NA          | Yes         | NA                 | NA   | State      | NA              | Yes                     | Yes                 |      0.000 |         19,100 |
-| Eng         | NA          | NA                 | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |         18,900 |
-| NA          | NA          | PGR                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |         18,600 |
-| Eng         | NA          | OMD                | Yes  | State      | NA              | NA                      | NA                  |      0.000 |         18,500 |
-| Mose        | Yes         | NA                 | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |         18,500 |
-| Sø          | NA          | NA                 | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |         18,200 |
-| Overdrev    | Yes         | NA                 | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |         18,200 |
-| Mose        | Yes         | NA                 | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |         18,100 |
-| Hede        | Yes         | NA                 | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |         17,900 |
-| NA          | Yes         | NA                 | Yes  | State      | NA              | NA                      | Yes                 |      0.000 |         17,800 |
-| Eng         | Yes         | PGR                | Yes  | Private    | Skov            | Yes                     | NA                  |      0.000 |         17,700 |
-| Klit        | Yes         | NA                 | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |         17,600 |
-| Overdrev    | Yes         | NA                 | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |         17,100 |
-| Overdrev    | Yes         | PGR                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |         15,900 |
-| Sø          | Yes         | PGR                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |         15,500 |
-| NA          | NA          | NA                 | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |         15,100 |
-| Overdrev    | NA          | NA                 | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |         14,900 |
-| NA          | Yes         | PGR                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |         14,200 |
-| Eng         | Yes         | NA                 | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |         13,600 |
-| Klit        | Yes         | PGR                | NA   | State      | NA              | NA                      | NA                  |      0.000 |         13,400 |
-| NA          | NA          | NA                 | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |         13,200 |
-| Mose        | NA          | OMD                | Yes  | State      | NA              | NA                      | NA                  |      0.000 |         12,900 |
-| Sø          | Yes         | NA                 | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |         12,700 |
-| Hede        | NA          | PGR                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |         12,500 |
-| Sø          | NA          | PGR                | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |         12,500 |
-| NA          | Yes         | OMD                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |         11,900 |
-| Mose        | Yes         | PGR                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |         11,800 |
-| Sø          | Yes         | NA                 | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |         11,700 |
-| Mose        | NA          | NA                 | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |         11,400 |
-| Hede        | Yes         | NA                 | NA   | NA         | egekrat         | Yes                     | Yes                 |      0.000 |         11,200 |
-| Overdrev    | NA          | OMD                | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |         10,400 |
-| Klit        | Yes         | OMD                | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |         10,100 |
-| Mose        | Yes         | NA                 | Yes  | State      | egekrat         | NA                      | NA                  |      0.000 |          9,800 |
-| Strandeng   | Yes         | PGR                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |          9,700 |
-| Sø          | Yes         | OMD                | NA   | State      | NA              | NA                      | NA                  |      0.000 |          9,700 |
-| Eng         | Yes         | NA                 | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |          9,600 |
-| Hede        | Yes         | NA                 | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |          9,500 |
-| NA          | Yes         | OMD                | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |          8,700 |
-| Eng         | Yes         | NA                 | Yes  | Private    | Skov            | Yes                     | NA                  |      0.000 |          8,400 |
-| Overdrev    | Yes         | PGR                | NA   | State      | egekrat         | NA                      | NA                  |      0.000 |          8,400 |
-| Eng         | NA          | PGR                | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |          8,400 |
-| Overdrev    | NA          | OMD                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |          7,900 |
-| NA          | NA          | NA                 | NA   | State      | egekrat         | NA                      | Yes                 |      0.000 |          7,600 |
-| Overdrev    | NA          | PGR                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |          7,200 |
-| Overdrev    | NA          | NA                 | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |          6,900 |
-| NA          | NA          | PGR                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |          6,800 |
-| Eng         | NA          | PGR                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |          6,800 |
-| Sø          | Yes         | NA                 | Yes  | State      | egekrat         | NA                      | NA                  |      0.000 |          6,700 |
-| Mose        | Yes         | PGR                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |          6,700 |
-| Mose        | NA          | PGR                | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |          6,700 |
-| NA          | Yes         | PGR                | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |          6,400 |
-| NA          | Yes         | PGR                | Yes  | Private    | Skov            | Yes                     | NA                  |      0.000 |          6,200 |
-| Sø          | Yes         | OMD                | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |          6,200 |
-| Overdrev    | Yes         | PGR                | Yes  | State      | egekrat         | NA                      | NA                  |      0.000 |          6,100 |
-| Overdrev    | Yes         | NA                 | Yes  | State      | egekrat         | NA                      | NA                  |      0.000 |          6,100 |
-| Overdrev    | Yes         | PGR                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |          6,000 |
-| NA          | Yes         | NA                 | NA   | State      | egekrat         | NA                      | Yes                 |      0.000 |          5,900 |
-| Hede        | NA          | OMD                | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |          5,800 |
-| Mose        | NA          | NA                 | NA   | State      | NA              | Yes                     | NA                  |      0.000 |          5,700 |
-| Sø          | Yes         | NA                 | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |          5,700 |
-| Sø          | Yes         | PGR                | NA   | State      | NA              | NA                      | Yes                 |      0.000 |          5,500 |
-| Hede        | Yes         | NA                 | NA   | Private    | egekrat         | NA                      | NA                  |      0.000 |          5,400 |
-| Mose        | NA          | NA                 | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |          5,400 |
-| Hede        | Yes         | NA                 | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |          5,100 |
-| NA          | NA          | PGR                | NA   | State      | NA              | NA                      | Yes                 |      0.000 |          4,800 |
-| NA          | NA          | OMD                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |          4,800 |
-| Strandeng   | NA          | PGR                | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |          4,700 |
-| Eng         | NA          | NA                 | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |          4,600 |
-| NA          | Yes         | OMD                | Yes  | Private    | Skov            | Yes                     | NA                  |      0.000 |          4,500 |
-| Strandeng   | Yes         | PGR                | Yes  | NA         | sammenhaengende | Yes                     | NA                  |      0.000 |          4,500 |
-| Mose        | NA          | NA                 | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |          4,500 |
-| Overdrev    | NA          | NA                 | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |          4,400 |
-| Mose        | NA          | OMD                | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |          4,400 |
-| Mose        | NA          | NA                 | NA   | State      | egekrat         | NA                      | NA                  |      0.000 |          4,200 |
-| Klit        | Yes         | OMD                | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |          4,100 |
-| Eng         | Yes         | PGR                | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |          4,100 |
-| Mose        | Yes         | NA                 | NA   | State      | egekrat         | NA                      | NA                  |      0.000 |          4,000 |
-| Mose        | Yes         | PGR                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |          4,000 |
-| Sø          | Yes         | PGR                | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |          3,900 |
-| Overdrev    | Yes         | OMD                | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |          3,900 |
-| NA          | Yes         | PGR                | NA   | State      | egekrat         | NA                      | NA                  |      0.000 |          3,700 |
-| Sø          | NA          | PGR                | Yes  | State      | NA              | NA                      | NA                  |      0.000 |          3,700 |
-| Overdrev    | NA          | NA                 | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |          3,700 |
-| Sø          | Yes         | OMD                | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |          3,600 |
-| NA          | Yes         | NA                 | NA   | NA         | sammenhaengende | Yes                     | NA                  |      0.000 |          3,600 |
-| NA          | NA          | NA                 | NA   | State      | Skov            | NA                      | NA                  |      0.000 |          3,500 |
-| Overdrev    | NA          | NA                 | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |          3,500 |
-| Sø          | NA          | NA                 | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |          3,500 |
-| Mose        | NA          | PGR                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |          3,400 |
-| NA          | NA          | NA                 | NA   | Private    | Skov            | Yes                     | NA                  |      0.000 |          3,300 |
-| Strandeng   | NA          | PGR                | Yes  | State      | NA              | NA                      | NA                  |      0.000 |          3,300 |
-| NA          | Yes         | NA                 | NA   | NA         | egekrat         | NA                      | Yes                 |      0.000 |          3,300 |
-| Eng         | Yes         | PGR                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |          3,300 |
-| NA          | NA          | PGR                | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |          3,200 |
-| NA          | NA          | OMD                | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |          3,000 |
-| Eng         | Yes         | NA                 | NA   | State      | egekrat         | Yes                     | Yes                 |      0.000 |          3,000 |
-| Hede        | Yes         | OMD                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |          3,000 |
-| Strandeng   | Yes         | PGR                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |          2,900 |
-| Strandeng   | Yes         | PGR                | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |          2,900 |
-| Sø          | NA          | OMD                | NA   | State      | NA              | NA                      | NA                  |      0.000 |          2,700 |
-| Hede        | NA          | PGR                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |          2,700 |
-| NA          | NA          | NA                 | NA   | Private    | egekrat         | NA                      | NA                  |      0.000 |          2,600 |
-| Overdrev    | Yes         | PGR                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |          2,600 |
-| Strandeng   | Yes         | NA                 | Yes  | NA         | sammenhaengende | Yes                     | NA                  |      0.000 |          2,500 |
-| Strandeng   | Yes         | OMD                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |          2,400 |
-| NA          | Yes         | PGR                | NA   | Private    | egekrat         | NA                      | NA                  |      0.000 |          2,400 |
-| Hede        | Yes         | PGR                | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |          2,400 |
-| Overdrev    | NA          | NA                 | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |          2,400 |
-| Hede        | Yes         | PGR                | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |          2,200 |
-| Eng         | Yes         | PGR                | Yes  | State      | egekrat         | NA                      | NA                  |      0.000 |          2,100 |
-| Mose        | Yes         | NA                 | Yes  | State      | NA              | NA                      | Yes                 |      0.000 |          2,100 |
-| Eng         | Yes         | NA                 | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |          2,100 |
-| Eng         | Yes         | NA                 | NA   | State      | NA              | Yes                     | Yes                 |      0.000 |          1,900 |
-| NA          | NA          | NA                 | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |          1,900 |
-| Mose        | Yes         | OMD                | NA   | State      | NA              | NA                      | Yes                 |      0.000 |          1,800 |
-| Overdrev    | NA          | PGR                | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |          1,800 |
-| NA          | NA          | PGR                | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |          1,800 |
-| Hede        | NA          | OMD                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |          1,700 |
-| Sø          | Yes         | PGR                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |          1,700 |
-| Mose        | NA          | PGR                | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |          1,700 |
-| Mose        | Yes         | PGR                | NA   | State      | egekrat         | NA                      | NA                  |      0.000 |          1,600 |
-| Eng         | NA          | NA                 | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |          1,600 |
-| Overdrev    | NA          | NA                 | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |          1,600 |
-| Sø          | Yes         | PGR                | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |          1,600 |
-| Overdrev    | Yes         | OMD                | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |          1,500 |
-| Sø          | NA          | PGR                | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |          1,500 |
-| NA          | NA          | NA                 | NA   | NA         | egekrat         | NA                      | Yes                 |      0.000 |          1,400 |
-| Mose        | Yes         | OMD                | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |          1,400 |
-| Hede        | NA          | PGR                | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |          1,400 |
-| Eng         | Yes         | NA                 | Yes  | State      | egekrat         | NA                      | NA                  |      0.000 |          1,300 |
-| Hede        | NA          | NA                 | NA   | State      | NA              | NA                      | Yes                 |      0.000 |          1,300 |
-| Hede        | Yes         | PGR                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |          1,300 |
-| Eng         | Yes         | OMD                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |          1,300 |
-| Mose        | NA          | PGR                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |          1,300 |
-| Overdrev    | NA          | PGR                | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |          1,300 |
-| Mose        | Yes         | OMD                | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |          1,200 |
-| Overdrev    | NA          | PGR                | Yes  | State      | egekrat         | NA                      | NA                  |      0.000 |          1,200 |
-| NA          | Yes         | OMD                | NA   | State      | egekrat         | NA                      | NA                  |      0.000 |          1,200 |
-| NA          | NA          | OMD                | NA   | State      | egekrat         | NA                      | NA                  |      0.000 |          1,200 |
-| Strandeng   | NA          | PGR                | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |          1,200 |
-| Sø          | NA          | NA                 | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |          1,200 |
-| Overdrev    | Yes         | OMD                | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |          1,200 |
-| Eng         | Yes         | NA                 | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |          1,200 |
-| Strandeng   | Yes         | NA                 | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |          1,200 |
-| Sø          | Yes         | NA                 | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |          1,200 |
-| Mose        | Yes         | OMD                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |          1,100 |
-| Eng         | Yes         | PGR                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |          1,100 |
-| Sø          | NA          | PGR                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |          1,100 |
-| Hede        | NA          | OMD                | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |          1,100 |
-| Hede        | Yes         | PGR                | NA   | Private    | egekrat         | NA                      | NA                  |      0.000 |          1,000 |
-| Hede        | Yes         | PGR                | NA   | State      | egekrat         | NA                      | NA                  |      0.000 |          1,000 |
-| Overdrev    | Yes         | NA                 | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |          1,000 |
-| Hede        | NA          | PGR                | Yes  | State      | NA              | NA                      | NA                  |      0.000 |          1,000 |
-| Sø          | Yes         | OMD                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |          1,000 |
-| Overdrev    | NA          | NA                 | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |            900 |
-| Eng         | Yes         | PGR                | NA   | Private    | Skov            | Yes                     | NA                  |      0.000 |            900 |
-| Mose        | NA          | OMD                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |            900 |
-| Overdrev    | NA          | PGR                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |            900 |
-| Mose        | Yes         | PGR                | NA   | Private    | Skov            | Yes                     | NA                  |      0.000 |            800 |
-| Sø          | Yes         | PGR                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |            800 |
-| Hede        | Yes         | OMD                | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |            800 |
-| Sø          | Yes         | PGR                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |            700 |
-| NA          | Yes         | OMD                | Yes  | State      | egekrat         | NA                      | NA                  |      0.000 |            700 |
-| Overdrev    | NA          | PGR                | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |            700 |
-| Hede        | NA          | OMD                | Yes  | State      | NA              | NA                      | NA                  |      0.000 |            700 |
-| Hede        | NA          | OMD                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |            700 |
-| Overdrev    | NA          | PGR                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |            700 |
-| Eng         | NA          | OMD                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |            700 |
-| Hede        | Yes         | OMD                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |            700 |
-| Eng         | NA          | OMD                | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |            700 |
-| Sø          | Yes         | OMD                | NA   | State      | NA              | NA                      | Yes                 |      0.000 |            600 |
-| Eng         | Yes         | PGR                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |            600 |
-| Mose        | NA          | OMD                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |            600 |
-| Sø          | NA          | NA                 | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |            600 |
-| Mose        | Yes         | OMD                | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |            600 |
-| Eng         | NA          | NA                 | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |            600 |
-| Overdrev    | Yes         | OMD                | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |            600 |
-| Sø          | NA          | OMD                | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |            600 |
-| Overdrev    | NA          | PGR                | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |            500 |
-| Sø          | Yes         | PGR                | NA   | Private    | Skov            | Yes                     | NA                  |      0.000 |            500 |
-| Sø          | Yes         | OMD                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |            500 |
-| NA          | NA          | PGR                | Yes  | State      | egekrat         | NA                      | NA                  |      0.000 |            500 |
-| Eng         | Yes         | NA                 | NA   | State      | egekrat         | NA                      | NA                  |      0.000 |            500 |
-| Eng         | NA          | PGR                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |            500 |
-| Overdrev    | Yes         | OMD                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |            500 |
-| Mose        | NA          | OMD                | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |            500 |
-| Eng         | NA          | PGR                | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |            500 |
-| Mose        | Yes         | PGR                | Yes  | Private    | Skov            | Yes                     | NA                  |      0.000 |            400 |
-| Overdrev    | Yes         | PGR                | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |            400 |
-| Eng         | Yes         | NA                 | NA   | NA         | egekrat         | NA                      | Yes                 |      0.000 |            400 |
-| Strandeng   | Yes         | NA                 | NA   | NA         | sammenhaengende | Yes                     | NA                  |      0.000 |            400 |
-| Hede        | NA          | NA                 | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |            400 |
-| Eng         | NA          | OMD                | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |            400 |
-| Ukendt      | NA          | NA                 | NA   | NA         | NA              | NA                      | NA                  |      0.000 |            400 |
-| Eng         | Yes         | OMD                | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |            300 |
-| Eng         | Yes         | NA                 | NA   | Private    | Skov            | Yes                     | NA                  |      0.000 |            300 |
-| Hede        | Yes         | PGR                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |            300 |
-| Mose        | Yes         | PGR                | Yes  | State      | egekrat         | NA                      | NA                  |      0.000 |            300 |
-| Hede        | NA          | NA                 | NA   | State      | egekrat         | NA                      | Yes                 |      0.000 |            300 |
-| Sø          | NA          | OMD                | Yes  | State      | NA              | NA                      | NA                  |      0.000 |            300 |
-| NA          | NA          | PGR                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |            300 |
-| Eng         | NA          | NA                 | NA   | State      | NA              | Yes                     | NA                  |      0.000 |            300 |
-| Klit        | NA          | NA                 | NA   | State      | NA              | NA                      | NA                  |      0.000 |            300 |
-| Eng         | NA          | PGR                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |            300 |
-| Hede        | NA          | PGR                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |            300 |
-| Eng         | NA          | NA                 | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |            300 |
-| Hede        | Yes         | NA                 | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |            300 |
-| Hede        | NA          | OMD                | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |            300 |
-| Overdrev    | Yes         | PGR                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |            200 |
-| Hede        | NA          | PGR                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |            200 |
-| Eng         | Yes         | NA                 | Yes  | Private    | egekrat         | NA                      | NA                  |      0.000 |            200 |
-| Overdrev    | Yes         | NA                 | Yes  | Private    | egekrat         | NA                      | NA                  |      0.000 |            200 |
-| NA          | Yes         | NA                 | Yes  | State      | Skov            | NA                      | NA                  |      0.000 |            200 |
-| Eng         | Yes         | PGR                | NA   | State      | egekrat         | NA                      | NA                  |      0.000 |            200 |
-| NA          | Yes         | PGR                | Yes  | State      | sammenhaengende | NA                      | NA                  |      0.000 |            200 |
-| Sø          | Yes         | OMD                | Yes  | State      | NA              | NA                      | NA                  |      0.000 |            200 |
-| Mose        | NA          | PGR                | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |            200 |
-| Mose        | NA          | NA                 | NA   | State      | NA              | NA                      | Yes                 |      0.000 |            200 |
-| Eng         | NA          | OMD                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |            200 |
-| Sø          | NA          | NA                 | NA   | State      | NA              | Yes                     | NA                  |      0.000 |            200 |
-| Strandeng   | Yes         | NA                 | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |            200 |
-| Overdrev    | Yes         | OMD                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |            200 |
-| NA          | Yes         | PGR                | Yes  | NA         | sammenhaengende | Yes                     | NA                  |      0.000 |            200 |
-| NA          | NA          | PGR                | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |            200 |
-| Strandeng   | NA          | PGR                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |            200 |
-| NA          | NA          | OMD                | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |            200 |
-| Sø          | NA          | PGR                | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |            200 |
-| Eng         | Yes         | OMD                | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |            200 |
-| Mose        | Yes         | OMD                | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |            200 |
-| Mose        | Yes         | PGR                | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |            200 |
-| Mose        | NA          | OMD                | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |            200 |
-| Sø          | NA          | NA                 | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |            100 |
-| NA          | Yes         | OMD                | NA   | Private    | Skov            | Yes                     | NA                  |      0.000 |            100 |
-| Overdrev    | NA          | OMD                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |            100 |
-| Strandeng   | NA          | OMD                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |            100 |
-| Strandeng   | NA          | PGR                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |            100 |
-| Sø          | NA          | PGR                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |            100 |
-| NA          | Yes         | PGR                | Yes  | Private    | egekrat         | NA                      | NA                  |      0.000 |            100 |
-| Eng         | Yes         | NA                 | NA   | Private    | egekrat         | NA                      | NA                  |      0.000 |            100 |
-| Overdrev    | NA          | NA                 | Yes  | State      | egekrat         | NA                      | NA                  |      0.000 |            100 |
-| NA          | Yes         | OMD                | Yes  | State      | sammenhaengende | NA                      | NA                  |      0.000 |            100 |
-| Eng         | Yes         | PGR                | Yes  | State      | sammenhaengende | NA                      | NA                  |      0.000 |            100 |
-| Sø          | NA          | PGR                | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |            100 |
-| NA          | NA          | OMD                | NA   | State      | NA              | NA                      | Yes                 |      0.000 |            100 |
-| Eng         | NA          | PGR                | NA   | State      | NA              | NA                      | Yes                 |      0.000 |            100 |
-| Mose        | NA          | PGR                | NA   | State      | NA              | NA                      | Yes                 |      0.000 |            100 |
-| NA          | Yes         | OMD                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |            100 |
-| NA          | NA          | OMD                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |            100 |
-| Mose        | Yes         | OMD                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |            100 |
-| Eng         | Yes         | NA                 | NA   | NA         | egekrat         | Yes                     | Yes                 |      0.000 |            100 |
-| Eng         | NA          | NA                 | NA   | NA         | egekrat         | NA                      | Yes                 |      0.000 |            100 |
-| Strandeng   | Yes         | NA                 | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |            100 |
-| NA          | Yes         | NA                 | Yes  | NA         | sammenhaengende | Yes                     | NA                  |      0.000 |            100 |
-| Overdrev    | NA          | OMD                | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |            100 |
-| Mose        | NA          | OMD                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |            100 |
-| Strandeng   | NA          | OMD                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |            100 |
-| Hede        | NA          | NA                 | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |            100 |
-| Strandeng   | NA          | OMD                | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |            100 |
-| Sø          | NA          | OMD                | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |            100 |
-| Overdrev    | Yes         | PGR                | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |            100 |
-| Klit        | Yes         | NA                 | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |            100 |
+| Habitats_P3 | Natura_2000 | Types_markblokkort | IUCN | Urort_Skov | Stoette         | NaturaOgVildtreservater | Naturnationalparker | Proportion | Area_Sq_Km |
+|:------------|:------------|:-------------------|:-----|:-----------|:----------------|:------------------------|:--------------------|-----------:|-----------:|
+| NA          | NA          | OMD                | NA   | NA         | NA              | NA                      | NA                  |     51.377 | 22,166.315 |
+| NA          | NA          | PGR                | NA   | NA         | NA              | NA                      | NA                  |      3.109 |  1,341.422 |
+| NA          | Yes         | NA                 | NA   | NA         | NA              | NA                      | NA                  |      1.517 |    654.567 |
+| Mose        | NA          | NA                 | NA   | NA         | NA              | NA                      | NA                  |      1.257 |    542.236 |
+| NA          | Yes         | OMD                | NA   | NA         | NA              | NA                      | NA                  |      1.236 |    533.390 |
+| Eng         | NA          | PGR                | NA   | NA         | NA              | NA                      | NA                  |      1.065 |    459.573 |
+| Hede        | NA          | NA                 | NA   | NA         | NA              | NA                      | NA                  |      0.707 |    305.092 |
+| Sø          | NA          | NA                 | NA   | NA         | NA              | NA                      | NA                  |      0.687 |    296.213 |
+| NA          | Yes         | NA                 | NA   | State      | NA              | NA                      | NA                  |      0.656 |    283.161 |
+| Eng         | NA          | NA                 | NA   | NA         | NA              | NA                      | NA                  |      0.550 |    237.475 |
+| Sø          | Yes         | NA                 | NA   | NA         | NA              | NA                      | NA                  |      0.463 |    199.761 |
+| NA          | NA          | NA                 | NA   | State      | NA              | NA                      | NA                  |      0.371 |    160.154 |
+| Hede        | Yes         | NA                 | NA   | NA         | NA              | NA                      | NA                  |      0.370 |    159.660 |
+| Mose        | Yes         | NA                 | NA   | NA         | NA              | NA                      | NA                  |      0.353 |    152.131 |
+| Overdrev    | NA          | NA                 | NA   | NA         | NA              | NA                      | NA                  |      0.280 |    120.659 |
+| NA          | Yes         | PGR                | NA   | NA         | NA              | NA                      | NA                  |      0.271 |    117.002 |
+| Eng         | Yes         | PGR                | NA   | NA         | NA              | NA                      | NA                  |      0.259 |    111.838 |
+| Overdrev    | NA          | PGR                | NA   | NA         | NA              | NA                      | NA                  |      0.251 |    108.365 |
+| NA          | NA          | NA                 | Yes  | NA         | NA              | NA                      | NA                  |      0.240 |    103.659 |
+| Hede        | Yes         | NA                 | Yes  | NA         | NA              | NA                      | NA                  |      0.240 |    103.497 |
+| Mose        | NA          | PGR                | NA   | NA         | NA              | NA                      | NA                  |      0.221 |     95.466 |
+| Mose        | Yes         | NA                 | Yes  | NA         | NA              | NA                      | NA                  |      0.211 |     90.980 |
+| NA          | Yes         | NA                 | Yes  | NA         | NA              | NA                      | NA                  |      0.199 |     85.826 |
+| Strandeng   | Yes         | NA                 | NA   | NA         | NA              | NA                      | NA                  |      0.187 |     80.665 |
+| NA          | Yes         | NA                 | NA   | NA         | NA              | Yes                     | NA                  |      0.184 |     79.221 |
+| Eng         | NA          | OMD                | NA   | NA         | NA              | NA                      | NA                  |      0.179 |     77.334 |
+| NA          | NA          | OMD                | Yes  | NA         | NA              | NA                      | NA                  |      0.171 |     73.863 |
+| Strandeng   | Yes         | PGR                | NA   | NA         | NA              | NA                      | NA                  |      0.165 |     71.389 |
+| Sø          | Yes         | NA                 | Yes  | NA         | NA              | NA                      | NA                  |      0.142 |     61.431 |
+| Eng         | Yes         | NA                 | NA   | NA         | NA              | NA                      | NA                  |      0.130 |     55.992 |
+| Sø          | Yes         | NA                 | NA   | NA         | NA              | Yes                     | NA                  |      0.125 |     54.060 |
+| Strandeng   | NA          | NA                 | NA   | NA         | NA              | NA                      | NA                  |      0.104 |     45.075 |
+| Hede        | Yes         | PGR                | Yes  | NA         | NA              | NA                      | NA                  |      0.103 |     44.537 |
+| Klit        | NA          | NA                 | NA   | NA         | NA              | NA                      | NA                  |      0.098 |     42.425 |
+| NA          | Yes         | OMD                | Yes  | NA         | NA              | NA                      | NA                  |      0.094 |     40.644 |
+| Mose        | Yes         | PGR                | NA   | NA         | NA              | NA                      | NA                  |      0.092 |     39.644 |
+| Hede        | NA          | PGR                | NA   | NA         | NA              | NA                      | NA                  |      0.092 |     39.580 |
+| Hede        | Yes         | PGR                | NA   | NA         | NA              | NA                      | NA                  |      0.084 |     36.123 |
+| Klit        | Yes         | NA                 | Yes  | NA         | NA              | NA                      | NA                  |      0.080 |     34.315 |
+| Strandeng   | Yes         | NA                 | NA   | NA         | NA              | Yes                     | NA                  |      0.079 |     34.066 |
+| Eng         | Yes         | PGR                | Yes  | NA         | NA              | NA                      | NA                  |      0.075 |     32.285 |
+| Strandeng   | Yes         | PGR                | Yes  | NA         | NA              | Yes                     | NA                  |      0.075 |     32.261 |
+| Strandeng   | Yes         | PGR                | NA   | NA         | NA              | Yes                     | NA                  |      0.067 |     29.077 |
+| Overdrev    | Yes         | NA                 | NA   | NA         | NA              | NA                      | NA                  |      0.065 |     28.162 |
+| Strandeng   | NA          | PGR                | NA   | NA         | NA              | NA                      | NA                  |      0.060 |     25.757 |
+| Klit        | Yes         | NA                 | NA   | NA         | NA              | NA                      | NA                  |      0.059 |     25.552 |
+| Mose        | Yes         | NA                 | NA   | State      | NA              | NA                      | NA                  |      0.057 |     24.770 |
+| Klit        | Yes         | NA                 | NA   | NA         | NA              | Yes                     | NA                  |      0.056 |     24.371 |
+| NA          | NA          | NA                 | NA   | NA         | NA              | NA                      | Yes                 |      0.056 |     24.235 |
+| Overdrev    | Yes         | PGR                | NA   | NA         | NA              | NA                      | NA                  |      0.055 |     23.578 |
+| Eng         | Yes         | OMD                | NA   | NA         | NA              | NA                      | NA                  |      0.053 |     22.817 |
+| NA          | Yes         | NA                 | NA   | State      | NA              | NA                      | Yes                 |      0.050 |     21.776 |
+| Mose        | NA          | OMD                | NA   | NA         | NA              | NA                      | NA                  |      0.046 |     19.978 |
+| Hede        | Yes         | NA                 | Yes  | NA         | NA              | Yes                     | NA                  |      0.044 |     18.771 |
+| Strandeng   | Yes         | OMD                | NA   | NA         | NA              | NA                      | NA                  |      0.042 |     18.172 |
+| NA          | NA          | PGR                | Yes  | NA         | NA              | NA                      | NA                  |      0.042 |     17.981 |
+| NA          | Yes         | PGR                | Yes  | NA         | NA              | NA                      | NA                  |      0.042 |     17.921 |
+| Mose        | Yes         | NA                 | NA   | NA         | NA              | Yes                     | NA                  |      0.038 |     16.353 |
+| Sø          | NA          | NA                 | Yes  | NA         | NA              | NA                      | NA                  |      0.037 |     16.119 |
+| Strandeng   | Yes         | PGR                | Yes  | NA         | NA              | NA                      | NA                  |      0.037 |     15.751 |
+| Overdrev    | NA          | OMD                | NA   | NA         | NA              | NA                      | NA                  |      0.036 |     15.740 |
+| Eng         | Yes         | NA                 | Yes  | NA         | NA              | NA                      | NA                  |      0.033 |     14.161 |
+| Strandeng   | Yes         | NA                 | Yes  | NA         | NA              | NA                      | NA                  |      0.032 |     13.771 |
+| NA          | Yes         | NA                 | Yes  | State      | NA              | NA                      | NA                  |      0.031 |     13.293 |
+| Sø          | Yes         | NA                 | Yes  | NA         | NA              | Yes                     | NA                  |      0.030 |     12.965 |
+| Sø          | NA          | PGR                | NA   | NA         | NA              | NA                      | NA                  |      0.029 |     12.444 |
+| Strandeng   | Yes         | PGR                | Yes  | State      | NA              | Yes                     | NA                  |      0.028 |     12.276 |
+| Overdrev    | Yes         | PGR                | Yes  | NA         | NA              | NA                      | NA                  |      0.028 |     12.013 |
+| NA          | NA          | NA                 | NA   | NA         | NA              | Yes                     | NA                  |      0.028 |     11.984 |
+| Mose        | NA          | NA                 | Yes  | NA         | NA              | NA                      | NA                  |      0.028 |     11.938 |
+| Hede        | NA          | NA                 | Yes  | NA         | NA              | NA                      | NA                  |      0.028 |     11.878 |
+| Sø          | Yes         | NA                 | NA   | State      | NA              | NA                      | NA                  |      0.027 |     11.820 |
+| Mose        | Yes         | PGR                | Yes  | NA         | NA              | NA                      | NA                  |      0.026 |     11.087 |
+| Sø          | NA          | OMD                | NA   | NA         | NA              | NA                      | NA                  |      0.025 |     10.747 |
+| NA          | Yes         | NA                 | NA   | NA         | NA              | NA                      | Yes                 |      0.024 |     10.186 |
+| Strandeng   | Yes         | NA                 | Yes  | NA         | NA              | Yes                     | NA                  |      0.023 |      9.776 |
+| NA          | Yes         | NA                 | Yes  | NA         | NA              | Yes                     | NA                  |      0.022 |      9.533 |
+| Overdrev    | Yes         | NA                 | Yes  | NA         | NA              | NA                      | NA                  |      0.021 |      9.256 |
+| NA          | NA          | NA                 | NA   | NA         | egekrat         | NA                      | NA                  |      0.021 |      9.107 |
+| NA          | NA          | OMD                | NA   | State      | NA              | NA                      | NA                  |      0.021 |      9.078 |
+| NA          | Yes         | PGR                | NA   | State      | NA              | NA                      | NA                  |      0.021 |      9.030 |
+| Strandeng   | Yes         | OMD                | NA   | NA         | NA              | Yes                     | NA                  |      0.021 |      9.015 |
+| Eng         | Yes         | PGR                | NA   | NA         | NA              | Yes                     | NA                  |      0.020 |      8.702 |
+| NA          | NA          | NA                 | NA   | Private    | Skov            | NA                      | NA                  |      0.020 |      8.597 |
+| Hede        | Yes         | NA                 | NA   | NA         | NA              | NA                      | Yes                 |      0.020 |      8.563 |
+| NA          | NA          | PGR                | NA   | State      | NA              | NA                      | NA                  |      0.019 |      8.311 |
+| Mose        | NA          | NA                 | NA   | State      | NA              | NA                      | NA                  |      0.019 |      8.302 |
+| Overdrev    | NA          | PGR                | Yes  | NA         | NA              | NA                      | NA                  |      0.018 |      7.882 |
+| NA          | Yes         | OMD                | NA   | NA         | NA              | Yes                     | NA                  |      0.018 |      7.612 |
+| Klit        | Yes         | PGR                | NA   | NA         | NA              | NA                      | NA                  |      0.017 |      7.319 |
+| Overdrev    | Yes         | PGR                | NA   | State      | NA              | NA                      | NA                  |      0.016 |      6.752 |
+| Hede        | NA          | OMD                | NA   | NA         | NA              | NA                      | NA                  |      0.015 |      6.588 |
+| Eng         | NA          | PGR                | Yes  | NA         | NA              | NA                      | NA                  |      0.014 |      6.192 |
+| Overdrev    | NA          | NA                 | Yes  | NA         | NA              | NA                      | NA                  |      0.014 |      5.991 |
+| Sø          | NA          | NA                 | NA   | State      | NA              | NA                      | NA                  |      0.014 |      5.981 |
+| Eng         | Yes         | PGR                | NA   | State      | NA              | NA                      | NA                  |      0.013 |      5.788 |
+| Klit        | Yes         | NA                 | Yes  | NA         | NA              | Yes                     | NA                  |      0.013 |      5.700 |
+| Hede        | NA          | PGR                | Yes  | NA         | NA              | NA                      | NA                  |      0.013 |      5.544 |
+| Mose        | Yes         | OMD                | NA   | NA         | NA              | NA                      | NA                  |      0.012 |      5.349 |
+| NA          | Yes         | PGR                | NA   | NA         | NA              | Yes                     | NA                  |      0.012 |      5.268 |
+| Klit        | Yes         | PGR                | NA   | NA         | NA              | Yes                     | NA                  |      0.012 |      5.121 |
+| NA          | Yes         | NA                 | NA   | Private    | Skov            | NA                      | NA                  |      0.012 |      5.110 |
+| Mose        | Yes         | NA                 | Yes  | NA         | NA              | Yes                     | NA                  |      0.011 |      4.944 |
+| Sø          | Yes         | NA                 | Yes  | State      | NA              | NA                      | NA                  |      0.011 |      4.934 |
+| Strandeng   | NA          | OMD                | NA   | NA         | NA              | NA                      | NA                  |      0.011 |      4.851 |
+| Overdrev    | Yes         | NA                 | NA   | State      | NA              | NA                      | NA                  |      0.011 |      4.596 |
+| NA          | Yes         | PGR                | Yes  | State      | NA              | NA                      | NA                  |      0.010 |      4.466 |
+| Hede        | Yes         | OMD                | NA   | NA         | NA              | NA                      | NA                  |      0.010 |      4.198 |
+| Eng         | NA          | NA                 | Yes  | NA         | NA              | NA                      | NA                  |      0.009 |      3.853 |
+| Overdrev    | NA          | PGR                | NA   | State      | NA              | NA                      | NA                  |      0.008 |      3.653 |
+| NA          | NA          | NA                 | Yes  | State      | NA              | NA                      | NA                  |      0.008 |      3.641 |
+| Hede        | Yes         | NA                 | Yes  | State      | NA              | NA                      | NA                  |      0.008 |      3.545 |
+| NA          | Yes         | NA                 | Yes  | State      | NA              | Yes                     | NA                  |      0.008 |      3.529 |
+| Overdrev    | Yes         | OMD                | NA   | NA         | NA              | NA                      | NA                  |      0.008 |      3.525 |
+| Hede        | Yes         | NA                 | NA   | NA         | NA              | Yes                     | Yes                 |      0.008 |      3.482 |
+| NA          | Yes         | NA                 | Yes  | NA         | egekrat         | NA                      | NA                  |      0.008 |      3.409 |
+| Mose        | Yes         | NA                 | Yes  | State      | NA              | NA                      | NA                  |      0.008 |      3.336 |
+| Klit        | NA          | NA                 | Yes  | NA         | NA              | NA                      | NA                  |      0.008 |      3.323 |
+| Klit        | Yes         | PGR                | Yes  | NA         | NA              | NA                      | NA                  |      0.008 |      3.289 |
+| Mose        | Yes         | OMD                | Yes  | NA         | NA              | NA                      | NA                  |      0.008 |      3.277 |
+| Overdrev    | Yes         | PGR                | Yes  | State      | NA              | NA                      | NA                  |      0.008 |      3.262 |
+| Hede        | Yes         | OMD                | Yes  | NA         | NA              | NA                      | NA                  |      0.007 |      3.101 |
+| NA          | Yes         | NA                 | Yes  | Private    | Skov            | NA                      | NA                  |      0.007 |      3.055 |
+| NA          | Yes         | NA                 | NA   | NA         | egekrat         | NA                      | NA                  |      0.007 |      3.029 |
+| Hede        | Yes         | PGR                | Yes  | State      | NA              | NA                      | NA                  |      0.007 |      3.001 |
+| Hede        | Yes         | NA                 | Yes  | NA         | NA              | NA                      | Yes                 |      0.007 |      2.859 |
+| Eng         | Yes         | NA                 | NA   | NA         | NA              | Yes                     | NA                  |      0.006 |      2.773 |
+| Eng         | Yes         | OMD                | Yes  | NA         | NA              | NA                      | NA                  |      0.006 |      2.722 |
+| Eng         | Yes         | PGR                | Yes  | State      | NA              | NA                      | NA                  |      0.006 |      2.714 |
+| Strandeng   | Yes         | OMD                | Yes  | NA         | NA              | NA                      | NA                  |      0.006 |      2.646 |
+| Sø          | Yes         | PGR                | NA   | NA         | NA              | NA                      | NA                  |      0.006 |      2.520 |
+| NA          | Yes         | OMD                | NA   | State      | NA              | NA                      | NA                  |      0.006 |      2.437 |
+| Strandeng   | Yes         | NA                 | Yes  | State      | NA              | Yes                     | NA                  |      0.006 |      2.435 |
+| Sø          | Yes         | NA                 | NA   | NA         | NA              | NA                      | Yes                 |      0.005 |      2.345 |
+| NA          | Yes         | NA                 | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.005 |      2.331 |
+| NA          | NA          | NA                 | Yes  | NA         | NA              | Yes                     | NA                  |      0.005 |      2.247 |
+| Hede        | Yes         | PGR                | Yes  | NA         | NA              | Yes                     | NA                  |      0.005 |      2.244 |
+| Mose        | Yes         | PGR                | Yes  | NA         | NA              | Yes                     | NA                  |      0.005 |      2.192 |
+| Hede        | Yes         | PGR                | Yes  | NA         | NA              | NA                      | Yes                 |      0.005 |      2.179 |
+| NA          | Yes         | NA                 | Yes  | State      | egekrat         | NA                      | NA                  |      0.005 |      2.178 |
+| Sø          | Yes         | NA                 | Yes  | State      | NA              | Yes                     | NA                  |      0.005 |      2.152 |
+| Mose        | NA          | PGR                | Yes  | NA         | NA              | NA                      | NA                  |      0.005 |      2.123 |
+| Klit        | NA          | PGR                | NA   | NA         | NA              | NA                      | NA                  |      0.005 |      2.070 |
+| Eng         | NA          | PGR                | NA   | State      | NA              | NA                      | NA                  |      0.005 |      2.064 |
+| Overdrev    | Yes         | OMD                | Yes  | NA         | NA              | NA                      | NA                  |      0.005 |      2.062 |
+| Eng         | Yes         | NA                 | NA   | State      | NA              | NA                      | NA                  |      0.005 |      2.054 |
+| Mose        | Yes         | NA                 | Yes  | Private    | Skov            | NA                      | NA                  |      0.005 |      2.012 |
+| Klit        | NA          | OMD                | NA   | NA         | NA              | NA                      | NA                  |      0.005 |      2.006 |
+| Mose        | Yes         | PGR                | NA   | NA         | NA              | Yes                     | NA                  |      0.005 |      1.961 |
+| Overdrev    | Yes         | NA                 | Yes  | State      | NA              | NA                      | NA                  |      0.004 |      1.915 |
+| Eng         | NA          | NA                 | NA   | State      | NA              | NA                      | NA                  |      0.004 |      1.913 |
+| Hede        | Yes         | PGR                | NA   | NA         | NA              | Yes                     | NA                  |      0.004 |      1.794 |
+| Eng         | Yes         | PGR                | Yes  | NA         | NA              | NA                      | Yes                 |      0.004 |      1.790 |
+| Mose        | Yes         | PGR                | NA   | State      | NA              | NA                      | NA                  |      0.004 |      1.787 |
+| Mose        | Yes         | NA                 | NA   | State      | NA              | NA                      | Yes                 |      0.004 |      1.773 |
+| Hede        | Yes         | NA                 | NA   | State      | NA              | NA                      | NA                  |      0.004 |      1.766 |
+| Overdrev    | NA          | NA                 | NA   | State      | NA              | NA                      | NA                  |      0.004 |      1.619 |
+| NA          | NA          | PGR                | NA   | NA         | NA              | NA                      | Yes                 |      0.004 |      1.609 |
+| Hede        | NA          | NA                 | NA   | NA         | NA              | NA                      | Yes                 |      0.004 |      1.595 |
+| Mose        | NA          | NA                 | NA   | Private    | Skov            | NA                      | NA                  |      0.004 |      1.549 |
+| Hede        | Yes         | PGR                | NA   | State      | NA              | NA                      | NA                  |      0.003 |      1.509 |
+| Klit        | Yes         | PGR                | Yes  | NA         | NA              | Yes                     | NA                  |      0.003 |      1.505 |
+| Overdrev    | Yes         | PGR                | Yes  | NA         | NA              | Yes                     | NA                  |      0.003 |      1.468 |
+| Strandeng   | Yes         | OMD                | Yes  | NA         | NA              | Yes                     | NA                  |      0.003 |      1.452 |
+| Eng         | Yes         | NA                 | Yes  | State      | NA              | NA                      | NA                  |      0.003 |      1.438 |
+| NA          | NA          | OMD                | NA   | NA         | NA              | Yes                     | NA                  |      0.003 |      1.420 |
+| Mose        | Yes         | NA                 | NA   | Private    | Skov            | NA                      | NA                  |      0.003 |      1.160 |
+| Hede        | Yes         | PGR                | NA   | NA         | NA              | NA                      | Yes                 |      0.003 |      1.128 |
+| NA          | NA          | NA                 | Yes  | NA         | egekrat         | NA                      | NA                  |      0.003 |      1.109 |
+| NA          | Yes         | NA                 | NA   | State      | egekrat         | NA                      | NA                  |      0.003 |      1.092 |
+| Overdrev    | NA          | PGR                | Yes  | State      | NA              | NA                      | NA                  |      0.002 |      1.045 |
+| Eng         | Yes         | PGR                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.002 |      1.001 |
+| NA          | NA          | OMD                | Yes  | State      | NA              | NA                      | NA                  |      0.002 |      0.971 |
+| NA          | Yes         | PGR                | NA   | NA         | NA              | NA                      | Yes                 |      0.002 |      0.938 |
+| NA          | Yes         | PGR                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.002 |      0.933 |
+| Strandeng   | Yes         | PGR                | NA   | State      | NA              | NA                      | NA                  |      0.002 |      0.912 |
+| Eng         | NA          | OMD                | Yes  | NA         | NA              | NA                      | NA                  |      0.002 |      0.880 |
+| NA          | Yes         | OMD                | Yes  | NA         | NA              | Yes                     | NA                  |      0.002 |      0.865 |
+| NA          | Yes         | OMD                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.002 |      0.837 |
+| Mose        | NA          | PGR                | NA   | State      | NA              | NA                      | NA                  |      0.002 |      0.831 |
+| Eng         | Yes         | NA                 | Yes  | NA         | NA              | Yes                     | NA                  |      0.002 |      0.821 |
+| NA          | Yes         | PGR                | NA   | State      | NA              | Yes                     | NA                  |      0.002 |      0.817 |
+| Eng         | Yes         | PGR                | NA   | NA         | NA              | NA                      | Yes                 |      0.002 |      0.816 |
+| Hede        | Yes         | OMD                | Yes  | NA         | NA              | NA                      | Yes                 |      0.002 |      0.730 |
+| Mose        | NA          | NA                 | NA   | NA         | NA              | NA                      | Yes                 |      0.002 |      0.723 |
+| Eng         | Yes         | NA                 | NA   | State      | NA              | Yes                     | NA                  |      0.002 |      0.722 |
+| Strandeng   | NA          | NA                 | Yes  | NA         | NA              | NA                      | NA                  |      0.002 |      0.713 |
+| NA          | Yes         | PGR                | Yes  | NA         | NA              | Yes                     | NA                  |      0.002 |      0.712 |
+| Hede        | NA          | NA                 | NA   | State      | NA              | NA                      | NA                  |      0.002 |      0.708 |
+| Sø          | Yes         | OMD                | NA   | NA         | NA              | NA                      | NA                  |      0.002 |      0.678 |
+| Eng         | Yes         | NA                 | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.001 |      0.645 |
+| Sø          | NA          | PGR                | Yes  | NA         | NA              | NA                      | NA                  |      0.001 |      0.627 |
+| Sø          | Yes         | PGR                | Yes  | State      | NA              | Yes                     | NA                  |      0.001 |      0.617 |
+| NA          | Yes         | PGR                | NA   | State      | NA              | NA                      | Yes                 |      0.001 |      0.617 |
+| Overdrev    | Yes         | NA                 | Yes  | NA         | NA              | Yes                     | NA                  |      0.001 |      0.601 |
+| Eng         | Yes         | OMD                | NA   | NA         | NA              | Yes                     | NA                  |      0.001 |      0.600 |
+| Strandeng   | Yes         | NA                 | NA   | State      | NA              | NA                      | NA                  |      0.001 |      0.598 |
+| Mose        | Yes         | PGR                | Yes  | State      | NA              | NA                      | NA                  |      0.001 |      0.591 |
+| NA          | Yes         | OMD                | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.001 |      0.575 |
+| Klit        | Yes         | OMD                | NA   | NA         | NA              | NA                      | NA                  |      0.001 |      0.571 |
+| NA          | NA          | OMD                | NA   | NA         | NA              | NA                      | Yes                 |      0.001 |      0.565 |
+| Klit        | Yes         | NA                 | Yes  | NA         | NA              | NA                      | Yes                 |      0.001 |      0.562 |
+| NA          | Yes         | PGR                | Yes  | State      | NA              | Yes                     | NA                  |      0.001 |      0.554 |
+| Sø          | NA          | NA                 | NA   | NA         | NA              | Yes                     | NA                  |      0.001 |      0.543 |
+| Strandeng   | Yes         | PGR                | Yes  | State      | NA              | NA                      | NA                  |      0.001 |      0.541 |
+| Klit        | Yes         | NA                 | Yes  | State      | NA              | NA                      | NA                  |      0.001 |      0.530 |
+| Eng         | Yes         | NA                 | NA   | NA         | NA              | NA                      | Yes                 |      0.001 |      0.527 |
+| Strandeng   | Yes         | NA                 | Yes  | State      | NA              | NA                      | NA                  |      0.001 |      0.525 |
+| Mose        | NA          | NA                 | Yes  | State      | NA              | NA                      | NA                  |      0.001 |      0.525 |
+| NA          | Yes         | NA                 | NA   | State      | NA              | Yes                     | NA                  |      0.001 |      0.523 |
+| Strandeng   | NA          | PGR                | Yes  | NA         | NA              | NA                      | NA                  |      0.001 |      0.519 |
+| Overdrev    | Yes         | PGR                | NA   | NA         | NA              | NA                      | Yes                 |      0.001 |      0.509 |
+| Eng         | NA          | OMD                | NA   | NA         | NA              | NA                      | Yes                 |      0.001 |      0.506 |
+| Overdrev    | Yes         | OMD                | Yes  | NA         | NA              | Yes                     | NA                  |      0.001 |      0.483 |
+| Sø          | Yes         | PGR                | Yes  | NA         | NA              | NA                      | NA                  |      0.001 |      0.481 |
+| Hede        | NA          | NA                 | NA   | NA         | egekrat         | NA                      | NA                  |      0.001 |      0.481 |
+| Eng         | Yes         | NA                 | Yes  | NA         | NA              | NA                      | Yes                 |      0.001 |      0.480 |
+| NA          | NA          | PGR                | Yes  | State      | NA              | NA                      | NA                  |      0.001 |      0.478 |
+| Overdrev    | NA          | OMD                | Yes  | NA         | NA              | NA                      | NA                  |      0.001 |      0.471 |
+| Hede        | NA          | PGR                | NA   | NA         | NA              | NA                      | Yes                 |      0.001 |      0.465 |
+| Mose        | Yes         | OMD                | NA   | State      | NA              | NA                      | NA                  |      0.001 |      0.464 |
+| Eng         | Yes         | PGR                | Yes  | State      | NA              | Yes                     | NA                  |      0.001 |      0.462 |
+| Mose        | Yes         | NA                 | NA   | NA         | NA              | NA                      | Yes                 |      0.001 |      0.453 |
+| Sø          | NA          | NA                 | Yes  | State      | NA              | NA                      | NA                  |      0.001 |      0.434 |
+| Overdrev    | Yes         | NA                 | NA   | NA         | NA              | Yes                     | NA                  |      0.001 |      0.428 |
+| Overdrev    | Yes         | OMD                | NA   | State      | NA              | NA                      | NA                  |      0.001 |      0.426 |
+| NA          | Yes         | NA                 | NA   | NA         | NA              | Yes                     | Yes                 |      0.001 |      0.426 |
+| Sø          | Yes         | NA                 | NA   | State      | NA              | NA                      | Yes                 |      0.001 |      0.406 |
+| NA          | NA          | NA                 | NA   | State      | egekrat         | NA                      | NA                  |      0.001 |      0.395 |
+| Eng         | Yes         | PGR                | Yes  | NA         | NA              | Yes                     | NA                  |      0.001 |      0.395 |
+| Strandeng   | Yes         | PGR                | NA   | State      | NA              | Yes                     | NA                  |      0.001 |      0.392 |
+| Strandeng   | NA          | NA                 | NA   | State      | NA              | NA                      | NA                  |      0.001 |      0.387 |
+| Overdrev    | Yes         | PGR                | NA   | NA         | NA              | Yes                     | NA                  |      0.001 |      0.381 |
+| NA          | Yes         | NA                 | Yes  | Private    | Skov            | Yes                     | NA                  |      0.001 |      0.374 |
+| Hede        | NA          | NA                 | NA   | Private    | Skov            | NA                      | NA                  |      0.001 |      0.368 |
+| Eng         | Yes         | OMD                | NA   | State      | NA              | NA                      | NA                  |      0.001 |      0.365 |
+| Strandeng   | NA          | NA                 | NA   | NA         | NA              | Yes                     | NA                  |      0.001 |      0.353 |
+| Overdrev    | Yes         | OMD                | Yes  | State      | NA              | NA                      | NA                  |      0.001 |      0.350 |
+| Hede        | Yes         | OMD                | NA   | NA         | NA              | NA                      | Yes                 |      0.001 |      0.348 |
+| Hede        | NA          | OMD                | Yes  | NA         | NA              | NA                      | NA                  |      0.001 |      0.346 |
+| Strandeng   | Yes         | NA                 | NA   | State      | NA              | Yes                     | NA                  |      0.001 |      0.342 |
+| NA          | Yes         | OMD                | Yes  | State      | NA              | NA                      | NA                  |      0.001 |      0.341 |
+| Strandeng   | NA          | NA                 | Yes  | State      | NA              | NA                      | NA                  |      0.001 |      0.338 |
+| NA          | NA          | PGR                | Yes  | NA         | NA              | Yes                     | NA                  |      0.001 |      0.332 |
+| Sø          | Yes         | PGR                | NA   | NA         | NA              | Yes                     | NA                  |      0.001 |      0.326 |
+| Mose        | Yes         | NA                 | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.001 |      0.312 |
+| Hede        | NA          | PGR                | NA   | NA         | NA              | Yes                     | NA                  |      0.001 |      0.311 |
+| Klit        | Yes         | NA                 | NA   | State      | NA              | NA                      | NA                  |      0.001 |      0.307 |
+| Strandeng   | Yes         | PGR                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.001 |      0.295 |
+| NA          | Yes         | PGR                | Yes  | NA         | NA              | NA                      | Yes                 |      0.001 |      0.287 |
+| Eng         | NA          | PGR                | Yes  | State      | NA              | NA                      | NA                  |      0.001 |      0.274 |
+| Eng         | Yes         | OMD                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.001 |      0.273 |
+| Mose        | Yes         | OMD                | NA   | NA         | NA              | Yes                     | NA                  |      0.001 |      0.272 |
+| NA          | NA          | NA                 | Yes  | Private    | Skov            | NA                      | NA                  |      0.001 |      0.265 |
+| NA          | Yes         | NA                 | Yes  | NA         | NA              | NA                      | Yes                 |      0.001 |      0.264 |
+| Hede        | Yes         | NA                 | NA   | NA         | NA              | Yes                     | NA                  |      0.001 |      0.260 |
+| Mose        | Yes         | NA                 | Yes  | State      | NA              | Yes                     | NA                  |      0.001 |      0.254 |
+| Hede        | Yes         | NA                 | NA   | State      | NA              | NA                      | Yes                 |      0.001 |      0.249 |
+| Eng         | Yes         | OMD                | Yes  | NA         | NA              | NA                      | Yes                 |      0.001 |      0.245 |
+| Mose        | Yes         | PGR                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.001 |      0.242 |
+| Sø          | Yes         | PGR                | Yes  | NA         | NA              | Yes                     | NA                  |      0.001 |      0.233 |
+| NA          | Yes         | PGR                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.001 |      0.233 |
+| Mose        | NA          | OMD                | Yes  | NA         | NA              | NA                      | NA                  |      0.001 |      0.231 |
+| NA          | Yes         | OMD                | NA   | NA         | NA              | NA                      | Yes                 |      0.001 |      0.230 |
+| Eng         | NA          | OMD                | NA   | State      | NA              | NA                      | NA                  |      0.001 |      0.218 |
+| Hede        | Yes         | NA                 | NA   | NA         | egekrat         | NA                      | NA                  |      0.001 |      0.218 |
+| Mose        | Yes         | NA                 | Yes  | Private    | Skov            | Yes                     | NA                  |      0.001 |      0.216 |
+| Hede        | NA          | NA                 | NA   | State      | egekrat         | NA                      | NA                  |      0.000 |      0.210 |
+| Eng         | Yes         | OMD                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |      0.209 |
+| Overdrev    | NA          | NA                 | Yes  | State      | NA              | NA                      | NA                  |      0.000 |      0.206 |
+| Hede        | Yes         | PGR                | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |      0.205 |
+| NA          | NA          | PGR                | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |      0.204 |
+| Overdrev    | Yes         | PGR                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.203 |
+| Strandeng   | NA          | PGR                | NA   | State      | NA              | NA                      | NA                  |      0.000 |      0.201 |
+| Hede        | Yes         | NA                 | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.199 |
+| Mose        | NA          | NA                 | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |      0.199 |
+| Eng         | Yes         | PGR                | NA   | State      | NA              | NA                      | Yes                 |      0.000 |      0.196 |
+| Eng         | Yes         | NA                 | NA   | State      | NA              | NA                      | Yes                 |      0.000 |      0.194 |
+| Eng         | Yes         | OMD                | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |      0.193 |
+| Overdrev    | NA          | OMD                | NA   | State      | NA              | NA                      | NA                  |      0.000 |      0.191 |
+| Hede        | Yes         | NA                 | NA   | State      | egekrat         | NA                      | NA                  |      0.000 |      0.189 |
+| NA          | Yes         | OMD                | NA   | State      | NA              | NA                      | Yes                 |      0.000 |      0.188 |
+| Mose        | NA          | NA                 | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.182 |
+| Eng         | Yes         | OMD                | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |      0.174 |
+| Strandeng   | NA          | NA                 | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |      0.172 |
+| Sø          | Yes         | NA                 | NA   | State      | NA              | Yes                     | NA                  |      0.000 |      0.172 |
+| Mose        | Yes         | NA                 | NA   | State      | NA              | Yes                     | NA                  |      0.000 |      0.170 |
+| Mose        | Yes         | PGR                | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |      0.168 |
+| Eng         | Yes         | OMD                | Yes  | State      | NA              | NA                      | NA                  |      0.000 |      0.163 |
+| NA          | NA          | OMD                | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |      0.161 |
+| Overdrev    | NA          | OMD                | Yes  | State      | NA              | NA                      | NA                  |      0.000 |      0.151 |
+| Mose        | NA          | PGR                | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |      0.150 |
+| NA          | Yes         | NA                 | NA   | Private    | egekrat         | NA                      | NA                  |      0.000 |      0.147 |
+| Hede        | NA          | NA                 | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.141 |
+| Mose        | Yes         | PGR                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |      0.140 |
+| Hede        | NA          | PGR                | NA   | State      | NA              | NA                      | NA                  |      0.000 |      0.139 |
+| Mose        | Yes         | PGR                | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |      0.138 |
+| NA          | NA          | PGR                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.137 |
+| Eng         | Yes         | NA                 | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |      0.137 |
+| Eng         | NA          | NA                 | Yes  | State      | NA              | NA                      | NA                  |      0.000 |      0.127 |
+| Overdrev    | Yes         | OMD                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.126 |
+| NA          | Yes         | PGR                | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |      0.124 |
+| Sø          | Yes         | PGR                | NA   | State      | NA              | NA                      | NA                  |      0.000 |      0.123 |
+| NA          | Yes         | NA                 | Yes  | Private    | egekrat         | NA                      | NA                  |      0.000 |      0.120 |
+| Overdrev    | NA          | PGR                | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |      0.118 |
+| Hede        | Yes         | PGR                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.116 |
+| Eng         | Yes         | OMD                | NA   | State      | NA              | NA                      | Yes                 |      0.000 |      0.114 |
+| Hede        | Yes         | PGR                | NA   | State      | NA              | NA                      | Yes                 |      0.000 |      0.114 |
+| Sø          | Yes         | NA                 | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |      0.112 |
+| Strandeng   | NA          | OMD                | Yes  | NA         | NA              | NA                      | NA                  |      0.000 |      0.108 |
+| NA          | Yes         | PGR                | Yes  | State      | egekrat         | NA                      | NA                  |      0.000 |      0.107 |
+| Strandeng   | Yes         | OMD                | NA   | State      | NA              | NA                      | NA                  |      0.000 |      0.107 |
+| Mose        | Yes         | NA                 | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |      0.107 |
+| NA          | Yes         | OMD                | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |      0.105 |
+| Mose        | Yes         | PGR                | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |      0.102 |
+| NA          | NA          | OMD                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.101 |
+| NA          | NA          | OMD                | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.100 |
+| Mose        | Yes         | OMD                | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |      0.094 |
+| Overdrev    | Yes         | PGR                | NA   | State      | NA              | NA                      | Yes                 |      0.000 |      0.093 |
+| Mose        | NA          | PGR                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |      0.091 |
+| Overdrev    | Yes         | NA                 | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.088 |
+| Mose        | Yes         | NA                 | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.088 |
+| Eng         | NA          | PGR                | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |      0.088 |
+| Sø          | Yes         | PGR                | Yes  | State      | NA              | NA                      | NA                  |      0.000 |      0.088 |
+| NA          | Yes         | PGR                | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.084 |
+| Klit        | NA          | NA                 | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |      0.084 |
+| Hede        | Yes         | NA                 | NA   | State      | egekrat         | NA                      | Yes                 |      0.000 |      0.084 |
+| NA          | Yes         | OMD                | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |      0.083 |
+| Klit        | NA          | NA                 | Yes  | State      | NA              | NA                      | NA                  |      0.000 |      0.083 |
+| Overdrev    | NA          | OMD                | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |      0.080 |
+| Overdrev    | Yes         | OMD                | NA   | State      | NA              | NA                      | Yes                 |      0.000 |      0.080 |
+| NA          | Yes         | NA                 | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.078 |
+| Eng         | Yes         | NA                 | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |      0.076 |
+| Eng         | NA          | NA                 | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |      0.075 |
+| Eng         | NA          | NA                 | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |      0.075 |
+| Mose        | NA          | NA                 | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.074 |
+| Overdrev    | NA          | PGR                | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |      0.074 |
+| Eng         | NA          | PGR                | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |      0.072 |
+| Hede        | Yes         | NA                 | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |      0.071 |
+| Klit        | Yes         | PGR                | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |      0.071 |
+| Overdrev    | NA          | NA                 | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |      0.070 |
+| Eng         | Yes         | NA                 | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |      0.069 |
+| Eng         | NA          | NA                 | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.068 |
+| Klit        | NA          | PGR                | Yes  | NA         | NA              | NA                      | NA                  |      0.000 |      0.067 |
+| Overdrev    | Yes         | NA                 | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |      0.066 |
+| Hede        | NA          | NA                 | Yes  | State      | NA              | NA                      | NA                  |      0.000 |      0.066 |
+| Hede        | NA          | OMD                | NA   | State      | NA              | NA                      | NA                  |      0.000 |      0.064 |
+| Overdrev    | NA          | NA                 | NA   | State      | NA              | Yes                     | NA                  |      0.000 |      0.064 |
+| Strandeng   | NA          | NA                 | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |      0.062 |
+| Sø          | Yes         | OMD                | Yes  | NA         | NA              | NA                      | NA                  |      0.000 |      0.062 |
+| NA          | NA          | OMD                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.061 |
+| Klit        | NA          | NA                 | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |      0.061 |
+| Eng         | NA          | PGR                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |      0.061 |
+| Sø          | Yes         | NA                 | Yes  | Private    | Skov            | Yes                     | NA                  |      0.000 |      0.059 |
+| Sø          | NA          | NA                 | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |      0.059 |
+| NA          | NA          | NA                 | NA   | State      | NA              | Yes                     | NA                  |      0.000 |      0.059 |
+| NA          | NA          | NA                 | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.058 |
+| Strandeng   | Yes         | OMD                | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |      0.058 |
+| Mose        | NA          | PGR                | Yes  | State      | NA              | NA                      | NA                  |      0.000 |      0.057 |
+| Klit        | Yes         | OMD                | Yes  | NA         | NA              | NA                      | NA                  |      0.000 |      0.056 |
+| Hede        | Yes         | NA                 | Yes  | State      | egekrat         | NA                      | NA                  |      0.000 |      0.056 |
+| Sø          | Yes         | OMD                | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |      0.056 |
+| Mose        | NA          | NA                 | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |      0.055 |
+| Eng         | Yes         | PGR                | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |      0.055 |
+| Hede        | Yes         | OMD                | Yes  | State      | NA              | NA                      | NA                  |      0.000 |      0.054 |
+| Strandeng   | Yes         | NA                 | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.054 |
+| Eng         | NA          | PGR                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.053 |
+| Sø          | NA          | NA                 | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |      0.052 |
+| Eng         | Yes         | PGR                | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.052 |
+| Sø          | NA          | PGR                | NA   | State      | NA              | NA                      | NA                  |      0.000 |      0.052 |
+| Klit        | NA          | NA                 | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |      0.052 |
+| NA          | Yes         | NA                 | NA   | Private    | Skov            | Yes                     | NA                  |      0.000 |      0.051 |
+| Mose        | Yes         | NA                 | NA   | Private    | Skov            | Yes                     | NA                  |      0.000 |      0.049 |
+| NA          | NA          | OMD                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |      0.049 |
+| Sø          | Yes         | NA                 | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |      0.049 |
+| Sø          | Yes         | NA                 | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |      0.048 |
+| NA          | Yes         | NA                 | NA   | State      | egekrat         | Yes                     | Yes                 |      0.000 |      0.047 |
+| Hede        | Yes         | OMD                | NA   | State      | NA              | NA                      | NA                  |      0.000 |      0.047 |
+| Strandeng   | Yes         | OMD                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.046 |
+| Hede        | NA          | NA                 | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |      0.043 |
+| Overdrev    | NA          | PGR                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.043 |
+| Eng         | NA          | PGR                | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |      0.043 |
+| Mose        | Yes         | PGR                | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.043 |
+| Strandeng   | NA          | PGR                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |      0.042 |
+| Overdrev    | Yes         | NA                 | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |      0.042 |
+| Overdrev    | Yes         | PGR                | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.042 |
+| Overdrev    | Yes         | NA                 | NA   | State      | NA              | Yes                     | NA                  |      0.000 |      0.042 |
+| Eng         | NA          | NA                 | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |      0.038 |
+| Eng         | Yes         | PGR                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |      0.038 |
+| Mose        | Yes         | OMD                | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |      0.037 |
+| Hede        | Yes         | OMD                | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |      0.036 |
+| Sø          | NA          | OMD                | Yes  | NA         | NA              | NA                      | NA                  |      0.000 |      0.036 |
+| Hede        | NA          | NA                 | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |      0.036 |
+| Hede        | Yes         | PGR                | Yes  | State      | egekrat         | NA                      | NA                  |      0.000 |      0.036 |
+| Overdrev    | Yes         | NA                 | NA   | State      | NA              | NA                      | Yes                 |      0.000 |      0.035 |
+| Overdrev    | Yes         | NA                 | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.035 |
+| Sø          | Yes         | NA                 | NA   | Private    | Skov            | Yes                     | NA                  |      0.000 |      0.035 |
+| Eng         | Yes         | OMD                | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |      0.034 |
+| Mose        | Yes         | PGR                | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |      0.034 |
+| Strandeng   | NA          | NA                 | NA   | State      | NA              | Yes                     | NA                  |      0.000 |      0.033 |
+| Mose        | Yes         | NA                 | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.033 |
+| Overdrev    | Yes         | NA                 | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.033 |
+| Strandeng   | NA          | OMD                | NA   | State      | NA              | NA                      | NA                  |      0.000 |      0.032 |
+| Eng         | NA          | OMD                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.032 |
+| NA          | NA          | NA                 | NA   | State      | NA              | NA                      | Yes                 |      0.000 |      0.031 |
+| NA          | Yes         | OMD                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.031 |
+| Mose        | Yes         | OMD                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.030 |
+| Overdrev    | NA          | NA                 | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |      0.029 |
+| Strandeng   | NA          | PGR                | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |      0.028 |
+| NA          | NA          | NA                 | Yes  | State      | egekrat         | NA                      | NA                  |      0.000 |      0.028 |
+| Hede        | NA          | NA                 | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |      0.028 |
+| Hede        | Yes         | PGR                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.027 |
+| Strandeng   | NA          | OMD                | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |      0.026 |
+| NA          | NA          | PGR                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.026 |
+| Strandeng   | NA          | NA                 | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |      0.026 |
+| Mose        | Yes         | OMD                | Yes  | State      | NA              | NA                      | NA                  |      0.000 |      0.026 |
+| Overdrev    | Yes         | NA                 | NA   | State      | egekrat         | NA                      | NA                  |      0.000 |      0.025 |
+| NA          | NA          | NA                 | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |      0.025 |
+| Mose        | Yes         | OMD                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |      0.024 |
+| Hede        | NA          | OMD                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.024 |
+| NA          | Yes         | PGR                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.024 |
+| Hede        | Yes         | PGR                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.024 |
+| Mose        | NA          | OMD                | NA   | State      | NA              | NA                      | NA                  |      0.000 |      0.024 |
+| NA          | Yes         | OMD                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |      0.023 |
+| Overdrev    | Yes         | OMD                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |      0.022 |
+| Mose        | Yes         | PGR                | NA   | State      | NA              | NA                      | Yes                 |      0.000 |      0.021 |
+| Overdrev    | Yes         | NA                 | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |      0.021 |
+| Hede        | Yes         | OMD                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.021 |
+| Strandeng   | Yes         | OMD                | Yes  | State      | NA              | NA                      | NA                  |      0.000 |      0.021 |
+| Strandeng   | Yes         | NA                 | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |      0.020 |
+| Sø          | Yes         | OMD                | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |      0.019 |
+| NA          | Yes         | NA                 | NA   | State      | NA              | Yes                     | Yes                 |      0.000 |      0.019 |
+| Eng         | NA          | NA                 | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.019 |
+| NA          | NA          | PGR                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |      0.019 |
+| Eng         | NA          | OMD                | Yes  | State      | NA              | NA                      | NA                  |      0.000 |      0.018 |
+| Mose        | Yes         | NA                 | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |      0.018 |
+| Sø          | NA          | NA                 | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.018 |
+| Overdrev    | Yes         | NA                 | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.018 |
+| Mose        | Yes         | NA                 | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.018 |
+| Hede        | Yes         | NA                 | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.018 |
+| NA          | Yes         | NA                 | Yes  | State      | NA              | NA                      | Yes                 |      0.000 |      0.018 |
+| Eng         | Yes         | PGR                | Yes  | Private    | Skov            | Yes                     | NA                  |      0.000 |      0.018 |
+| Klit        | Yes         | NA                 | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |      0.018 |
+| Overdrev    | Yes         | NA                 | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |      0.017 |
+| Overdrev    | Yes         | PGR                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.016 |
+| Sø          | Yes         | PGR                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |      0.016 |
+| NA          | NA          | NA                 | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.015 |
+| Overdrev    | NA          | NA                 | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.015 |
+| NA          | Yes         | PGR                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |      0.014 |
+| Eng         | Yes         | NA                 | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |      0.014 |
+| Klit        | Yes         | PGR                | NA   | State      | NA              | NA                      | NA                  |      0.000 |      0.013 |
+| NA          | NA          | NA                 | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |      0.013 |
+| Mose        | NA          | OMD                | Yes  | State      | NA              | NA                      | NA                  |      0.000 |      0.013 |
+| Sø          | Yes         | NA                 | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.013 |
+| Hede        | NA          | PGR                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.013 |
+| Sø          | NA          | PGR                | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |      0.013 |
+| NA          | Yes         | OMD                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.012 |
+| Mose        | Yes         | PGR                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |      0.012 |
+| Sø          | Yes         | NA                 | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.012 |
+| Mose        | NA          | NA                 | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |      0.011 |
+| Hede        | Yes         | NA                 | NA   | NA         | egekrat         | Yes                     | Yes                 |      0.000 |      0.011 |
+| Overdrev    | NA          | OMD                | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |      0.010 |
+| Klit        | Yes         | OMD                | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |      0.010 |
+| Mose        | Yes         | NA                 | Yes  | State      | egekrat         | NA                      | NA                  |      0.000 |      0.010 |
+| Strandeng   | Yes         | PGR                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |      0.010 |
+| Sø          | Yes         | OMD                | NA   | State      | NA              | NA                      | NA                  |      0.000 |      0.010 |
+| Eng         | Yes         | NA                 | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.010 |
+| Hede        | Yes         | NA                 | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |      0.010 |
+| NA          | Yes         | OMD                | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |      0.009 |
+| Eng         | Yes         | NA                 | Yes  | Private    | Skov            | Yes                     | NA                  |      0.000 |      0.008 |
+| Overdrev    | Yes         | PGR                | NA   | State      | egekrat         | NA                      | NA                  |      0.000 |      0.008 |
+| Eng         | NA          | PGR                | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |      0.008 |
+| Overdrev    | NA          | OMD                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.008 |
+| NA          | NA          | NA                 | NA   | State      | egekrat         | NA                      | Yes                 |      0.000 |      0.008 |
+| Overdrev    | NA          | PGR                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |      0.007 |
+| Overdrev    | NA          | NA                 | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |      0.007 |
+| NA          | NA          | PGR                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.007 |
+| Eng         | NA          | PGR                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.007 |
+| Sø          | Yes         | NA                 | Yes  | State      | egekrat         | NA                      | NA                  |      0.000 |      0.007 |
+| Mose        | Yes         | PGR                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.007 |
+| Mose        | NA          | PGR                | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |      0.007 |
+| NA          | Yes         | PGR                | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |      0.006 |
+| NA          | Yes         | PGR                | Yes  | Private    | Skov            | Yes                     | NA                  |      0.000 |      0.006 |
+| Sø          | Yes         | OMD                | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |      0.006 |
+| Overdrev    | Yes         | PGR                | Yes  | State      | egekrat         | NA                      | NA                  |      0.000 |      0.006 |
+| Overdrev    | Yes         | NA                 | Yes  | State      | egekrat         | NA                      | NA                  |      0.000 |      0.006 |
+| Overdrev    | Yes         | PGR                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |      0.006 |
+| NA          | Yes         | NA                 | NA   | State      | egekrat         | NA                      | Yes                 |      0.000 |      0.006 |
+| Hede        | NA          | OMD                | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |      0.006 |
+| Mose        | NA          | NA                 | NA   | State      | NA              | Yes                     | NA                  |      0.000 |      0.006 |
+| Sø          | Yes         | NA                 | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |      0.006 |
+| Sø          | Yes         | PGR                | NA   | State      | NA              | NA                      | Yes                 |      0.000 |      0.005 |
+| Hede        | Yes         | NA                 | NA   | Private    | egekrat         | NA                      | NA                  |      0.000 |      0.005 |
+| Mose        | NA          | NA                 | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |      0.005 |
+| Hede        | Yes         | NA                 | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |      0.005 |
+| NA          | NA          | PGR                | NA   | State      | NA              | NA                      | Yes                 |      0.000 |      0.005 |
+| NA          | NA          | OMD                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.005 |
+| Strandeng   | NA          | PGR                | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |      0.005 |
+| Eng         | NA          | NA                 | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |      0.005 |
+| NA          | Yes         | OMD                | Yes  | Private    | Skov            | Yes                     | NA                  |      0.000 |      0.004 |
+| Strandeng   | Yes         | PGR                | Yes  | NA         | sammenhaengende | Yes                     | NA                  |      0.000 |      0.004 |
+| Mose        | NA          | NA                 | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.004 |
+| Overdrev    | NA          | NA                 | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.004 |
+| Mose        | NA          | OMD                | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |      0.004 |
+| Mose        | NA          | NA                 | NA   | State      | egekrat         | NA                      | NA                  |      0.000 |      0.004 |
+| Klit        | Yes         | OMD                | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |      0.004 |
+| Eng         | Yes         | PGR                | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |      0.004 |
+| Mose        | Yes         | NA                 | NA   | State      | egekrat         | NA                      | NA                  |      0.000 |      0.004 |
+| Mose        | Yes         | PGR                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.004 |
+| Sø          | Yes         | PGR                | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |      0.004 |
+| Overdrev    | Yes         | OMD                | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |      0.004 |
+| NA          | Yes         | PGR                | NA   | State      | egekrat         | NA                      | NA                  |      0.000 |      0.004 |
+| Sø          | NA          | PGR                | Yes  | State      | NA              | NA                      | NA                  |      0.000 |      0.004 |
+| Overdrev    | NA          | NA                 | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.004 |
+| Sø          | Yes         | OMD                | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |      0.004 |
+| NA          | Yes         | NA                 | NA   | NA         | sammenhaengende | Yes                     | NA                  |      0.000 |      0.004 |
+| NA          | NA          | NA                 | NA   | State      | Skov            | NA                      | NA                  |      0.000 |      0.004 |
+| Overdrev    | NA          | NA                 | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |      0.004 |
+| Sø          | NA          | NA                 | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |      0.004 |
+| Mose        | NA          | PGR                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.003 |
+| NA          | NA          | NA                 | NA   | Private    | Skov            | Yes                     | NA                  |      0.000 |      0.003 |
+| Strandeng   | NA          | PGR                | Yes  | State      | NA              | NA                      | NA                  |      0.000 |      0.003 |
+| NA          | Yes         | NA                 | NA   | NA         | egekrat         | NA                      | Yes                 |      0.000 |      0.003 |
+| Eng         | Yes         | PGR                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.003 |
+| NA          | NA          | PGR                | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |      0.003 |
+| NA          | NA          | OMD                | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |      0.003 |
+| Eng         | Yes         | NA                 | NA   | State      | egekrat         | Yes                     | Yes                 |      0.000 |      0.003 |
+| Hede        | Yes         | OMD                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |      0.003 |
+| Strandeng   | Yes         | PGR                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.003 |
+| Strandeng   | Yes         | PGR                | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.003 |
+| Sø          | NA          | OMD                | NA   | State      | NA              | NA                      | NA                  |      0.000 |      0.003 |
+| Hede        | NA          | PGR                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.003 |
+| NA          | NA          | NA                 | NA   | Private    | egekrat         | NA                      | NA                  |      0.000 |      0.003 |
+| Overdrev    | Yes         | PGR                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.003 |
+| Strandeng   | Yes         | NA                 | Yes  | NA         | sammenhaengende | Yes                     | NA                  |      0.000 |      0.002 |
+| Strandeng   | Yes         | OMD                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |      0.002 |
+| NA          | Yes         | PGR                | NA   | Private    | egekrat         | NA                      | NA                  |      0.000 |      0.002 |
+| Hede        | Yes         | PGR                | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |      0.002 |
+| Overdrev    | NA          | NA                 | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.002 |
+| Hede        | Yes         | PGR                | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |      0.002 |
+| Eng         | Yes         | PGR                | Yes  | State      | egekrat         | NA                      | NA                  |      0.000 |      0.002 |
+| Mose        | Yes         | NA                 | Yes  | State      | NA              | NA                      | Yes                 |      0.000 |      0.002 |
+| Eng         | Yes         | NA                 | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.002 |
+| Eng         | Yes         | NA                 | NA   | State      | NA              | Yes                     | Yes                 |      0.000 |      0.002 |
+| NA          | NA          | NA                 | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |      0.002 |
+| Mose        | Yes         | OMD                | NA   | State      | NA              | NA                      | Yes                 |      0.000 |      0.002 |
+| Overdrev    | NA          | PGR                | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.002 |
+| NA          | NA          | PGR                | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |      0.002 |
+| Hede        | NA          | OMD                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.002 |
+| Sø          | Yes         | PGR                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.002 |
+| Mose        | NA          | PGR                | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |      0.002 |
+| Mose        | Yes         | PGR                | NA   | State      | egekrat         | NA                      | NA                  |      0.000 |      0.002 |
+| Eng         | NA          | NA                 | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |      0.002 |
+| Overdrev    | NA          | NA                 | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |      0.002 |
+| Sø          | Yes         | PGR                | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |      0.002 |
+| Overdrev    | Yes         | OMD                | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |      0.002 |
+| Sø          | NA          | PGR                | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |      0.002 |
+| NA          | NA          | NA                 | NA   | NA         | egekrat         | NA                      | Yes                 |      0.000 |      0.001 |
+| Mose        | Yes         | OMD                | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.001 |
+| Hede        | NA          | PGR                | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |      0.001 |
+| Eng         | Yes         | NA                 | Yes  | State      | egekrat         | NA                      | NA                  |      0.000 |      0.001 |
+| Hede        | NA          | NA                 | NA   | State      | NA              | NA                      | Yes                 |      0.000 |      0.001 |
+| Hede        | Yes         | PGR                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |      0.001 |
+| Eng         | Yes         | OMD                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.001 |
+| Mose        | NA          | PGR                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.001 |
+| Overdrev    | NA          | PGR                | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |      0.001 |
+| Mose        | Yes         | OMD                | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |      0.001 |
+| Overdrev    | NA          | PGR                | Yes  | State      | egekrat         | NA                      | NA                  |      0.000 |      0.001 |
+| NA          | Yes         | OMD                | NA   | State      | egekrat         | NA                      | NA                  |      0.000 |      0.001 |
+| NA          | NA          | OMD                | NA   | State      | egekrat         | NA                      | NA                  |      0.000 |      0.001 |
+| Strandeng   | NA          | PGR                | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |      0.001 |
+| Sø          | NA          | NA                 | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |      0.001 |
+| Overdrev    | Yes         | OMD                | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.001 |
+| Eng         | Yes         | NA                 | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.001 |
+| Strandeng   | Yes         | NA                 | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.001 |
+| Sø          | Yes         | NA                 | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.001 |
+| Mose        | Yes         | OMD                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |      0.001 |
+| Eng         | Yes         | PGR                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |      0.001 |
+| Sø          | NA          | PGR                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.001 |
+| Hede        | NA          | OMD                | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |      0.001 |
+| Hede        | Yes         | PGR                | NA   | Private    | egekrat         | NA                      | NA                  |      0.000 |      0.001 |
+| Hede        | Yes         | PGR                | NA   | State      | egekrat         | NA                      | NA                  |      0.000 |      0.001 |
+| Overdrev    | Yes         | NA                 | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |      0.001 |
+| Hede        | NA          | PGR                | Yes  | State      | NA              | NA                      | NA                  |      0.000 |      0.001 |
+| Sø          | Yes         | OMD                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |      0.001 |
+| Overdrev    | NA          | NA                 | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |      0.001 |
+| Eng         | Yes         | PGR                | NA   | Private    | Skov            | Yes                     | NA                  |      0.000 |      0.001 |
+| Mose        | NA          | OMD                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |      0.001 |
+| Overdrev    | NA          | PGR                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.001 |
+| Mose        | Yes         | PGR                | NA   | Private    | Skov            | Yes                     | NA                  |      0.000 |      0.001 |
+| Sø          | Yes         | PGR                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.001 |
+| Hede        | Yes         | OMD                | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |      0.001 |
+| Sø          | Yes         | PGR                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |      0.001 |
+| NA          | Yes         | OMD                | Yes  | State      | egekrat         | NA                      | NA                  |      0.000 |      0.001 |
+| Overdrev    | NA          | PGR                | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |      0.001 |
+| Hede        | NA          | OMD                | Yes  | State      | NA              | NA                      | NA                  |      0.000 |      0.001 |
+| Hede        | NA          | OMD                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |      0.001 |
+| Overdrev    | NA          | PGR                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.001 |
+| Eng         | NA          | OMD                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.001 |
+| Hede        | Yes         | OMD                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.001 |
+| Eng         | NA          | OMD                | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |      0.001 |
+| Sø          | Yes         | OMD                | NA   | State      | NA              | NA                      | Yes                 |      0.000 |      0.001 |
+| Eng         | Yes         | PGR                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.001 |
+| Mose        | NA          | OMD                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.001 |
+| Sø          | NA          | NA                 | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.001 |
+| Mose        | Yes         | OMD                | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |      0.001 |
+| Eng         | NA          | NA                 | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |      0.001 |
+| Overdrev    | Yes         | OMD                | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |      0.001 |
+| Sø          | NA          | OMD                | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |      0.001 |
+| Overdrev    | NA          | PGR                | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |      0.000 |
+| Sø          | Yes         | PGR                | NA   | Private    | Skov            | Yes                     | NA                  |      0.000 |      0.000 |
+| Sø          | Yes         | OMD                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |      0.000 |
+| NA          | NA          | PGR                | Yes  | State      | egekrat         | NA                      | NA                  |      0.000 |      0.000 |
+| Eng         | Yes         | NA                 | NA   | State      | egekrat         | NA                      | NA                  |      0.000 |      0.000 |
+| Eng         | NA          | PGR                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |      0.000 |
+| Overdrev    | Yes         | OMD                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.000 |
+| Mose        | NA          | OMD                | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |      0.000 |
+| Eng         | NA          | PGR                | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |      0.000 |
+| Mose        | Yes         | PGR                | Yes  | Private    | Skov            | Yes                     | NA                  |      0.000 |      0.000 |
+| Overdrev    | Yes         | PGR                | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |      0.000 |
+| Eng         | Yes         | NA                 | NA   | NA         | egekrat         | NA                      | Yes                 |      0.000 |      0.000 |
+| Strandeng   | Yes         | NA                 | NA   | NA         | sammenhaengende | Yes                     | NA                  |      0.000 |      0.000 |
+| Hede        | NA          | NA                 | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |      0.000 |
+| Eng         | NA          | OMD                | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |      0.000 |
+| Ukendt      | NA          | NA                 | NA   | NA         | NA              | NA                      | NA                  |      0.000 |      0.000 |
+| Eng         | Yes         | OMD                | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |      0.000 |
+| Eng         | Yes         | NA                 | NA   | Private    | Skov            | Yes                     | NA                  |      0.000 |      0.000 |
+| Hede        | Yes         | PGR                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |      0.000 |
+| Mose        | Yes         | PGR                | Yes  | State      | egekrat         | NA                      | NA                  |      0.000 |      0.000 |
+| Hede        | NA          | NA                 | NA   | State      | egekrat         | NA                      | Yes                 |      0.000 |      0.000 |
+| Sø          | NA          | OMD                | Yes  | State      | NA              | NA                      | NA                  |      0.000 |      0.000 |
+| NA          | NA          | PGR                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |      0.000 |
+| Eng         | NA          | NA                 | NA   | State      | NA              | Yes                     | NA                  |      0.000 |      0.000 |
+| Klit        | NA          | NA                 | NA   | State      | NA              | NA                      | NA                  |      0.000 |      0.000 |
+| Eng         | NA          | PGR                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.000 |
+| Hede        | NA          | PGR                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.000 |
+| Eng         | NA          | NA                 | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.000 |
+| Hede        | Yes         | NA                 | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.000 |
+| Hede        | NA          | OMD                | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |      0.000 |
+| Overdrev    | Yes         | PGR                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |      0.000 |
+| Hede        | NA          | PGR                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |      0.000 |
+| Eng         | Yes         | NA                 | Yes  | Private    | egekrat         | NA                      | NA                  |      0.000 |      0.000 |
+| Overdrev    | Yes         | NA                 | Yes  | Private    | egekrat         | NA                      | NA                  |      0.000 |      0.000 |
+| NA          | Yes         | NA                 | Yes  | State      | Skov            | NA                      | NA                  |      0.000 |      0.000 |
+| Eng         | Yes         | PGR                | NA   | State      | egekrat         | NA                      | NA                  |      0.000 |      0.000 |
+| NA          | Yes         | PGR                | Yes  | State      | sammenhaengende | NA                      | NA                  |      0.000 |      0.000 |
+| Sø          | Yes         | OMD                | Yes  | State      | NA              | NA                      | NA                  |      0.000 |      0.000 |
+| Mose        | NA          | PGR                | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |      0.000 |
+| Mose        | NA          | NA                 | NA   | State      | NA              | NA                      | Yes                 |      0.000 |      0.000 |
+| Eng         | NA          | OMD                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |      0.000 |
+| Sø          | NA          | NA                 | NA   | State      | NA              | Yes                     | NA                  |      0.000 |      0.000 |
+| Strandeng   | Yes         | NA                 | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.000 |
+| Overdrev    | Yes         | OMD                | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.000 |
+| NA          | Yes         | PGR                | Yes  | NA         | sammenhaengende | Yes                     | NA                  |      0.000 |      0.000 |
+| NA          | NA          | PGR                | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.000 |
+| Strandeng   | NA          | PGR                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.000 |
+| NA          | NA          | OMD                | Yes  | NA         | NA              | NA                      | Yes                 |      0.000 |      0.000 |
+| Sø          | NA          | PGR                | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |      0.000 |
+| Eng         | Yes         | OMD                | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |      0.000 |
+| Mose        | Yes         | OMD                | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |      0.000 |
+| Mose        | Yes         | PGR                | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |      0.000 |
+| Mose        | NA          | OMD                | NA   | NA         | NA              | Yes                     | NA                  |      0.000 |      0.000 |
+| Sø          | NA          | NA                 | Yes  | Private    | Skov            | NA                      | NA                  |      0.000 |      0.000 |
+| NA          | Yes         | OMD                | NA   | Private    | Skov            | Yes                     | NA                  |      0.000 |      0.000 |
+| Overdrev    | NA          | OMD                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |      0.000 |
+| Strandeng   | NA          | OMD                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |      0.000 |
+| Strandeng   | NA          | PGR                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |      0.000 |
+| Sø          | NA          | PGR                | NA   | Private    | Skov            | NA                      | NA                  |      0.000 |      0.000 |
+| NA          | Yes         | PGR                | Yes  | Private    | egekrat         | NA                      | NA                  |      0.000 |      0.000 |
+| Eng         | Yes         | NA                 | NA   | Private    | egekrat         | NA                      | NA                  |      0.000 |      0.000 |
+| Overdrev    | NA          | NA                 | Yes  | State      | egekrat         | NA                      | NA                  |      0.000 |      0.000 |
+| NA          | Yes         | OMD                | Yes  | State      | sammenhaengende | NA                      | NA                  |      0.000 |      0.000 |
+| Eng         | Yes         | PGR                | Yes  | State      | sammenhaengende | NA                      | NA                  |      0.000 |      0.000 |
+| Sø          | NA          | PGR                | Yes  | State      | NA              | Yes                     | NA                  |      0.000 |      0.000 |
+| NA          | NA          | OMD                | NA   | State      | NA              | NA                      | Yes                 |      0.000 |      0.000 |
+| Eng         | NA          | PGR                | NA   | State      | NA              | NA                      | Yes                 |      0.000 |      0.000 |
+| Mose        | NA          | PGR                | NA   | State      | NA              | NA                      | Yes                 |      0.000 |      0.000 |
+| NA          | Yes         | OMD                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |      0.000 |
+| NA          | NA          | OMD                | NA   | State      | NA              | Yes                     | NA                  |      0.000 |      0.000 |
+| Mose        | Yes         | OMD                | Yes  | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.000 |
+| Eng         | Yes         | NA                 | NA   | NA         | egekrat         | Yes                     | Yes                 |      0.000 |      0.000 |
+| Eng         | NA          | NA                 | NA   | NA         | egekrat         | NA                      | Yes                 |      0.000 |      0.000 |
+| Strandeng   | Yes         | NA                 | NA   | NA         | egekrat         | NA                      | NA                  |      0.000 |      0.000 |
+| NA          | Yes         | NA                 | Yes  | NA         | sammenhaengende | Yes                     | NA                  |      0.000 |      0.000 |
+| Overdrev    | NA          | OMD                | Yes  | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.000 |
+| Mose        | NA          | OMD                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.000 |
+| Strandeng   | NA          | OMD                | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.000 |
+| Hede        | NA          | NA                 | NA   | NA         | sammenhaengende | NA                      | NA                  |      0.000 |      0.000 |
+| Strandeng   | NA          | OMD                | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |      0.000 |
+| Sø          | NA          | OMD                | Yes  | NA         | NA              | Yes                     | NA                  |      0.000 |      0.000 |
+| Overdrev    | Yes         | PGR                | NA   | NA         | NA              | Yes                     | Yes                 |      0.000 |      0.000 |
+| Klit        | Yes         | NA                 | NA   | NA         | NA              | NA                      | Yes                 |      0.000 |      0.000 |
 
 Table 3.1: Number of cells that are shared by different groups of
 rastercells
@@ -1824,16 +1827,16 @@ General table of overlap
 
 </summary>
 
-| Class                   | Proportion |    Area_Sq_Mt | Area_Exclusive | Area_Overlapped |
-|:------------------------|-----------:|--------------:|---------------:|----------------:|
-| Total                   |     16.012 | 6,908,146,900 |             NA |              NA |
-| Paragraph_3             |     10.516 | 4,537,103,500 |  1,589,174,800 |   2,947,928,700 |
-| Nautra_2000             |      8.990 | 3,878,619,900 |    654,566,600 |   3,224,053,300 |
-| IUCN                    |      2.531 | 1,091,783,700 |    103,659,500 |     988,124,200 |
-| Urort_Skov              |      1.617 |   697,724,000 |    160,153,600 |     537,570,400 |
-| NaturaOgVildtreservater |      1.019 |   439,605,300 |     11,983,600 |     427,621,700 |
-| Naturnationalparker     |      0.225 |    97,267,500 |     24,235,400 |      73,032,100 |
-| Stoette                 |      0.131 |    56,735,000 |      9,164,800 |      47,570,200 |
+| Class                   | Proportion | Area_Exclusive | Area_Overlapped | Area_Sq_Km |
+|:------------------------|-----------:|---------------:|----------------:|-----------:|
+| Total                   |     16.012 |             NA |              NA |  6,908.147 |
+| Paragraph_3             |     10.516 |      1,589.175 |       2,947.929 |  4,537.104 |
+| Nautra_2000             |      8.990 |        654.567 |       3,224.053 |  3,878.620 |
+| IUCN                    |      2.531 |        103.659 |         988.124 |  1,091.784 |
+| Urort_Skov              |      1.617 |        160.154 |         537.570 |    697.724 |
+| NaturaOgVildtreservater |      1.019 |         11.984 |         427.622 |    439.605 |
+| Naturnationalparker     |      0.225 |         24.235 |          73.032 |     97.268 |
+| Stoette                 |      0.131 |          9.165 |          47.570 |     56.735 |
 
 Table 3.2: Areas that are exclusive or overlapped between different
 groups
@@ -1957,7 +1960,7 @@ Habitats_P3_Urort_Skov <- Area_summary %>%
 # Paragraph 3 in Permament grasslands
 
 Habitats_P3_PGR <- Area_summary %>%
-    dplyr::filter(Types_markblokkort == "PGR" & is.na(Habitats_P3)) %>%
+    dplyr::filter(Types_markblokkort == "PGR" & is.na(Habitats_P3) & !is.na(Habitats_P3)) %>%
     summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
     rename(PGR = Area_Sq_Mt) %>%
     mutate(Nature_content = "Paragraph 3 and klit") %>%
@@ -1966,7 +1969,7 @@ Habitats_P3_PGR <- Area_summary %>%
 # Paragraph 3 in Plough areas
 
 Habitats_P3_OMD <- Area_summary %>%
-    dplyr::filter(Types_markblokkort == "OMD" & is.na(Habitats_P3)) %>%
+    dplyr::filter(Types_markblokkort == "OMD" & is.na(Habitats_P3) & !is.na(Habitats_P3)) %>%
     summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
     rename(OMD = Area_Sq_Mt) %>%
     mutate(Nature_content = "Paragraph 3 and klit") %>%
@@ -2133,11 +2136,71 @@ IUCN_SO <- Area_summary %>%
 Final_IUCN <- list(IUCN, IUCN_Open_Nature, IUCN_Urort_Skov, IUCN_PGR, IUCN_OMD, IUCN_SO) %>%
     purrr::reduce(full_join)
 
+# Untouched forest
+
+Urort_Skov <- Area_summary %>%
+    dplyr::filter(!is.na(Urort_Skov)) %>%
+    summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
+    rename(Area = Area_Sq_Mt) %>%
+    mutate(Nature_content = "Urort_Skov") %>%
+    relocate(Nature_content, .before = everything())
+
+# Urort_Skov in open areas
+
+Urort_Skov_Open_Nature <- Area_summary %>%
+    dplyr::filter(!is.na(Urort_Skov) & !is.na(Habitats_P3)) %>%
+    summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
+    rename(Open_Nature = Area_Sq_Mt) %>%
+    mutate(Nature_content = "Urort_Skov") %>%
+    relocate(Nature_content, .before = everything())
+
+# Urort_Skov in untouched forest
+
+Urort_Skov_Urort_Skov <- Area_summary %>%
+    dplyr::filter(!is.na(Urort_Skov) & !is.na(Urort_Skov)) %>%
+    summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
+    rename(Urort_Skov = Area_Sq_Mt) %>%
+    mutate(Nature_content = "Urort_Skov") %>%
+    relocate(Nature_content, .before = everything())
+
+# Urort_Skov in Permanent grasslands
+
+Urort_Skov_PGR <- Area_summary %>%
+    dplyr::filter(!is.na(Urort_Skov) & Types_markblokkort == "PGR" & is.na(Habitats_P3)) %>%
+    summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
+    rename(PGR = Area_Sq_Mt) %>%
+    mutate(Nature_content = "Urort_Skov") %>%
+    relocate(Nature_content, .before = everything())
+
+# Urort_Skov in Plough areas
+
+Urort_Skov_OMD <- Area_summary %>%
+    dplyr::filter(!is.na(Urort_Skov) & Types_markblokkort == "OMD" & is.na(Habitats_P3)) %>%
+    summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
+    rename(OMD = Area_Sq_Mt) %>%
+    mutate(Nature_content = "Urort_Skov") %>%
+    relocate(Nature_content, .before = everything())
+
+# Urort_Skov in Lakes
+
+Urort_Skov_SO <- Area_summary %>%
+    dplyr::filter(!is.na(Urort_Skov) & Habitats_P3 == "Sø") %>%
+    summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
+    rename(SO = Area_Sq_Mt) %>%
+    mutate(Nature_content = "Urort_Skov") %>%
+    relocate(Nature_content, .before = everything())
+
+# Join all togheter
+
+Final_Urort_Skov <- list(Urort_Skov, Urort_Skov_Open_Nature, Urort_Skov_Urort_Skov,
+    Urort_Skov_PGR, Urort_Skov_OMD, Urort_Skov_SO) %>%
+    purrr::reduce(full_join)
+
 # Get everything together and arrange by total area
 
 
 Total <- list(Final_Natura_2000, Final_Habitats_P3, Final_NaturaOgVildtreservater,
-    Final_IUCN) %>%
+    Final_IUCN, Final_Urort_Skov) %>%
     purrr::reduce(bind_rows) %>%
     arrange(desc(Area))
 ```
@@ -2154,18 +2217,61 @@ Specific table of overlap
 
 </summary>
 
-| Nature_content          |          Area |   Open_Nature |  Urort_Skov |           PGR |            OMD |          SO |
-|:------------------------|--------------:|--------------:|------------:|--------------:|---------------:|------------:|
-| Paragraph 3 and klit    | 4,537,103,500 | 4,537,103,500 | 152,468,500 | 1,529,687,200 | 22,840,079,100 | 698,996,000 |
-| Natura 2000             | 3,878,619,900 | 1,948,709,500 | 473,051,600 |   159,149,900 |    587,387,200 | 355,642,200 |
-| IUCN                    | 1,091,783,700 |   698,271,500 |  85,394,100 |    43,179,700 |    117,655,200 | 100,437,200 |
-| NaturaOgVildtreservater |   439,605,300 |   313,374,900 |  27,535,800 |     8,019,000 |     10,167,300 |  71,268,100 |
+| Nature_content          |      Area | Open_Nature | Urort_Skov |     PGR |     OMD |      SO |
+|:------------------------|----------:|------------:|-----------:|--------:|--------:|--------:|
+| Paragraph 3 and klit    | 4,537.104 |   4,537.104 |    152.469 |   0.000 |   0.000 | 698.996 |
+| Natura 2000             | 3,878.620 |   1,948.709 |    473.052 | 159.150 | 587.387 | 355.642 |
+| IUCN                    | 1,091.784 |     698.271 |     85.394 |  43.180 | 117.655 | 100.437 |
+| Urort_Skov              |   697.724 |     152.469 |    697.724 |  24.440 |  13.107 |  27.081 |
+| NaturaOgVildtreservater |   439.605 |     313.375 |     27.536 |   8.019 |  10.167 |  71.268 |
 
 Table 3.3: Total area for protected areas and potential protected areas
 
 </details>
 
 # 4 Ocean ecosystems
+
+## 4.1 Data generation
+
+In this Section we will try to solve for intersections within the data
+and incongruencies within the data, some of the polygons provided have
+topological issues so we need to rasterize them in order to resolve this
+issues easily.
+
+### 4.1.1 Denmark’s Exclusive Economic Zone (EEZ)
+
+To both crop the areas (some include ocean and terrestrial ecosystems)
+and to have a value of the total area of the sea Denmark, we need to
+have a polygon of the EEZ of the country. We used the marineregions
+dataset version 3.0 using the mregions package (Institute 2020 ;
+Chamberlain, Schepers, and Fernandez 2022) using the following code, the
+resulting polygon is shown in figure
+<a href="#fig:PlotSeaDenmark">4.1</a>
+
+<details style="\&quot;margin-bottom:10px;\&quot;">
+<summary>
+
+Denmark EEZ
+
+</summary>
+
+``` r
+SeaOfDenmark <- mregions::mr_shp("Denmark:eez") %>%
+    dplyr::filter(geoname == "Danish Exclusive Economic Zone") %>%
+    dplyr::select(geoname) %>%
+    terra::vect() %>%
+    terra::project(terra::crs(DK))
+
+Area_Sea_DK <- expanse(SeaOfDenmark)
+```
+
+</details>
+
+![Figure 4.1: Polygon of de EEZ of
+Denmark](README_files/figure-gfm/PlotSeaDenmark-1.png)
+
+The total area for Denmark according to that is 105,021 Square
+kilometers
 
 # 5 Session info
 
@@ -2289,6 +2395,13 @@ Forward-Pipe Operator for r*.
 
 </div>
 
+<div id="ref-Chamberlain2022" class="csl-entry">
+
+Chamberlain, Scott, Lennert Schepers, and Salvador Fernandez. 2022.
+*Mregions: Marine Regions Data from ’Marineregions.org’*.
+
+</div>
+
 <div id="ref-global2022gadm" class="csl-entry">
 
 Global Administrative Areas, G. 2022. “GADM Database of Global
@@ -2308,6 +2421,14 @@ Hijmans, Robert J. 2022. *Terra: Spatial Data Analysis*.
 
 Hijmans, Robert J., Aniruddha Ghosh, and Alex Mandel. 2022. *Geodata:
 Download Geographic Data*. <https://CRAN.R-project.org/package=geodata>.
+
+</div>
+
+<div id="ref-flanders2014union" class="csl-entry">
+
+Institute, Flanders Marine. 2020. “Union of the ESRI Country Shapefile
+and the Exclusive Economic Zones (Version
+3).”[ https://www.marineregions.org/]( https://www.marineregions.org/).
 
 </div>
 

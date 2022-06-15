@@ -80,7 +80,7 @@ To both crop the areas (some include ocean and terrestrial ecosystems) and to ha
 ```
 
 
-The total area for Denmark according to that is `r prettyNum(round(Area_DK), big.mark = ",")` Square meters
+The total area for Denmark according to that is `r prettyNum(round(Area_DK/1000000), big.mark = ",")` Square kilometers
 
 ### Paragraph 3 and dunes
 
@@ -349,11 +349,34 @@ The results of this code are seen in table \@ref(tab:show-second-table)
 
 <details style=\"margin-bottom:10px;\">
 <summary>Specific table of overlap</summary>
-```{r show-second-table, cache = T, echo=F}
+```{r show-second-table, cache = F, echo=F}
 
 ```
 </details>
 # Ocean ecosystems
+
+## Data generation
+
+In this Section we will try to solve for intersections within the data and incongruencies within the data, some of the polygons provided have topological issues so we need to rasterize them in order to resolve this issues easily.
+
+
+### Denmark's Exclusive Economic Zone (EEZ)
+
+To both crop the areas (some include ocean and terrestrial ecosystems) and to have a value of the total area of the sea Denmark, we need to have a polygon of the EEZ of the country. We used the  marineregions dataset version 3.0 using the mregions package [@flanders2014union ; @Chamberlain2022] using the following code, the resulting polygon is shown in figure \@ref(fig:PlotSeaDenmark)
+
+<details style=\"margin-bottom:10px;\">
+<summary>Denmark EEZ</summary>
+```{r sea-of-Denmark, cache = F}
+
+```
+</details>
+
+
+```{r PlotSeaDenmark,fig.cap="Polygon of de EEZ of Denmark", echo = F, cache = T}
+
+```
+
+The total area for Denmark according to that is `r prettyNum(round(Area_Sea_DK/1000000), big.mark = ",")` Square kilometers
 
 # Session info
 
