@@ -1346,7 +1346,7 @@ writeRaster(Natura2000_Croped_Sea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterize
 
 sf::gdal_utils("warp",
                source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Natura2000_Croped_Sea.tif",
-               destination = "Rast_Natura2000_Croped_Sea.tif",
+               destination = "RasterizedCOG/Rast_Natura2000_Croped_Sea.tif",
                options = c(
                  "-of", "COG",
                  "-co", "RESAMPLING=NEAREST",
@@ -1358,7 +1358,7 @@ sf::gdal_utils("warp",
 ## ---- PlotNatura2000Sea --------
 
 plot(SeaOfDenmark, col = "blue")
-plot(Natura2000_Croped_Sea, add =T)
+plot(Natura2000_Croped_Sea, add =T, legend = "bottom")
 
 ## ---- NaturaOgVildtreservater-sea-raster --------
 
@@ -1380,7 +1380,7 @@ writeRaster(NaturaOgVildtreservater_Croped_Sea, "O:/Nat_BDR-data/Arealanalyse/CL
 
 sf::gdal_utils("warp",
                source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_NaturaOgVildtreservater_Croped_Sea.tif",
-               destination = "Rast_NaturaOgVildtreservater_Croped_Sea.tif",
+               destination = "RasterizedCOG/Rast_NaturaOgVildtreservater_Croped_Sea.tif",
                options = c(
                  "-of", "COG",
                  "-co", "RESAMPLING=NEAREST",
@@ -1392,4 +1392,4 @@ sf::gdal_utils("warp",
 ## ---- PlotNaturaOgVildtreservaterSea --------
 
 plot(SeaOfDenmark, col = "blue")
-plot(NaturaOgVildtreservater_Croped_Sea, add =T)
+plot(NaturaOgVildtreservater_Croped_Sea, add =T, legend = "bottom")

@@ -2438,9 +2438,9 @@ writeRaster(Natura2000_Croped_Sea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterize
 # save as cloud optimized rasters
 
 sf::gdal_utils("warp", source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Natura2000_Croped_Sea.tif",
-    destination = "Rast_Natura2000_Croped_Sea.tif", options = c("-of", "COG", "-co",
-        "RESAMPLING=NEAREST", "-co", "TILING_SCHEME=GoogleMapsCompatible", "-co",
-        "COMPRESS=DEFLATE", "-co", "NUM_THREADS=46"))
+    destination = "RasterizedCOG/Rast_Natura2000_Croped_Sea.tif", options = c("-of",
+        "COG", "-co", "RESAMPLING=NEAREST", "-co", "TILING_SCHEME=GoogleMapsCompatible",
+        "-co", "COMPRESS=DEFLATE", "-co", "NUM_THREADS=46"))
 ```
 
 </details>
@@ -2482,7 +2482,7 @@ writeRaster(NaturaOgVildtreservater_Croped_Sea, "O:/Nat_BDR-data/Arealanalyse/CL
 # save as cloud optimized rasters
 
 sf::gdal_utils("warp", source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_NaturaOgVildtreservater_Croped_Sea.tif",
-    destination = "Rast_NaturaOgVildtreservater_Croped_Sea.tif", options = c("-of",
+    destination = "RasterizedCOG/Rast_NaturaOgVildtreservater_Croped_Sea.tif", options = c("-of",
         "COG", "-co", "RESAMPLING=NEAREST", "-co", "TILING_SCHEME=GoogleMapsCompatible",
         "-co", "COMPRESS=DEFLATE", "-co", "NUM_THREADS=46"))
 ```
