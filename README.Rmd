@@ -327,7 +327,7 @@ From this we can generate a summary table with the general overlap as follows:
 ```
 </details>
 
-This generates a summarized table shown in table \@ref(tab:table-overlap-summarized), this can be downloaded as an rds [here](https://github.com/Sustainscapes/BiodiversityCounsil/blob/master/Table1.rds), or a csv [here](https://github.com/Sustainscapes/BiodiversityCounsil/blob/master/Table1.csv)
+This generates a summarized table shown in table \@ref(tab:table-overlap-summarized), this can be downloaded as an excel file [here](https://github.com/Sustainscapes/BiodiversityCounsil/raw/master/Table1.xlsx) an rds [here](https://github.com/Sustainscapes/BiodiversityCounsil/blob/master/Table1.rds), or a csv [here](https://github.com/Sustainscapes/BiodiversityCounsil/blob/master/Table1.csv)
 
 <details style=\"margin-bottom:10px;\">
 <summary>General table of overlap</summary>
@@ -345,7 +345,7 @@ To check the overlap between de different protected and potentially protected la
 ```
 </details>
 
-The results of this code are seen in table \@ref(tab:show-second-table), and the table can be downloaded as an rds [here](https://github.com/Sustainscapes/BiodiversityCounsil/blob/master/Total.rds) or as a csv [here](https://github.com/Sustainscapes/BiodiversityCounsil/blob/master/Table1.csv)
+The results of this code are seen in table \@ref(tab:show-second-table), and the table can be downloaded as an excel file [here](https://github.com/Sustainscapes/BiodiversityCounsil/raw/master/Total.xlsx) an rds [here](https://github.com/Sustainscapes/BiodiversityCounsil/blob/master/Total.rds) or as a csv [here](https://github.com/Sustainscapes/BiodiversityCounsil/blob/master/Table1.csv)
 
 <details style=\"margin-bottom:10px;\">
 <summary>Specific table of overlap</summary>

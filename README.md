@@ -1910,7 +1910,9 @@ Table1 <- list(Natura2000_Table1, Paragraph3_Table1, NaturaOgVildtreservater_Tab
 
 This generates a summarized table shown in table
 <a href="#tab:table-overlap-summarized">3.2</a>, this can be downloaded
-as an rds
+as an excel file
+[here](https://github.com/Sustainscapes/BiodiversityCounsil/raw/master/Table1.xlsx)
+an rds
 [here](https://github.com/Sustainscapes/BiodiversityCounsil/blob/master/Table1.rds),
 or a csv
 [here](https://github.com/Sustainscapes/BiodiversityCounsil/blob/master/Table1.csv)
@@ -2498,7 +2500,9 @@ Total <- list(Final_All, Final_Natura_2000, Final_Habitats_P3, Final_NaturaOgVil
 
 The results of this code are seen in table
 <a href="#tab:show-second-table">3.3</a>, and the table can be
-downloaded as an rds
+downloaded as an excel file
+[here](https://github.com/Sustainscapes/BiodiversityCounsil/raw/master/Total.xlsx)
+an rds
 [here](https://github.com/Sustainscapes/BiodiversityCounsil/blob/master/Total.rds)
 or as a csv
 [here](https://github.com/Sustainscapes/BiodiversityCounsil/blob/master/Table1.csv)
