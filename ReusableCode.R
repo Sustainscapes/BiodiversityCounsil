@@ -634,6 +634,7 @@ Area2 <- Area2 %>%
 
 saveRDS(Area2, "Area_summary.rds")
 readr::write_csv(Area2, "Area_summary.csv")
+openxlsx::write.xlsx(Area2, "Area_summary.xlsx")
 
 knitr::kable(Area2, digits = 3, caption = "Number of cells that are shared by different groups of rastercells", format.args	= list(big.mark = ','))
 
@@ -850,6 +851,7 @@ knitr::kable(NewTable, digits = 3, caption = "Areas that are exclusive or overla
 # Save table 1
 
 readr::write_csv(NewTable, "Table1.csv")
+openxlsx::write.xlsx(NewTable, "Table1.xlsx")
 saveRDS(NewTable, "Table1.rds")
 
 ## ---- generate-second-table --------
@@ -1381,6 +1383,7 @@ Total <- list(Final_All, Final_Natura_2000, Final_Habitats_P3, Final_NaturaOgVil
 ## ---- show-second-table --------
 
 readr::write_csv(Total, "Total.csv")
+openxlsx::write.xlsx(Total, "Total.xlsx")
 saveRDS(Total, "Total.rds")
 
 

@@ -901,7 +901,9 @@ Area2 <- Area2 %>%
 </details>
 
 This leads to the table <a href="#tab:table-overlap">3.1</a> wich can be
-downloaded as an rds
+downloaded as an excel file
+[here](https://github.com/Sustainscapes/BiodiversityCounsil/raw/master/Area_summary.xlsx)
+an rds
 [here](https://github.com/Sustainscapes/BiodiversityCounsil/blob/master/Area_summary.rds),
 or as a csv
 [here](https://github.com/Sustainscapes/BiodiversityCounsil/blob/master/Area_summary.csv)
