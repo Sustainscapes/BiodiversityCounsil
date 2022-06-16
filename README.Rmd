@@ -331,7 +331,7 @@ This generates a summarized table shown in table \@ref(tab:table-overlap-summari
 
 <details style=\"margin-bottom:10px;\">
 <summary>General table of overlap</summary>
-```{r table-overlap-summarized, cache = T, echo=F}
+```{r table-overlap-summarized, cache = F, echo=F}
 
 ```
 </details>

@@ -633,6 +633,18 @@ National_Parks <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/GIS filer - de 5
 
 National_Parks$ID <- "NationalParks"
 
+# Read New ones
+
+NewNatParks <- list.files(path = "O:/Nat_BDR-data/Arealanalyse/RAW/NewNationalParks/",
+    pattern = ".shp", full.names = T) %>%
+    purrr::map(vect) %>%
+    purrr::reduce(rbind) %>%
+    terra::project(crs(Template))
+
+NewNatParks$ID <- "NationalParks"
+
+National_Parks_Aggregated <- rbind(NewNatParks, National_Parks)
+
 National_Parks_Aggregated <- terra::aggregate(National_Parks, by = "ID")
 
 Rast_National_Parks <- terra::rasterize(National_Parks_Aggregated, Template, field = "ID")
@@ -1864,6 +1876,78 @@ Code for summary of specific overlaps
 
 Area_summary <- readRDS("Area_summary.rds")
 
+# Total
+
+# Total area
+
+All <- Area_summary %>%
+    dplyr::filter(!is.na(Natura_2000) | !is.na(Habitats_P3) | !is.na(IUCN) | !is.na(Urort_Skov) |
+        !is.na(Stoette) | !is.na(NaturaOgVildtreservater) | !is.na(Naturnationalparker)) %>%
+    summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+    rename(Area = Area_Sq_Km) %>%
+    mutate(Nature_content = "All") %>%
+    relocate(Nature_content, .before = everything())
+
+# All open habitats area
+
+All_Open_Nature <- Area_summary %>%
+    dplyr::filter(!is.na(Natura_2000) & (!is.na(Habitats_P3) | !is.na(IUCN) | !is.na(Urort_Skov) |
+        !is.na(Stoette) | !is.na(NaturaOgVildtreservater) | !is.na(Naturnationalparker))) %>%
+    summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+    rename(Open_Nature = Area_Sq_Km) %>%
+    mutate(Nature_content = "All") %>%
+    relocate(Nature_content, .before = everything())
+
+# All in untouched forest
+
+All_Urort_Skov <- Area_summary %>%
+    dplyr::filter(!is.na(Urort_Skov) & (!is.na(Natura_2000) | !is.na(Habitats_P3) |
+        !is.na(IUCN) | !is.na(Stoette) | !is.na(NaturaOgVildtreservater) | !is.na(Naturnationalparker))) %>%
+    summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+    rename(Urort_Skov = Area_Sq_Km) %>%
+    mutate(Nature_content = "All") %>%
+    relocate(Nature_content, .before = everything())
+
+# All in Permanent grasslands
+
+All_PGR <- Area_summary %>%
+    dplyr::filter((!is.na(Natura_2000) | !is.na(Habitats_P3) | !is.na(IUCN) | !is.na(Urort_Skov) |
+        !is.na(Stoette) | !is.na(NaturaOgVildtreservater) | !is.na(Naturnationalparker)) &
+        Types_markblokkort == "PGR" & is.na(Habitats_P3)) %>%
+    summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+    rename(PGR = Area_Sq_Km) %>%
+    mutate(Nature_content = "All") %>%
+    relocate(Nature_content, .before = everything())
+
+# All in Arable lands
+
+All_OMD <- Area_summary %>%
+    dplyr::filter((!is.na(Natura_2000) | !is.na(Habitats_P3) | !is.na(IUCN) | !is.na(Urort_Skov) |
+        !is.na(Stoette) | !is.na(NaturaOgVildtreservater) | !is.na(Naturnationalparker)) &
+        Types_markblokkort == "OMD" & is.na(Habitats_P3)) %>%
+    summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+    rename(OMD = Area_Sq_Km) %>%
+    mutate(Nature_content = "All") %>%
+    relocate(Nature_content, .before = everything())
+
+# All in Lakes
+
+All_SO <- Area_summary %>%
+    dplyr::filter((!is.na(Natura_2000) | !is.na(Habitats_P3) | !is.na(IUCN) | !is.na(Urort_Skov) |
+        !is.na(Stoette) | !is.na(NaturaOgVildtreservater) | !is.na(Naturnationalparker)) &
+        Habitats_P3 == "Sø") %>%
+    summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+    rename(SO = Area_Sq_Km) %>%
+    mutate(Nature_content = "All") %>%
+    relocate(Nature_content, .before = everything())
+
+# Joind toghether
+
+Final_All <- list(All, All_Open_Nature, All_Urort_Skov, All_PGR, All_OMD, All_SO) %>%
+    purrr::reduce(full_join)
+
+######
+
 # Natura_2000 total area
 
 Natura_2000 <- Area_summary %>%
@@ -2327,7 +2411,7 @@ Final_Stoette <- list(Stoette, Stoette_Open_Nature, Stoette_Urort_Skov, Stoette_
 # Get everything together and arrange by total area
 
 
-Total <- list(Final_Natura_2000, Final_Habitats_P3, Final_NaturaOgVildtreservater,
+Total <- list(Final_All, Final_Natura_2000, Final_Habitats_P3, Final_NaturaOgVildtreservater,
     Final_IUCN, Final_Urort_Skov, Final_Naturnationalparker, Final_Stoette) %>%
     purrr::reduce(bind_rows) %>%
     arrange(desc(Area))
@@ -2351,6 +2435,7 @@ Specific table of overlap
 
 | Nature_content          |      Area | Open_Nature | Urort_Skov |     PGR |     OMD |      SO |
 |:------------------------|----------:|------------:|-----------:|--------:|--------:|--------:|
+| All                     | 6,908.147 |   2,573.661 |    520.181 | 188.265 | 673.764 | 698.996 |
 | Paragraph 3 and klit    | 4,537.104 |   4,537.104 |    152.469 |   0.000 |   0.000 | 698.996 |
 | Natura 2000             | 3,878.620 |   1,948.709 |    473.052 | 159.150 | 587.387 | 355.642 |
 | IUCN                    | 1,091.784 |     698.271 |     85.394 |  43.180 | 117.655 | 100.437 |
