@@ -523,6 +523,7 @@ plot(Rast_stoette_Croped, add =T)
 ## ---- AllStack --------
 
 All <- c(Rast_Urort_Skov_Croped, Rast_stoette_Croped, Rast_p3_klit_Croped, Rast_markblokkort_Croped, Rast_NaturaOgVildtreservater_Croped, Rast_Natura2000_Croped, Rast_National_Parks_Croped, Rast_IUCN_Croped)
+writeRaster(All, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/All.tif", overwrite=TRUE, gdal=c("COMPRESS=DEFLATE", "TFW=YES","of=COG"))
 
 
 ## ---- crosstab --------
@@ -609,9 +610,6 @@ Area2 <- Area2 %>%
   dplyr::relocate(Proportion, .after = everything()) %>%
   dplyr::relocate(Area_Sq_Mt, .after = everything())
 
-# Save dataframe as rds
-
-saveRDS(Area2, "Area_summary.rds")
 
 ## ---- table-overlap --------
 
@@ -620,11 +618,18 @@ Area2 <- Area2 %>%
   mutate(Area_Sq_Km = Area_Sq_Mt/1000000) %>%
   dplyr::select(-Area_Sq_Mt)
 
+# Save dataframe as rds
+
+saveRDS(Area2, "Area_summary.rds")
+readr::write_csv(Area2, "Area_summary.csv")
+
 knitr::kable(Area2, digits = 3, caption = "Number of cells that are shared by different groups of rastercells", format.args	= list(big.mark = ','))
 
 ## ---- table-general-overlap-creation --------
 
 # eliminate cells that are not natura 2000 and separate overlapped and not overlapped cells and summarize
+
+Area2 <- readRDS("Area_summary.rds")
 
 Natura2000_Table1a <- Area2 %>%
   dplyr::filter(!is.na(Natura_2000)) %>%
@@ -642,7 +647,7 @@ Natura2000_Table1_Appart <- Natura2000_Table1a %>%
   mutate(Class = "Nautra_2000") %>%
   ungroup() %>%
   dplyr::select(-Proportion, -Natura_2000) %>%
-  tidyr::pivot_wider(names_from = Overlaped, values_from = Area_Sq_Mt) %>%
+  tidyr::pivot_wider(names_from = Overlaped, values_from = Area_Sq_Km) %>%
   rename(Area_Overlapped = Yes, Area_Exclusive = No)
 
 Natura2000_Table1 <- full_join(Natura2000_Table1_Totals, Natura2000_Table1_Appart) %>%
@@ -668,7 +673,7 @@ Paragraph3_Table1_Appart <- Paragraph3_Table1a %>%
   mutate(Class = "Paragraph_3") %>%
   ungroup() %>%
   dplyr::select(-Proportion, -Paragrah3) %>%
-  tidyr::pivot_wider(names_from = Overlaped, values_from = Area_Sq_Mt) %>%
+  tidyr::pivot_wider(names_from = Overlaped, values_from = Area_Sq_Km) %>%
   rename(Area_Overlapped = Yes, Area_Exclusive = No)
 
 Paragraph3_Table1 <- full_join(Paragraph3_Table1_Totals, Paragraph3_Table1_Appart) %>%
@@ -692,7 +697,7 @@ NaturaOgVildtreservater_Table1_Appart <- NaturaOgVildtreservater_Table1a %>%
   mutate(Class = "NaturaOgVildtreservater") %>%
   ungroup() %>%
   dplyr::select(-Proportion, -NaturaOgVildtreservater) %>%
-  tidyr::pivot_wider(names_from = Overlaped, values_from = Area_Sq_Mt) %>%
+  tidyr::pivot_wider(names_from = Overlaped, values_from = Area_Sq_Km) %>%
   rename(Area_Overlapped = Yes, Area_Exclusive = No)
 
 NaturaOgVildtreservater_Table1 <- full_join(NaturaOgVildtreservater_Table1_Totals, NaturaOgVildtreservater_Table1_Appart) %>%
@@ -716,7 +721,7 @@ IUCN_Table1_Appart <- IUCN_Table1a %>%
   mutate(Class = "IUCN") %>%
   ungroup() %>%
   dplyr::select(-Proportion, -IUCN) %>%
-  tidyr::pivot_wider(names_from = Overlaped, values_from = Area_Sq_Mt) %>%
+  tidyr::pivot_wider(names_from = Overlaped, values_from = Area_Sq_Km) %>%
   rename(Area_Overlapped = Yes, Area_Exclusive = No)
 
 IUCN_Table1 <- full_join(IUCN_Table1_Totals, IUCN_Table1_Appart) %>%
@@ -742,7 +747,7 @@ Urort_Skov_Table1_Appart <- Urort_Skov_Table1a %>%
   mutate(Class = "Urort_Skov") %>%
   ungroup() %>%
   dplyr::select(-Proportion, -Urort_Skov) %>%
-  tidyr::pivot_wider(names_from = Overlaped, values_from = Area_Sq_Mt) %>%
+  tidyr::pivot_wider(names_from = Overlaped, values_from = Area_Sq_Km) %>%
   rename(Area_Overlapped = Yes, Area_Exclusive = No)
 
 Urort_Skov_Table1 <- full_join(Urort_Skov_Table1_Totals, Urort_Skov_Table1_Appart) %>%
@@ -767,7 +772,7 @@ Stoette_Table1_Appart <- Stoette_Table1a %>%
   mutate(Class = "Stoette") %>%
   ungroup() %>%
   dplyr::select(-Proportion, -Stoette) %>%
-  tidyr::pivot_wider(names_from = Overlaped, values_from = Area_Sq_Mt) %>%
+  tidyr::pivot_wider(names_from = Overlaped, values_from = Area_Sq_Km) %>%
   rename(Area_Overlapped = Yes, Area_Exclusive = No)
 
 Stoette_Table1 <- full_join(Stoette_Table1_Totals, Stoette_Table1_Appart) %>%
@@ -791,7 +796,7 @@ Naturnationalparker_Table1_Appart <- Naturnationalparker_Table1a %>%
   mutate(Class = "Naturnationalparker") %>%
   ungroup() %>%
   dplyr::select(-Proportion, -Naturnationalparker) %>%
-  tidyr::pivot_wider(names_from = Overlaped, values_from = Area_Sq_Mt) %>%
+  tidyr::pivot_wider(names_from = Overlaped, values_from = Area_Sq_Km) %>%
   rename(Area_Overlapped = Yes, Area_Exclusive = No)
 
 Naturnationalparker_Table1 <- full_join(Naturnationalparker_Table1_Totals, Naturnationalparker_Table1_Appart) %>%
@@ -811,10 +816,6 @@ Total_Area__Table1a <- Area2 %>%
 Table1 <- list(Natura2000_Table1, Paragraph3_Table1, NaturaOgVildtreservater_Table1, IUCN_Table1, Urort_Skov_Table1, Stoette_Table1, Naturnationalparker_Table1) %>%
   purrr::reduce(bind_rows)
 
-# Save table 1
-
-readr::write_csv(Table1, "Table1.csv")
-saveRDS(Table1, "Table1.rds")
 
 ## ---- table-overlap-summarized --------
 
@@ -830,11 +831,14 @@ TotalProtected <- ForTotal %>% summarise_if(is.numeric, sum) %>%
   mutate(Class = "Total") %>%
   relocate(Class, .before = everything())
 
-NewTable <- dplyr::arrange(bind_rows(Table1, TotalProtected), desc(Proportion)) %>%
-  mutate(Area_Sq_Km = Area_Sq_Mt/1000000, Area_Exclusive = Area_Exclusive/1000000, Area_Overlapped = Area_Overlapped/1000000) %>%
-  dplyr::select(-Area_Sq_Mt)
+NewTable <- dplyr::arrange(bind_rows(Table1, TotalProtected), desc(Proportion))
 
 knitr::kable(NewTable, digits = 3, caption = "Areas that are exclusive or overlapped between different groups", format.args	= list(big.mark = ','))
+
+# Save table 1
+
+readr::write_csv(NewTable, "Table1.csv")
+saveRDS(NewTable, "Table1.rds")
 
 ## ---- generate-second-table --------
 
@@ -847,8 +851,8 @@ Area_summary <- readRDS("Area_summary.rds")
 Natura_2000 <- Area_summary %>%
   dplyr::filter(!is.na(Natura_2000)) %>%
   group_by(Natura_2000) %>%
-  summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
-  rename(Area = Area_Sq_Mt) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(Area = Area_Sq_Km) %>%
   mutate(Nature_content = "Natura 2000") %>%
   dplyr::select(-Natura_2000) %>%
   relocate(Nature_content, .before = everything())
@@ -858,8 +862,8 @@ Natura_2000 <- Area_summary %>%
 Natura_2000_Open_Nature <- Area_summary %>%
   dplyr::filter(!is.na(Natura_2000) & !is.na(Habitats_P3)) %>%
   group_by(Natura_2000) %>%
-  summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
-  rename(Open_Nature = Area_Sq_Mt) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(Open_Nature = Area_Sq_Km) %>%
   mutate(Nature_content = "Natura 2000") %>%
   dplyr::select(-Natura_2000) %>%
   relocate(Nature_content, .before = everything())
@@ -869,8 +873,8 @@ Natura_2000_Open_Nature <- Area_summary %>%
 Natura_2000_Urort_Skov <- Area_summary %>%
   dplyr::filter(!is.na(Natura_2000) & !is.na(Urort_Skov)) %>%
   group_by(Natura_2000) %>%
-  summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
-  rename(Urort_Skov = Area_Sq_Mt) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(Urort_Skov = Area_Sq_Km) %>%
   mutate(Nature_content = "Natura 2000") %>%
   dplyr::select(-Natura_2000) %>%
   relocate(Nature_content, .before = everything())
@@ -880,8 +884,8 @@ Natura_2000_Urort_Skov <- Area_summary %>%
 Natura_2000_PGR <- Area_summary %>%
   dplyr::filter(!is.na(Natura_2000) & Types_markblokkort == "PGR" & is.na(Habitats_P3)) %>%
   group_by(Natura_2000) %>%
-  summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
-  rename(PGR = Area_Sq_Mt) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(PGR = Area_Sq_Km) %>%
   mutate(Nature_content = "Natura 2000") %>%
   dplyr::select(-Natura_2000) %>%
   relocate(Nature_content, .before = everything())
@@ -891,8 +895,8 @@ Natura_2000_PGR <- Area_summary %>%
 Natura_2000_OMD <- Area_summary %>%
   dplyr::filter(!is.na(Natura_2000) & Types_markblokkort == "OMD" & is.na(Habitats_P3)) %>%
   group_by(Natura_2000) %>%
-  summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
-  rename(OMD = Area_Sq_Mt) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(OMD = Area_Sq_Km) %>%
   mutate(Nature_content = "Natura 2000") %>%
   dplyr::select(-Natura_2000) %>%
   relocate(Nature_content, .before = everything())
@@ -902,8 +906,8 @@ Natura_2000_OMD <- Area_summary %>%
 Natura_2000_SO <- Area_summary %>%
   dplyr::filter(!is.na(Natura_2000) & Habitats_P3 == "Sø") %>%
   group_by(Natura_2000) %>%
-  summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
-  rename(SO = Area_Sq_Mt) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(SO = Area_Sq_Km) %>%
   mutate(Nature_content = "Natura 2000") %>%
   dplyr::select(-Natura_2000) %>%
   relocate(Nature_content, .before = everything())
@@ -917,8 +921,8 @@ Final_Natura_2000 <- list(Natura_2000, Natura_2000_Open_Nature, Natura_2000_Uror
 
 Habitats_P3 <- Area_summary %>%
   dplyr::filter(!is.na(Habitats_P3)) %>%
-  summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
-  rename(Area = Area_Sq_Mt) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(Area = Area_Sq_Km) %>%
   mutate(Nature_content = "Paragraph 3 and klit") %>%
   relocate(Nature_content, .before = everything())
 
@@ -926,8 +930,8 @@ Habitats_P3 <- Area_summary %>%
 
 Habitats_P3_Open_Nature <- Area_summary %>%
   dplyr::filter(!is.na(Habitats_P3) & !is.na(Habitats_P3)) %>%
-  summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
-  rename(Open_Nature = Area_Sq_Mt) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(Open_Nature = Area_Sq_Km) %>%
   mutate(Nature_content = "Paragraph 3 and klit") %>%
   relocate(Nature_content, .before = everything())
 
@@ -935,8 +939,8 @@ Habitats_P3_Open_Nature <- Area_summary %>%
 
 Habitats_P3_Urort_Skov <- Area_summary %>%
   dplyr::filter(!is.na(Habitats_P3) & !is.na(Urort_Skov)) %>%
-  summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
-  rename(Urort_Skov = Area_Sq_Mt) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(Urort_Skov = Area_Sq_Km) %>%
   mutate(Nature_content = "Paragraph 3 and klit") %>%
   relocate(Nature_content, .before = everything())
 
@@ -944,8 +948,8 @@ Habitats_P3_Urort_Skov <- Area_summary %>%
 
 Habitats_P3_PGR <- Area_summary %>%
   dplyr::filter(Types_markblokkort == "PGR" & is.na(Habitats_P3) & !is.na(Habitats_P3)) %>%
-  summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
-  rename(PGR = Area_Sq_Mt) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(PGR = Area_Sq_Km) %>%
   mutate(Nature_content = "Paragraph 3 and klit") %>%
   relocate(Nature_content, .before = everything())
 
@@ -953,8 +957,8 @@ Habitats_P3_PGR <- Area_summary %>%
 
 Habitats_P3_OMD <- Area_summary %>%
   dplyr::filter(Types_markblokkort == "OMD" & is.na(Habitats_P3) & !is.na(Habitats_P3)) %>%
-  summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
-  rename(OMD = Area_Sq_Mt) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(OMD = Area_Sq_Km) %>%
   mutate(Nature_content = "Paragraph 3 and klit") %>%
   relocate(Nature_content, .before = everything())
 
@@ -962,8 +966,8 @@ Habitats_P3_OMD <- Area_summary %>%
 
 Habitats_P3_SO <- Area_summary %>%
   dplyr::filter(!is.na(Habitats_P3) & Habitats_P3 == "Sø") %>%
-  summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
-  rename(SO = Area_Sq_Mt) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(SO = Area_Sq_Km) %>%
   mutate(Nature_content = "Paragraph 3 and klit") %>%
   relocate(Nature_content, .before = everything())
 
@@ -977,8 +981,8 @@ Final_Habitats_P3 <- list(Habitats_P3, Habitats_P3_Open_Nature, Habitats_P3_Uror
 NaturaOgVildtreservater <- Area_summary %>%
   dplyr::filter(!is.na(NaturaOgVildtreservater)) %>%
   group_by(NaturaOgVildtreservater) %>%
-  summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
-  rename(Area = Area_Sq_Mt) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(Area = Area_Sq_Km) %>%
   mutate(Nature_content = "NaturaOgVildtreservater") %>%
   dplyr::select(-NaturaOgVildtreservater) %>%
   relocate(Nature_content, .before = everything())
@@ -988,8 +992,8 @@ NaturaOgVildtreservater <- Area_summary %>%
 NaturaOgVildtreservater_Open_Nature <- Area_summary %>%
   dplyr::filter(!is.na(NaturaOgVildtreservater) & !is.na(Habitats_P3)) %>%
   group_by(NaturaOgVildtreservater) %>%
-  summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
-  rename(Open_Nature = Area_Sq_Mt) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(Open_Nature = Area_Sq_Km) %>%
   mutate(Nature_content = "NaturaOgVildtreservater") %>%
   dplyr::select(-NaturaOgVildtreservater) %>%
   relocate(Nature_content, .before = everything())
@@ -999,8 +1003,8 @@ NaturaOgVildtreservater_Open_Nature <- Area_summary %>%
 NaturaOgVildtreservater_Urort_Skov <- Area_summary %>%
   dplyr::filter(!is.na(NaturaOgVildtreservater) & !is.na(Urort_Skov)) %>%
   group_by(NaturaOgVildtreservater) %>%
-  summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
-  rename(Urort_Skov = Area_Sq_Mt) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(Urort_Skov = Area_Sq_Km) %>%
   mutate(Nature_content = "NaturaOgVildtreservater") %>%
   dplyr::select(-NaturaOgVildtreservater) %>%
   relocate(Nature_content, .before = everything())
@@ -1010,8 +1014,8 @@ NaturaOgVildtreservater_Urort_Skov <- Area_summary %>%
 NaturaOgVildtreservater_PGR <- Area_summary %>%
   dplyr::filter(!is.na(NaturaOgVildtreservater) & Types_markblokkort == "PGR" & is.na(Habitats_P3)) %>%
   group_by(NaturaOgVildtreservater) %>%
-  summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
-  rename(PGR = Area_Sq_Mt) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(PGR = Area_Sq_Km) %>%
   mutate(Nature_content = "NaturaOgVildtreservater") %>%
   dplyr::select(-NaturaOgVildtreservater) %>%
   relocate(Nature_content, .before = everything())
@@ -1021,8 +1025,8 @@ NaturaOgVildtreservater_PGR <- Area_summary %>%
 NaturaOgVildtreservater_OMD <- Area_summary %>%
   dplyr::filter(!is.na(NaturaOgVildtreservater) & Types_markblokkort == "OMD" & is.na(Habitats_P3)) %>%
   group_by(NaturaOgVildtreservater) %>%
-  summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
-  rename(OMD = Area_Sq_Mt) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(OMD = Area_Sq_Km) %>%
   mutate(Nature_content = "NaturaOgVildtreservater") %>%
   dplyr::select(-NaturaOgVildtreservater) %>%
   relocate(Nature_content, .before = everything())
@@ -1032,8 +1036,8 @@ NaturaOgVildtreservater_OMD <- Area_summary %>%
 NaturaOgVildtreservater_SO <- Area_summary %>%
   dplyr::filter(!is.na(NaturaOgVildtreservater) & Habitats_P3 == "Sø") %>%
   group_by(NaturaOgVildtreservater) %>%
-  summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
-  rename(SO = Area_Sq_Mt) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(SO = Area_Sq_Km) %>%
   mutate(Nature_content = "NaturaOgVildtreservater") %>%
   dplyr::select(-NaturaOgVildtreservater) %>%
   relocate(Nature_content, .before = everything())
@@ -1048,8 +1052,8 @@ Final_NaturaOgVildtreservater <- list(NaturaOgVildtreservater, NaturaOgVildtrese
 IUCN <- Area_summary %>%
   dplyr::filter(!is.na(IUCN)) %>%
   group_by(IUCN) %>%
-  summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
-  rename(Area = Area_Sq_Mt) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(Area = Area_Sq_Km) %>%
   mutate(Nature_content = "IUCN") %>%
   dplyr::select(-IUCN) %>%
   relocate(Nature_content, .before = everything())
@@ -1059,8 +1063,8 @@ IUCN <- Area_summary %>%
 IUCN_Open_Nature <- Area_summary %>%
   dplyr::filter(!is.na(IUCN) & !is.na(Habitats_P3)) %>%
   group_by(IUCN) %>%
-  summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
-  rename(Open_Nature = Area_Sq_Mt) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(Open_Nature = Area_Sq_Km) %>%
   mutate(Nature_content = "IUCN") %>%
   dplyr::select(-IUCN) %>%
   relocate(Nature_content, .before = everything())
@@ -1070,8 +1074,8 @@ IUCN_Open_Nature <- Area_summary %>%
 IUCN_Urort_Skov <- Area_summary %>%
   dplyr::filter(!is.na(IUCN) & !is.na(Urort_Skov)) %>%
   group_by(IUCN) %>%
-  summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
-  rename(Urort_Skov = Area_Sq_Mt) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(Urort_Skov = Area_Sq_Km) %>%
   mutate(Nature_content = "IUCN") %>%
   dplyr::select(-IUCN) %>%
   relocate(Nature_content, .before = everything())
@@ -1081,8 +1085,8 @@ IUCN_Urort_Skov <- Area_summary %>%
 IUCN_PGR <- Area_summary %>%
   dplyr::filter(!is.na(IUCN) & Types_markblokkort == "PGR" & is.na(Habitats_P3)) %>%
   group_by(IUCN) %>%
-  summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
-  rename(PGR = Area_Sq_Mt) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(PGR = Area_Sq_Km) %>%
   mutate(Nature_content = "IUCN") %>%
   dplyr::select(-IUCN) %>%
   relocate(Nature_content, .before = everything())
@@ -1092,8 +1096,8 @@ IUCN_PGR <- Area_summary %>%
 IUCN_OMD <- Area_summary %>%
   dplyr::filter(!is.na(IUCN) & Types_markblokkort == "OMD" & is.na(Habitats_P3)) %>%
   group_by(IUCN) %>%
-  summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
-  rename(OMD = Area_Sq_Mt) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(OMD = Area_Sq_Km) %>%
   mutate(Nature_content = "IUCN") %>%
   dplyr::select(-IUCN) %>%
   relocate(Nature_content, .before = everything())
@@ -1103,8 +1107,8 @@ IUCN_OMD <- Area_summary %>%
 IUCN_SO <- Area_summary %>%
   dplyr::filter(!is.na(IUCN) & Habitats_P3 == "Sø") %>%
   group_by(IUCN) %>%
-  summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
-  rename(SO = Area_Sq_Mt) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(SO = Area_Sq_Km) %>%
   mutate(Nature_content = "IUCN") %>%
   dplyr::select(-IUCN) %>%
   relocate(Nature_content, .before = everything())
@@ -1118,8 +1122,8 @@ Final_IUCN <- list(IUCN, IUCN_Open_Nature, IUCN_Urort_Skov, IUCN_PGR, IUCN_OMD,I
 
 Urort_Skov <- Area_summary %>%
   dplyr::filter(!is.na(Urort_Skov)) %>%
-  summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
-  rename(Area = Area_Sq_Mt) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(Area = Area_Sq_Km) %>%
   mutate(Nature_content = "Urort_Skov") %>%
   relocate(Nature_content, .before = everything())
 
@@ -1127,8 +1131,8 @@ Urort_Skov <- Area_summary %>%
 
 Urort_Skov_Open_Nature <- Area_summary %>%
   dplyr::filter(!is.na(Urort_Skov) & !is.na(Habitats_P3)) %>%
-  summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
-  rename(Open_Nature = Area_Sq_Mt) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(Open_Nature = Area_Sq_Km) %>%
   mutate(Nature_content = "Urort_Skov") %>%
   relocate(Nature_content, .before = everything())
 
@@ -1136,8 +1140,8 @@ Urort_Skov_Open_Nature <- Area_summary %>%
 
 Urort_Skov_Urort_Skov <- Area_summary %>%
   dplyr::filter(!is.na(Urort_Skov) & !is.na(Urort_Skov)) %>%
-  summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
-  rename(Urort_Skov = Area_Sq_Mt) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(Urort_Skov = Area_Sq_Km) %>%
   mutate(Nature_content = "Urort_Skov") %>%
   relocate(Nature_content, .before = everything())
 
@@ -1145,8 +1149,8 @@ Urort_Skov_Urort_Skov <- Area_summary %>%
 
 Urort_Skov_PGR <- Area_summary %>%
   dplyr::filter(!is.na(Urort_Skov) & Types_markblokkort == "PGR" & is.na(Habitats_P3)) %>%
-  summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
-  rename(PGR = Area_Sq_Mt) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(PGR = Area_Sq_Km) %>%
   mutate(Nature_content = "Urort_Skov") %>%
   relocate(Nature_content, .before = everything())
 
@@ -1154,8 +1158,8 @@ Urort_Skov_PGR <- Area_summary %>%
 
 Urort_Skov_OMD <- Area_summary %>%
   dplyr::filter(!is.na(Urort_Skov) & Types_markblokkort == "OMD" & is.na(Habitats_P3)) %>%
-  summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
-  rename(OMD = Area_Sq_Mt) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(OMD = Area_Sq_Km) %>%
   mutate(Nature_content = "Urort_Skov") %>%
   relocate(Nature_content, .before = everything())
 
@@ -1163,8 +1167,8 @@ Urort_Skov_OMD <- Area_summary %>%
 
 Urort_Skov_SO <- Area_summary %>%
   dplyr::filter(!is.na(Urort_Skov) & Habitats_P3 == "Sø") %>%
-  summarise(Area_Sq_Mt = sum(Area_Sq_Mt)) %>%
-  rename(SO = Area_Sq_Mt) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(SO = Area_Sq_Km) %>%
   mutate(Nature_content = "Urort_Skov") %>%
   relocate(Nature_content, .before = everything())
 
@@ -1173,16 +1177,137 @@ Urort_Skov_SO <- Area_summary %>%
 Final_Urort_Skov <- list(Urort_Skov, Urort_Skov_Open_Nature, Urort_Skov_Urort_Skov, Urort_Skov_PGR, Urort_Skov_OMD,Urort_Skov_SO) %>%
   purrr::reduce(full_join)
 
+# Nationalparks
+
+
+Naturnationalparker  <- Area_summary %>%
+  dplyr::filter(!is.na(Naturnationalparker)) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(Area = Area_Sq_Km) %>%
+  mutate(Nature_content = "Naturnationalparker") %>%
+  relocate(Nature_content, .before = everything())
+
+# Naturnationalparker in open areas
+
+Naturnationalparker_Open_Nature <- Area_summary %>%
+  dplyr::filter(!is.na(Naturnationalparker) & !is.na(Habitats_P3)) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(Open_Nature = Area_Sq_Km) %>%
+  mutate(Nature_content = "Naturnationalparker") %>%
+  relocate(Nature_content, .before = everything())
+
+# Naturnationalparker in untouched forest
+
+Naturnationalparker_Urort_Skov <- Area_summary %>%
+  dplyr::filter(!is.na(Naturnationalparker) & !is.na(Urort_Skov)) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(Urort_Skov = Area_Sq_Km) %>%
+  mutate(Nature_content = "Naturnationalparker") %>%
+  relocate(Nature_content, .before = everything())
+
+# Naturnationalparker in Permanent grasslands
+
+Naturnationalparker_PGR <- Area_summary %>%
+  dplyr::filter(!is.na(Naturnationalparker) & Types_markblokkort == "PGR" & is.na(Habitats_P3)) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(PGR = Area_Sq_Km) %>%
+  mutate(Nature_content = "Naturnationalparker") %>%
+  relocate(Nature_content, .before = everything())
+
+# Naturnationalparker in Plough areas
+
+Naturnationalparker_OMD <- Area_summary %>%
+  dplyr::filter(!is.na(Naturnationalparker) & Types_markblokkort == "OMD" & is.na(Habitats_P3)) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(OMD = Area_Sq_Km) %>%
+  mutate(Nature_content = "Naturnationalparker") %>%
+  relocate(Nature_content, .before = everything())
+
+# Naturnationalparker in Lakes
+
+Naturnationalparker_SO <- Area_summary %>%
+  dplyr::filter(!is.na(Naturnationalparker) & Habitats_P3 == "Sø") %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(SO = Area_Sq_Km) %>%
+  mutate(Nature_content = "Naturnationalparker") %>%
+  relocate(Nature_content, .before = everything())
+
+# Join all togheter
+
+Final_Naturnationalparker <- list(Naturnationalparker, Naturnationalparker_Open_Nature, Naturnationalparker_Urort_Skov, Naturnationalparker_PGR, Naturnationalparker_OMD,Naturnationalparker_SO) %>%
+  purrr::reduce(full_join)
+
+# Subsidies
+
+Stoette  <- Area_summary %>%
+  dplyr::filter(!is.na(Stoette)) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(Area = Area_Sq_Km) %>%
+  mutate(Nature_content = "Stoette") %>%
+  relocate(Nature_content, .before = everything())
+
+# Stoette in open areas
+
+Stoette_Open_Nature <- Area_summary %>%
+  dplyr::filter(!is.na(Stoette) & !is.na(Habitats_P3)) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(Open_Nature = Area_Sq_Km) %>%
+  mutate(Nature_content = "Stoette") %>%
+  relocate(Nature_content, .before = everything())
+
+# Stoette in untouched forest
+
+Stoette_Urort_Skov <- Area_summary %>%
+  dplyr::filter(!is.na(Stoette) & !is.na(Urort_Skov)) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(Urort_Skov = Area_Sq_Km) %>%
+  mutate(Nature_content = "Stoette") %>%
+  relocate(Nature_content, .before = everything())
+
+# Stoette in Permanent grasslands
+
+Stoette_PGR <- Area_summary %>%
+  dplyr::filter(!is.na(Stoette) & Types_markblokkort == "PGR" & is.na(Habitats_P3)) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(PGR = Area_Sq_Km) %>%
+  mutate(Nature_content = "Stoette") %>%
+  relocate(Nature_content, .before = everything())
+
+# Stoette in Plough areas
+
+Stoette_OMD <- Area_summary %>%
+  dplyr::filter(!is.na(Stoette) & Types_markblokkort == "OMD" & is.na(Habitats_P3)) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(OMD = Area_Sq_Km) %>%
+  mutate(Nature_content = "Stoette") %>%
+  relocate(Nature_content, .before = everything())
+
+# Stoette in Lakes
+
+Stoette_SO <- Area_summary %>%
+  dplyr::filter(!is.na(Stoette) & Habitats_P3 == "Sø") %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(SO = Area_Sq_Km) %>%
+  mutate(Nature_content = "Stoette") %>%
+  relocate(Nature_content, .before = everything())
+
+# Join all togheter
+
+Final_Stoette <- list(Stoette, Stoette_Open_Nature, Stoette_Urort_Skov, Stoette_PGR, Stoette_OMD,Stoette_SO) %>%
+  purrr::reduce(full_join)
+
 # Get everything together and arrange by total area
 
 
-Total <- list(Final_Natura_2000, Final_Habitats_P3, Final_NaturaOgVildtreservater, Final_IUCN, Final_Urort_Skov) %>%
+Total <- list(Final_Natura_2000, Final_Habitats_P3, Final_NaturaOgVildtreservater, Final_IUCN, Final_Urort_Skov, Final_Naturnationalparker, Final_Stoette) %>%
   purrr::reduce(bind_rows) %>%
   arrange(desc(Area))
 
 ## ---- show-second-table --------
-Total <- Total  %>%
-  mutate_if(is.numeric, ~.x/1000000)
+
+readr::write_csv(Total, "Total.csv")
+saveRDS(Total, "Total.rds")
+
 
 knitr::kable(Total, digits = 3, caption = "Total area for protected areas and potential protected areas", format.args	= list(big.mark = ','))
 
@@ -1200,3 +1325,71 @@ Area_Sea_DK <- expanse(SeaOfDenmark)
 ## ---- PlotSeaDenmark --------
 
 plot(SeaOfDenmark, col = "blue")
+
+## ---- Natura-2000-sea-raster --------
+
+# read natura2000
+
+Natura2000 <-  terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Natura2000.tif")
+
+
+# Write raw rasters to disk
+
+Natura2000_Croped_Sea <- terra::mask(Natura2000, SeaOfDenmark)
+
+# Write croped rasters to disk
+
+writeRaster(Natura2000_Croped_Sea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Natura2000_Croped_Sea.tif", overwrite=TRUE, gdal=c("COMPRESS=DEFLATE", "TFW=YES","of=COG"))
+
+
+# save as cloud optimized rasters
+
+sf::gdal_utils("warp",
+               source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Natura2000_Croped_Sea.tif",
+               destination = "Rast_Natura2000_Croped_Sea.tif",
+               options = c(
+                 "-of", "COG",
+                 "-co", "RESAMPLING=NEAREST",
+                 "-co", "TILING_SCHEME=GoogleMapsCompatible",
+                 "-co", "COMPRESS=DEFLATE",
+                 "-co", "NUM_THREADS=46"
+               ))
+
+## ---- PlotNatura2000Sea --------
+
+plot(SeaOfDenmark, col = "blue")
+plot(Natura2000_Croped_Sea, add =T)
+
+## ---- NaturaOgVildtreservater-sea-raster --------
+
+# read NaturaOgVildtreservater
+
+NaturaOgVildtreservater <-  terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_NaturaOgVildtreservater.tif")
+
+
+# Write raw rasters to disk
+
+NaturaOgVildtreservater_Croped_Sea <- terra::mask(NaturaOgVildtreservater, SeaOfDenmark)
+
+# Write croped rasters to disk
+
+writeRaster(NaturaOgVildtreservater_Croped_Sea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_NaturaOgVildtreservater_Croped_Sea.tif", overwrite=TRUE, gdal=c("COMPRESS=DEFLATE", "TFW=YES","of=COG"))
+
+
+# save as cloud optimized rasters
+
+sf::gdal_utils("warp",
+               source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_NaturaOgVildtreservater_Croped_Sea.tif",
+               destination = "Rast_NaturaOgVildtreservater_Croped_Sea.tif",
+               options = c(
+                 "-of", "COG",
+                 "-co", "RESAMPLING=NEAREST",
+                 "-co", "TILING_SCHEME=GoogleMapsCompatible",
+                 "-co", "COMPRESS=DEFLATE",
+                 "-co", "NUM_THREADS=46"
+               ))
+
+## ---- PlotNaturaOgVildtreservaterSea --------
+
+plot(SeaOfDenmark, col = "blue")
+plot(NaturaOgVildtreservater_Croped_Sea, add =T)
