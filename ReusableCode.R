@@ -532,6 +532,48 @@ plot(DK, col = "grey")
 plot(Rast_stoette_Croped, add =T)
 
 
+## ---- Ownership --------
+
+Ownership <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/Archive/ejerskab_20220609.gpkg")
+Ownership$Ownership <- ifelse(Ownership$ejerforhold_dni %in% c("fond", "andet"), "Privat",
+                              ifelse(Ownership$ejerforhold_dni %in% c("naturstyrelsen", "forsvaret","landbrugsstyrelsen", "kystdirektoratet"), "Statslig", "Kommunal"))
+
+Ownersip_Aggregated <- terra::aggregate(Ownership, by = "Ownership")
+
+Rast_Ownersip  <- terra::rasterize(Ownersip_Aggregated, Template, field = "Ownership")
+Rast_Ownersip_Croped <- terra::mask(Rast_Ownersip, DK)
+
+writeRaster(Rast_Ownersip, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Ownersip.tif", overwrite=TRUE, gdal=c("COMPRESS=NONE", "TFW=YES","of=COG"))
+
+writeRaster(Rast_Ownersip_Croped, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Ownersip_Croped.tif", overwrite=TRUE, gdal=c("COMPRESS=NONE", "TFW=YES","of=COG"))
+
+sf::gdal_utils("warp",
+               source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Ownersip.tif",
+               destination = "RasterizedCOG/Rast_Ownersip.tif",
+               options = c(
+                 "-of", "COG",
+                 "-co", "RESAMPLING=NEAREST",
+                 "-co", "TILING_SCHEME=GoogleMapsCompatible",
+                 "-co", "COMPRESS=DEFLATE",
+                 "-co", "NUM_THREADS=46"
+               ))
+
+sf::gdal_utils("warp",
+               source ="O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Ownersip_Croped.tif",
+               destination = "RasterizedCOG/Rast_Ownersip_Croped.tif",
+               options = c(
+                 "-of", "COG",
+                 "-co", "RESAMPLING=NEAREST",
+                 "-co", "TILING_SCHEME=GoogleMapsCompatible",
+                 "-co", "COMPRESS=DEFLATE",
+                 "-co", "NUM_THREADS=46"
+               ))
+
+## ---- Plotownership --------
+
+plot(DK, col = "grey")
+plot(Rast_Ownersip_Croped, add =T)
+
 ## ---- AllStack --------
 
 All <- c(Rast_Urort_Skov_Croped, Rast_stoette_Croped, Rast_p3_klit_Croped, Rast_markblokkort_Croped, Rast_NaturaOgVildtreservater_Croped, Rast_Natura2000_Croped, Rast_National_Parks_Croped, Rast_IUCN_Croped)

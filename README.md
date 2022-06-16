@@ -2529,6 +2529,51 @@ Table 3.3: Total area for protected areas and potential protected areas
 
 </details>
 
+For the next table we need to add some more layers such as the ownership
+of land
+
+<details style="\&quot;margin-bottom:10px;\&quot;">
+<summary>
+
+Creation of the Ownership layer
+
+</summary>
+
+``` r
+Ownership <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/Archive/ejerskab_20220609.gpkg")
+Ownership$Ownership <- ifelse(Ownership$ejerforhold_dni %in% c("fond", "andet"),
+    "Privat", ifelse(Ownership$ejerforhold_dni %in% c("naturstyrelsen", "forsvaret",
+        "landbrugsstyrelsen", "kystdirektoratet"), "Statslig", "Kommunal"))
+
+Ownersip_Aggregated <- terra::aggregate(Ownership, by = "Ownership")
+
+Rast_Ownersip <- terra::rasterize(Ownersip_Aggregated, Template, field = "Ownership")
+Rast_Ownersip_Croped <- terra::mask(Rast_Ownersip, DK)
+
+writeRaster(Rast_Ownersip, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Ownersip.tif",
+    overwrite = TRUE, gdal = c("COMPRESS=NONE", "TFW=YES", "of=COG"))
+
+writeRaster(Rast_Ownersip_Croped, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Ownersip_Croped.tif",
+    overwrite = TRUE, gdal = c("COMPRESS=NONE", "TFW=YES", "of=COG"))
+
+sf::gdal_utils("warp", source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Ownersip.tif",
+    destination = "RasterizedCOG/Rast_Ownersip.tif", options = c("-of", "COG", "-co",
+        "RESAMPLING=NEAREST", "-co", "TILING_SCHEME=GoogleMapsCompatible", "-co",
+        "COMPRESS=DEFLATE", "-co", "NUM_THREADS=46"))
+
+sf::gdal_utils("warp", source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Ownersip_Croped.tif",
+    destination = "RasterizedCOG/Rast_Ownersip_Croped.tif", options = c("-of", "COG",
+        "-co", "RESAMPLING=NEAREST", "-co", "TILING_SCHEME=GoogleMapsCompatible",
+        "-co", "COMPRESS=DEFLATE", "-co", "NUM_THREADS=46"))
+```
+
+</details>
+
+the results can be seen in figure <a href="#fig:Plotownership">3.9</a>
+
+![Figure 3.9: Plot of
+ownership](README_files/figure-gfm/Plotownership-1.png)
+
 # 4 Ocean ecosystems
 
 ## 4.1 Data generation

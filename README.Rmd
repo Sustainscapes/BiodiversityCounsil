@@ -353,6 +353,23 @@ The results of this code are seen in table \@ref(tab:show-second-table), and the
 
 ```
 </details>
+
+
+For the next table we need to add some more layers such as the ownership of land
+
+<details style=\"margin-bottom:10px;\">
+<summary>Creation of the Ownership layer</summary>
+```{r Ownership, cache = T, echo=T}
+
+```
+</details>
+
+the results can be seen in figure \@ref(fig:Plotownership)
+
+```{r Plotownership, fig.cap= "Plot of ownership", echo=FALSE, cache=TRUE}
+
+```
+
 # Ocean ecosystems
 
 ## Data generation
