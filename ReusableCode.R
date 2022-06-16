@@ -411,19 +411,20 @@ National_Parks$ID <- "NationalParks"
 
 # Read New ones
 
-NewNatParks <- list.files(path = "O:/Nat_BDR-data/Arealanalyse/RAW/NewNationalParks/", pattern = ".shp", full.names = T) %>%
+NewNatParks <- list.files(path = "O:/Nat_BDR-data/Arealanalyse/RAW/NewNationalParks/", pattern = ".shp", full.names = T)
+NewNatParks <- NewNatParks[str_detect(NewNatParks, "lock", negate = T)] %>%
   purrr::map(vect) %>%
   purrr::reduce(rbind) %>%
   terra::project(crs(Template))
 
 NewNatParks$ID <- "NationalParks"
 
-National_Parks_Aggregated <- rbind(NewNatParks, National_Parks)
+National_Parks_Aggregated <- rbind(NewNatParks, National_Parks) %>%
+  terra::makeValid()
 
-National_Parks_Aggregated <- terra::aggregate(National_Parks, by='ID')
+National_Parks_Aggregated <- terra::aggregate(National_Parks_Aggregated, by='ID')
 
 Rast_National_Parks  <- terra::rasterize(National_Parks_Aggregated, Template, field = "ID")
-
 
 Rast_National_Parks_Croped <- terra::mask(Rast_National_Parks, DK)
 
