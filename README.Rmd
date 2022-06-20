@@ -370,6 +370,26 @@ the results can be seen in figure \@ref(fig:Plotownership)
 
 ```
 
+With this we genrate the ownership table with the following code
+
+
+<details style=\"margin-bottom:10px;\">
+<summary>Creation of the Ownership table</summary>
+```{r build-3d-table, cache = T, echo=T}
+
+```
+</details>
+
+
+This generates a summarized table shown in table \@ref(tab:show-3d-table), this can be downloaded as an excel file [here](https://github.com/Sustainscapes/BiodiversityCounsil/raw/master/Ownership_Table.xlsx) an rds [here](https://github.com/Sustainscapes/BiodiversityCounsil/blob/master/Ownership_Table.rds), or a csv [here](https://github.com/Sustainscapes/BiodiversityCounsil/blob/master/Ownership_Table.csv)
+
+<details style=\"margin-bottom:10px;\">
+<summary>Ownership table</summary>
+```{r show-3d-table, cache = F, echo=F}
+
+```
+</details>
+
 # Ocean ecosystems
 
 ## Data generation

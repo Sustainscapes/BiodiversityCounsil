@@ -1,7 +1,7 @@
 Dataset generation for the Danish Biodiversity council
 ================
 Derek Corcoran
-16/06, 2022
+20/06, 2022
 
 -   [1 Objective](#1-objective)
 -   [2 Packages needed](#2-packages-needed)
@@ -2573,6 +2573,135 @@ the results can be seen in figure <a href="#fig:Plotownership">3.9</a>
 
 ![Figure 3.9: Plot of
 ownership](README_files/figure-gfm/Plotownership-1.png)
+
+With this we genrate the ownership table with the following code
+
+<details style="\&quot;margin-bottom:10px;\&quot;">
+<summary>
+
+Creation of the Ownership table
+
+</summary>
+
+``` r
+Ownership <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Ownersip_Croped.tif")
+
+Natura2000 <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Natura2000_Croped.tif")
+
+Paragraph3 <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_p3_klit_Croped.tif")
+
+Vildtreservater <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_NaturaOgVildtreservater_Croped.tif")
+
+Urort_skov <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Urort_Skov_Croped.tif")
+
+National_Parks <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_National_Parks_Croped.tif")
+
+ForTable <- c(Ownership, Natura2000, Paragraph3, Vildtreservater, Urort_skov, National_Parks)
+
+Ownership_Long_Table <- terra::crosstab(ForTable, useNA = T, long = TRUE)
+
+saveRDS(Ownership_Long_Table, "Ownership_Long_Table.rds")
+
+Paragraph3_DF <- data.frame(Natyp_navn = 0:(length(levels(Paragraph3)[[1]]) - 1),
+    Habitats_P3 = levels(Paragraph3)[[1]])
+
+Ownership_Long_Table <- Ownership_Long_Table %>%
+    full_join(Paragraph3_DF) %>%
+    dplyr::select(-Natyp_navn)
+
+# Change the names of the columns of Natura 2000 from Natura2000 to Natura_2000
+# and change numbers for actual names
+
+Natura2000_DF <- data.frame(Natura2000 = 0, Natura_2000 = "Yes")
+
+Ownership_Long_Table <- Ownership_Long_Table %>%
+    full_join(Natura2000_DF) %>%
+    dplyr::select(-Natura2000)
+
+
+# Change the names of the columns of Urort_Skov from Owned to Urort_Skov and
+# change numbers for actual names
+
+Urort_Skov_DF <- data.frame(Owned = 0:(length(levels(Urort_skov)[[1]]) - 1), Urort_Skov = levels(Urort_skov)[[1]])
+
+Ownership_Long_Table <- Ownership_Long_Table %>%
+    full_join(Urort_Skov_DF) %>%
+    dplyr::select(-Owned)
+
+# Change the names of the columns of NaturaOgVildtreservater_DF from Temanavn
+# to NaturaOgVildtreservater and change numbers for actual names
+
+NaturaOgVildtreservater_DF <- data.frame(Temanavn = 0, NaturaOgVildtreservater = "Yes")
+
+Ownership_Long_Table <- Ownership_Long_Table %>%
+    full_join(NaturaOgVildtreservater_DF) %>%
+    dplyr::select(-Temanavn)
+
+# Change the names of the columns of Naturnationalparker from ID to
+# Naturnationalparker and change numbers for actual names
+
+Naturnationalparker_DF <- data.frame(ID = 0, Naturnationalparker = "Yes")
+
+Ownership_Long_Table <- Ownership_Long_Table %>%
+    full_join(Naturnationalparker_DF) %>%
+    dplyr::select(-ID)
+
+## Change the names of owntership
+
+Ownership_DF <- data.frame(Ownership = 0:(length(levels(Ownership)[[1]]) - 1), ownership = levels(Ownership)[[1]])
+
+Ownership_Long_Table <- Ownership_Long_Table %>%
+    full_join(Ownership_DF) %>%
+    dplyr::select(-Ownership)
+
+Ownership_Table <- Ownership_Long_Table %>%
+    mutate(Area_Sq_Mt = 100 * Freq, Proportion = 100 * (Area_Sq_Mt/Area_DK)) %>%
+    dplyr::select(-Freq) %>%
+    mutate_at(c("Habitats_P3", "Natura_2000", "Urort_Skov", "NaturaOgVildtreservater",
+        "Naturnationalparker"), ~ifelse(is.na(.x), NA, "Yes")) %>%
+    pivot_longer(c("Habitats_P3", "Natura_2000", "Urort_Skov", "NaturaOgVildtreservater",
+        "Naturnationalparker")) %>%
+    dplyr::filter(!is.na(value)) %>%
+    dplyr::select(-value, -Proportion) %>%
+    group_by(name, ownership) %>%
+    summarise(Area_Sq_Km = sum(Area_Sq_Mt)/1e+06) %>%
+    mutate(ownership = ifelse(is.na(ownership), "Unknown", ownership)) %>%
+    pivot_wider(values_from = Area_Sq_Km, names_from = ownership)
+
+saveRDS(Ownership_Table, "Ownership_Table.rds")
+readr::write_csv(Ownership_Table, "Ownership_Table.csv")
+openxlsx::write.xlsx(Ownership_Table, "Ownership_Table.xlsx")
+```
+
+</details>
+
+This generates a summarized table shown in table
+<a href="#tab:show-3d-table">3.4</a>, this can be downloaded as an excel
+file
+[here](https://github.com/Sustainscapes/BiodiversityCounsil/raw/master/Ownership_Table.xlsx)
+an rds
+[here](https://github.com/Sustainscapes/BiodiversityCounsil/blob/master/Ownership_Table.rds),
+or a csv
+[here](https://github.com/Sustainscapes/BiodiversityCounsil/blob/master/Ownership_Table.csv)
+
+<details style="\&quot;margin-bottom:10px;\&quot;">
+<summary>
+
+Ownership table
+
+</summary>
+
+| name                    | Kommunal |    Privat |  Statslig | Unknown |
+|:------------------------|---------:|----------:|----------:|--------:|
+| Habitats_P3             |  187.460 | 3,193.396 |   882.343 | 273.905 |
+| Natura_2000             |   60.449 | 2,229.276 | 1,241.710 | 347.185 |
+| NaturaOgVildtreservater |    7.108 |   151.268 |   164.311 | 116.919 |
+| Naturnationalparker     |    0.047 |     2.353 |   253.629 |   1.272 |
+| Urort_Skov              |    0.469 |    33.874 |   651.373 |  12.008 |
+
+Table 3.4: Total area for areas by ownership in square kilometers
+
+</details>
 
 # 4 Ocean ecosystems
 

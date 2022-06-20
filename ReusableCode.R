@@ -1431,6 +1431,94 @@ saveRDS(Total, "Total.rds")
 
 knitr::kable(Total, digits = 3, caption = "Total area for protected areas and potential protected areas", format.args	= list(big.mark = ','))
 
+## ---- build-3d-table --------
+
+Ownership <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Ownersip_Croped.tif")
+
+Natura2000 <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Natura2000_Croped.tif")
+
+Paragraph3 <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_p3_klit_Croped.tif")
+
+Vildtreservater <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_NaturaOgVildtreservater_Croped.tif")
+
+Urort_skov <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Urort_Skov_Croped.tif")
+
+National_Parks <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_National_Parks_Croped.tif")
+
+ForTable <- c(Ownership, Natura2000, Paragraph3, Vildtreservater, Urort_skov, National_Parks)
+
+Ownership_Long_Table <- terra::crosstab(ForTable, useNA=T, long=TRUE)
+
+saveRDS(Ownership_Long_Table, "Ownership_Long_Table.rds")
+
+Paragraph3_DF <- data.frame(Natyp_navn = 0:(length(levels(Paragraph3)[[1]]) - 1), Habitats_P3 = levels(Paragraph3)[[1]])
+
+Ownership_Long_Table <- Ownership_Long_Table %>%
+  full_join(Paragraph3_DF) %>%
+  dplyr::select(-Natyp_navn)
+
+# Change the names of the columns of Natura 2000 from Natura2000 to Natura_2000 and change numbers for actual names
+
+Natura2000_DF <- data.frame(Natura2000 = 0, Natura_2000 = "Yes")
+
+Ownership_Long_Table <- Ownership_Long_Table %>%
+  full_join(Natura2000_DF) %>%
+  dplyr::select(-Natura2000)
+
+
+# Change the names of the columns of Urort_Skov from Owned to Urort_Skov and change numbers for actual names
+
+Urort_Skov_DF <- data.frame(Owned = 0:(length(levels(Urort_skov)[[1]]) - 1), Urort_Skov = levels(Urort_skov)[[1]])
+
+Ownership_Long_Table <- Ownership_Long_Table %>%
+  full_join(Urort_Skov_DF) %>%
+  dplyr::select(-Owned)
+
+# Change the names of the columns of NaturaOgVildtreservater_DF from Temanavn to NaturaOgVildtreservater and change numbers for actual names
+
+NaturaOgVildtreservater_DF <- data.frame(Temanavn  = 0, NaturaOgVildtreservater = "Yes")
+
+Ownership_Long_Table <- Ownership_Long_Table %>%
+  full_join(NaturaOgVildtreservater_DF) %>%
+  dplyr::select(-Temanavn)
+
+# Change the names of the columns of Naturnationalparker from ID to Naturnationalparker and change numbers for actual names
+
+Naturnationalparker_DF <- data.frame(ID  = 0, Naturnationalparker = "Yes")
+
+Ownership_Long_Table <- Ownership_Long_Table %>%
+  full_join(Naturnationalparker_DF) %>%
+  dplyr::select(-ID)
+
+## Change the names of owntership
+
+Ownership_DF <- data.frame(Ownership  = 0:(length(levels(Ownership)[[1]]) - 1), ownership = levels(Ownership)[[1]])
+
+Ownership_Long_Table <- Ownership_Long_Table %>%
+  full_join(Ownership_DF) %>%
+  dplyr::select(-Ownership)
+
+Ownership_Table <- Ownership_Long_Table %>%
+  mutate(Area_Sq_Mt = 100*Freq, Proportion = 100*(Area_Sq_Mt/Area_DK)) %>%
+  dplyr::select(-Freq) %>%
+  mutate_at(c("Habitats_P3", "Natura_2000", "Urort_Skov", "NaturaOgVildtreservater", "Naturnationalparker"), ~ifelse(is.na(.x), NA, "Yes")) %>%
+  pivot_longer(c("Habitats_P3", "Natura_2000", "Urort_Skov", "NaturaOgVildtreservater","Naturnationalparker")) %>%
+  dplyr::filter(!is.na(value)) %>%
+  dplyr::select(-value, -Proportion) %>%
+  group_by(name, ownership) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Mt)/1000000) %>%
+  mutate(ownership = ifelse(is.na(ownership), "Unknown", ownership)) %>%
+  pivot_wider(values_from = Area_Sq_Km, names_from = ownership)
+
+saveRDS(Ownership_Table, "Ownership_Table.rds")
+readr::write_csv(Ownership_Table, "Ownership_Table.csv")
+openxlsx::write.xlsx(Ownership_Table, "Ownership_Table.xlsx")
+
+## ---- show-3d-table --------
+
+knitr::kable(Ownership_Table, digits = 3, caption = "Total area for areas by ownership in square kilometers", format.args	= list(big.mark = ','))
+
+
 ## ---- sea-of-Denmark --------
 
 SeaOfDenmark <- mregions::mr_shp("Denmark:eez") %>%
