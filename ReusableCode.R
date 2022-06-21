@@ -1557,6 +1557,7 @@ SeaOfDenmark <- mregions::mr_shp("Denmark:eez") %>%
 
 Area_Sea_DK <- expanse(SeaOfDenmark)
 
+TemplateSea <- terra::extend(Template, SeaOfDenmark)
 
 ## ---- PlotSeaDenmark --------
 
@@ -1566,16 +1567,21 @@ plot(SeaOfDenmark, col = "blue")
 
 # read natura2000
 
-Natura2000 <-  terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Natura2000.tif")
+Natura2000 <-  terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/Natura2000 MiljøGIS Maj2022/pg-natura_2000_omraader_natura2000.shp")
+Natura2000$Natura_2000 <- "Yes"
+Natura2000 <- Natura2000[,c("Natura_2000")]
+
+Natura2000 <- aggregate(Natura2000, by='Natura_2000')
+Natura2000_Croped_Sea <- terra::mask(Natura2000, SeaOfDenmark)
 
 
 # Write raw rasters to disk
 
-Natura2000_Croped_Sea <- terra::mask(Natura2000, SeaOfDenmark)
+Rast_Natura2000_Croped_Sea <- terra::rasterize(Natura2000_Croped_Sea, TemplateSea)
 
 # Write croped rasters to disk
 
-writeRaster(Natura2000_Croped_Sea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Natura2000_Croped_Sea.tif", overwrite=TRUE, gdal=c("COMPRESS=DEFLATE", "TFW=YES","of=COG"))
+writeRaster(Rast_Natura2000_Croped_Sea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Natura2000_Croped_Sea.tif", overwrite=TRUE, gdal=c("COMPRESS=DEFLATE", "TFW=YES","of=COG"))
 
 
 # save as cloud optimized rasters
@@ -1594,29 +1600,33 @@ sf::gdal_utils("warp",
 ## ---- PlotNatura2000Sea --------
 
 plot(SeaOfDenmark, col = "blue")
-plot(Natura2000_Croped_Sea, add =T, legend = "bottom")
+plot(Rast_Natura2000_Croped_Sea, add =T, legend = "bottom")
 
-## ---- NaturaOgVildtreservater-sea-raster --------
+## ---- Habitatomrade-sea-raster --------
 
-# read NaturaOgVildtreservater
+Habitatomrade <-  terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/HABITAT_OMRAADER/HABITAT_OMRAADER.shp")
 
-NaturaOgVildtreservater <-  terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_NaturaOgVildtreservater.tif")
+Habitatomrade$Habitatomrade <- "Yes"
+Habitatomrade <- Habitatomrade[,c("Habitatomrade")]
+
+Habitatomrade <- aggregate(Habitatomrade, by='Habitatomrade')
+Habitatomrade_Croped_Sea <- terra::mask(Habitatomrade, SeaOfDenmark)
 
 
 # Write raw rasters to disk
 
-NaturaOgVildtreservater_Croped_Sea <- terra::mask(NaturaOgVildtreservater, SeaOfDenmark)
+Rast_Habitatomrade_Croped_Sea <- terra::rasterize(Habitatomrade_Croped_Sea, TemplateSea)
 
 # Write croped rasters to disk
 
-writeRaster(NaturaOgVildtreservater_Croped_Sea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_NaturaOgVildtreservater_Croped_Sea.tif", overwrite=TRUE, gdal=c("COMPRESS=DEFLATE", "TFW=YES","of=COG"))
+writeRaster(Rast_Habitatomrade_Croped_Sea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Habitatomrade_Croped_Sea.tif", overwrite=TRUE, gdal=c("COMPRESS=DEFLATE", "TFW=YES","of=COG"))
 
 
 # save as cloud optimized rasters
 
 sf::gdal_utils("warp",
-               source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_NaturaOgVildtreservater_Croped_Sea.tif",
-               destination = "RasterizedCOG/Rast_NaturaOgVildtreservater_Croped_Sea.tif",
+               source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Habitatomrade_Croped_Sea.tif",
+               destination = "RasterizedCOG/Rast_Habitatomrade_Croped_Sea.tif",
                options = c(
                  "-of", "COG",
                  "-co", "RESAMPLING=NEAREST",
@@ -1625,7 +1635,45 @@ sf::gdal_utils("warp",
                  "-co", "NUM_THREADS=46"
                ))
 
-## ---- PlotNaturaOgVildtreservaterSea --------
+## ---- PlotHabitatomradeSea --------
 
 plot(SeaOfDenmark, col = "blue")
-plot(NaturaOgVildtreservater_Croped_Sea, add =T, legend = "bottom")
+plot(Rast_Habitatomrade_Croped_Sea, add =T, legend = "bottom")
+
+## ---- Habitatnaturtype-sea-raster --------
+
+Habitatnaturtype <-  terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/np3h2021_shp_download/np3h2021_marine_kortlaeg_2004_2018.shp")
+
+Habitatnaturtype$Habitatnaturtype <- Habitatnaturtype$Naturnavn
+Habitatnaturtype <- Habitatnaturtype[,c("Habitatnaturtype")]
+
+Habitatnaturtype <- aggregate(Habitatnaturtype, by='Habitatnaturtype')
+Habitatnaturtype_Croped_Sea <- terra::mask(Habitatnaturtype, SeaOfDenmark)
+
+
+# Write raw rasters to disk
+
+Rast_Habitatnaturtype_Croped_Sea <- terra::rasterize(Habitatnaturtype_Croped_Sea, TemplateSea)
+
+# Write croped rasters to disk
+
+writeRaster(Rast_Habitatnaturtype_Croped_Sea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Habitatnaturtype_Croped_Sea.tif", overwrite=TRUE, gdal=c("COMPRESS=DEFLATE", "TFW=YES","of=COG"))
+
+
+# save as cloud optimized rasters
+
+sf::gdal_utils("warp",
+               source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Habitatnaturtype_Croped_Sea.tif",
+               destination = "RasterizedCOG/Rast_Habitatnaturtype_Croped_Sea.tif",
+               options = c(
+                 "-of", "COG",
+                 "-co", "RESAMPLING=NEAREST",
+                 "-co", "TILING_SCHEME=GoogleMapsCompatible",
+                 "-co", "COMPRESS=DEFLATE",
+                 "-co", "NUM_THREADS=46"
+               ))
+
+## ---- PlotHabitatnaturtypeSea --------
+
+plot(SeaOfDenmark, col = "blue")
+plot(Rast_Habitatnaturtype_Croped_Sea, add =T, legend = "bottom")

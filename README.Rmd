@@ -462,7 +462,7 @@ The total area for Denmark according to that is `r prettyNum(round(Area_Sea_DK/1
 
 ### Natura 2000
 
-This was already rasterized above, so we only need to mask it to sea and save it
+We had to rerasterize the shapefile using a template for the sea of Denmark as shown below
 
 <details style=\"margin-bottom:10px;\">
 <summary>Crop and save natura 2000 sea</summary>
@@ -477,24 +477,39 @@ the results can be seen in figure \@ref(fig:PlotNatura2000Sea)
 
 ```
 
-### Nature and wildlife reservations
+### Habitatomrade
 
-This was already rasterized above, so we only need to mask it to sea and save it
+We had to rerasterize the shapefile using a template for the sea of Denmark as shown below
 
 <details style=\"margin-bottom:10px;\">
-<summary>Nature and wildlife reservations</summary>
-```{r NaturaOgVildtreservater-sea-raster}
+<summary>Crop and save Habitatomrade sea</summary>
+```{r Habitatomrade-sea-raster}
 
 ```
 </details>
 
-the results can be seen in figure \@ref(fig:PlotNaturaOgVildtreservaterSea)
+the results can be seen in figure \@ref(fig:PlotHabitatomradeSea)
 
-```{r PlotNaturaOgVildtreservaterSea, fig.cap= "Plot of the areas of Natura 2000 within the sea of Denmark", echo=FALSE, cache=TRUE}
+```{r PlotHabitatomradeSea, fig.cap= "Plot of the areas of Habitatomrade within the sea of Denmark", echo=FALSE, cache=TRUE}
 
 ```
 
+### Habitatnaturtype
 
+We had to rerasterize the shapefile using a template for the sea of Denmark as shown below
+
+<details style=\"margin-bottom:10px;\">
+<summary>Crop and save Habitatnaturtype sea</summary>
+```{r Habitatnaturtype-sea-raster}
+
+```
+</details>
+
+the results can be seen in figure \@ref(fig:PlotHabitatnaturtypeSea)
+
+```{r PlotHabitatnaturtypeSea, fig.cap= "Plot of the areas of Habitatnaturtype within the sea of Denmark", echo=FALSE, cache=TRUE}
+
+```
 
 # Session info
 
