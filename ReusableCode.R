@@ -404,25 +404,12 @@ plot(Rast_Urort_Skov_Croped, add =T)
 ## ---- Rasterize-naturnationalpark --------
 
 # Read state owned untouched forest
-National_Parks <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/GIS filer - de 5/GIS filer - de 5/Naturnationalparker.shp") %>%
+National_Parks <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/NNP from NST/Naturnationalparker.shp") %>%
   terra::project(crs(Template))
 
 National_Parks$ID <- "NationalParks"
 
-# Read New ones
-
-NewNatParks <- list.files(path = "O:/Nat_BDR-data/Arealanalyse/RAW/NewNationalParks/", pattern = ".shp", full.names = T)
-NewNatParks <- NewNatParks[str_detect(NewNatParks, "lock", negate = T)] %>%
-  purrr::map(vect) %>%
-  purrr::reduce(rbind) %>%
-  terra::project(crs(Template))
-
-NewNatParks$ID <- "NationalParks"
-
-National_Parks_Aggregated <- rbind(NewNatParks, National_Parks) %>%
-  terra::makeValid()
-
-National_Parks_Aggregated <- terra::aggregate(National_Parks_Aggregated, by='ID')
+National_Parks_Aggregated <- terra::aggregate(National_Parks, by='ID')
 
 Rast_National_Parks  <- terra::rasterize(National_Parks_Aggregated, Template, field = "ID")
 
@@ -1517,6 +1504,47 @@ openxlsx::write.xlsx(Ownership_Table, "Ownership_Table.xlsx")
 ## ---- show-3d-table --------
 
 knitr::kable(Ownership_Table, digits = 3, caption = "Total area for areas by ownership in square kilometers", format.args	= list(big.mark = ','))
+
+## ---- build-P3-Ownership-table --------
+
+P3_Ownership <- Ownership_Long_Table %>%
+  dplyr::filter(!is.na(Habitats_P3)) %>%
+  dplyr::mutate(Status = ifelse(is.na(Natura_2000) & is.na(Urort_Skov) & is.na(NaturaOgVildtreservater) & is.na(Naturnationalparker), "Exclusive", "Overlaps")) %>%
+  dplyr::select(Freq, Habitats_P3, ownership, Status) %>%
+  dplyr::mutate(Habitats_P3 = ifelse(is.na(Habitats_P3), NA, "Yes")) %>%
+  mutate(ownership = ifelse(is.na(ownership), "Unknown", ownership)) %>%
+  group_by(Habitats_P3, ownership, Status) %>%
+  summarise(Area_Sq_Km = (sum(Freq)*100)/1000000) %>%
+  ungroup() %>%
+  dplyr::select(-Habitats_P3) %>%
+  pivot_wider(names_from = ownership, values_from = Area_Sq_Km)
+
+saveRDS(P3_Ownership, "P3_Ownership.rds")
+readr::write_csv(P3_Ownership, "P3_Ownership.csv")
+openxlsx::write.xlsx(P3_Ownership, "P3_Ownership.xlsx")
+
+## ---- show-P3-Ownership-table --------
+
+knitr::kable(P3_Ownership, digits = 3, caption = "Total area for paragraph 3 and klit in square kilometers separated by ownership", format.args	= list(big.mark = ','))
+
+## ---- build-Skov-Ownership-table --------
+
+Urort_Skov_Ownership <- Ownership_Long_Table %>%
+  dplyr::filter(!is.na(Urort_Skov)) %>%
+  dplyr::mutate(Status = ifelse(is.na(Natura_2000) & is.na(Habitats_P3) & is.na(NaturaOgVildtreservater) & is.na(Naturnationalparker), "Exclusive", "Overlaps")) %>%
+  dplyr::select(Freq, Urort_Skov, Status) %>%
+  group_by(Urort_Skov, Status) %>%
+  summarise(Area_Sq_Km = (sum(Freq)*100)/1000000) %>%
+  ungroup() %>%
+  pivot_wider(names_from = Urort_Skov, values_from = Area_Sq_Km)
+
+saveRDS(Urort_Skov_Ownership, "Urort_Skov_Ownership.rds")
+readr::write_csv(Urort_Skov_Ownership, "Urort_Skov_Ownership.csv")
+openxlsx::write.xlsx(Urort_Skov_Ownership, "Urort_Skov_Ownership.xlsx")
+
+## ---- show-Skov-Ownership-table --------
+
+knitr::kable(Urort_Skov_Ownership, digits = 3, caption = "Total area for untouched forest in square kilometers separated by ownership", format.args	= list(big.mark = ','))
 
 
 ## ---- sea-of-Denmark --------
