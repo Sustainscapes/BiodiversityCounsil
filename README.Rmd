@@ -511,6 +511,105 @@ the results can be seen in figure \@ref(fig:PlotHabitatnaturtypeSea)
 
 ```
 
+### Ramsar 
+
+We had to rerasterize the shapefile using a template for the sea of Denmark as shown below
+
+<details style=\"margin-bottom:10px;\">
+<summary>Crop and save Ramsar sea</summary>
+```{r Ramsar-sea-raster}
+
+```
+</details>
+
+the results can be seen in figure \@ref(fig:PlotRamsarSea)
+
+```{r PlotRamsarSea, fig.cap= "Plot of the areas of Ramsar within the sea of Denmark", echo=FALSE, cache=TRUE}
+
+```
+
+### Havstrategi standard 
+
+We had to rerasterize the shapefile using a template for the sea of Denmark as shown below
+
+<details style=\"margin-bottom:10px;\">
+<summary>Crop and save Havstrategi-standard sea</summary>
+```{r Havstrategi-standard-sea-raster}
+
+```
+</details>
+
+the results can be seen in figure \@ref(fig:PlotHavstrategiStandardSea)
+
+```{r PlotHavstrategiStandardSea, fig.cap= "Plot of the areas of Havstrategi standard within the sea of Denmark", echo=FALSE, cache=TRUE}
+
+```
+
+### Havstrategi streng 
+
+We had to rerasterize the shapefile using a template for the sea of Denmark as shown below
+
+<details style=\"margin-bottom:10px;\">
+<summary>Crop and save Havstrategi streng sea</summary>
+```{r Havstrategi-streng-sea-raster}
+
+```
+</details>
+
+the results can be seen in figure \@ref(fig:PlotHavstrategiStandardSea)
+
+```{r PlotHavstrategiStrengSea, fig.cap= "Plot of the areas of Havstrategi streng within the sea of Denmark", echo=FALSE, cache=TRUE}
+
+```
+
+### Natur Vildt Reservater 
+
+We had to rerasterize the shapefile using a template for the sea of Denmark as shown below
+
+<details style=\"margin-bottom:10px;\">
+<summary>Crop and save Natur Vildt Reservater sea</summary>
+```{r Natur-Vildt-Reservater-sea-raster}
+
+```
+</details>
+
+the results can be seen in figure \@ref(fig:PlotNaturVildtReservaterSea)
+
+```{r PlotNaturVildtReservaterSea, fig.cap= "Plot of the areas of Natur Vildt Reservater within the sea of Denmark", echo=FALSE, cache=TRUE}
+
+```
+
+### Fredninger 
+
+We had to rerasterize the shapefile using a template for the sea of Denmark as shown below
+
+<details style=\"margin-bottom:10px;\">
+<summary>Crop and save Fredninger sea</summary>
+```{r Fredninger-sea-raster}
+
+```
+</details>
+
+the results can be seen in figure \@ref(fig:PlotFredningerSea)
+
+```{r PlotFredningerSea, fig.cap= "Plot of the areas of Fredninger within the sea of Denmark", echo=FALSE, cache=TRUE}
+
+```
+
+## Results
+
+To get the results we need to make a stack of all the layers
+
+```{r AllStackSea}
+
+```
+
+and then we crosstabulate to solve for all the intersections
+
+```{r crosstabSea}
+
+```
+
 # Session info
 
 <details style=\"margin-bottom:10px;\">
