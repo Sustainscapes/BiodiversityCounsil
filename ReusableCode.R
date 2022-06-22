@@ -2044,7 +2044,88 @@ Havstrategi_standard_Sea_Table1 <- full_join(Havstrategi_standard_Sea_Table1_Tot
   relocate(Class, .before = everything())
 
 
-TotalOverlap <- list(Natura2000_Sea_Table1, Habitatomrade_Sea_Table1, Habitatnaturtype_Sea_Table1, Ramsar_Sea_Table1, Havstrategi_standard_Sea_Table1) %>%
+##
+
+Havstrategi_streng_Sea_Table1a <- LongSeaTable %>%
+  dplyr::filter(!is.na(Havstrategi_streng)) %>%
+  mutate(Overlaped = case_when(is.na(Natura_2000) & is.na(Habitatnaturtype) &
+                                 is.na(Ramsar) & is.na(Habitatomrade) & is.na(Havstrategi_standard) & is.na(Natur_Vildt_Reservater) &
+                                 is.na(Fredninger) ~ "No", TRUE ~ "Yes")) %>%
+  group_by(Havstrategi_streng, Overlaped) %>%
+  summarise_if(is.numeric, sum) %>%
+  dplyr::select(-Frequency)
+
+Havstrategi_streng_Sea_Table1_Totals <- Havstrategi_streng_Sea_Table1a %>%
+  ungroup() %>%
+  summarise_if(is.numeric, sum) %>%
+  mutate(Class = "Havstrategi_streng")
+
+Havstrategi_streng_Sea_Table1_Appart <- Havstrategi_streng_Sea_Table1a %>%
+  mutate(Class = "Havstrategi_streng") %>%
+  ungroup() %>%
+  dplyr::select(-Proportion, -Havstrategi_streng) %>%
+  tidyr::pivot_wider(names_from = Overlaped, values_from = Area_Sq_Km) %>%
+  rename(Area_Overlapped = Yes)
+
+Havstrategi_streng_Sea_Table1 <- full_join(Havstrategi_streng_Sea_Table1_Totals, Havstrategi_streng_Sea_Table1_Appart) %>%
+  relocate(Class, .before = everything())
+
+##
+
+Natur_Vildt_Reservater_Sea_Table1a <- LongSeaTable %>%
+  dplyr::filter(!is.na(Natur_Vildt_Reservater)) %>%
+  mutate(Overlaped = case_when(is.na(Natura_2000) & is.na(Habitatnaturtype) &
+                                 is.na(Ramsar) & is.na(Habitatomrade) & is.na(Havstrategi_streng) & is.na(Havstrategi_standard) &
+                                 is.na(Fredninger) ~ "No", TRUE ~ "Yes")) %>%
+  group_by(Natur_Vildt_Reservater, Overlaped) %>%
+  summarise_if(is.numeric, sum) %>%
+  dplyr::select(-Frequency)
+
+Natur_Vildt_Reservater_Sea_Table1_Totals <- Natur_Vildt_Reservater_Sea_Table1a %>%
+  ungroup() %>%
+  summarise_if(is.numeric, sum) %>%
+  mutate(Class = "Natur_Vildt_Reservater")
+
+Natur_Vildt_Reservater_Sea_Table1_Appart <- Natur_Vildt_Reservater_Sea_Table1a %>%
+  mutate(Class = "Natur_Vildt_Reservater") %>%
+  ungroup() %>%
+  dplyr::select(-Proportion, -Natur_Vildt_Reservater) %>%
+  tidyr::pivot_wider(names_from = Overlaped, values_from = Area_Sq_Km) %>%
+  rename(Area_Overlapped = Yes, Area_Exclusive = No)
+
+Natur_Vildt_Reservater_Sea_Table1 <- full_join(Natur_Vildt_Reservater_Sea_Table1_Totals, Natur_Vildt_Reservater_Sea_Table1_Appart) %>%
+  relocate(Class, .before = everything())
+
+##
+
+Fredninger_Sea_Table1a <- LongSeaTable %>%
+  dplyr::filter(!is.na(Fredninger)) %>%
+  mutate(Overlaped = case_when(is.na(Natura_2000) & is.na(Habitatnaturtype) &
+                                 is.na(Ramsar) & is.na(Habitatomrade) & is.na(Havstrategi_streng) & is.na(Havstrategi_standard) &
+                                 is.na(Natur_Vildt_Reservater) ~ "No", TRUE ~ "Yes")) %>%
+  group_by(Fredninger, Overlaped) %>%
+  summarise_if(is.numeric, sum) %>%
+  dplyr::select(-Frequency)
+
+Fredninger_Sea_Table1_Totals <- Fredninger_Sea_Table1a %>%
+  ungroup() %>%
+  summarise_if(is.numeric, sum) %>%
+  mutate(Class = "Fredninger")
+
+Fredninger_Sea_Table1_Appart <- Fredninger_Sea_Table1a %>%
+  mutate(Class = "Fredninger") %>%
+  ungroup() %>%
+  dplyr::select(-Proportion, -Fredninger) %>%
+  tidyr::pivot_wider(names_from = Overlaped, values_from = Area_Sq_Km) %>%
+  rename(Area_Overlapped = Yes, Area_Exclusive = No)
+
+Fredninger_Sea_Table1 <- full_join(Fredninger_Sea_Table1_Totals, Fredninger_Sea_Table1_Appart) %>%
+  relocate(Class, .before = everything())
+
+##
+
+
+TotalOverlap <- list(Natura2000_Sea_Table1, Habitatomrade_Sea_Table1, Habitatnaturtype_Sea_Table1, Ramsar_Sea_Table1, Havstrategi_standard_Sea_Table1, Havstrategi_streng_Sea_Table1, Natur_Vildt_Reservater_Sea_Table1, Fredninger_Sea_Table1) %>%
   purrr::reduce(bind_rows) %>%
   arrange(desc(Area_Sq_Km))
 
