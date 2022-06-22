@@ -3348,7 +3348,26 @@ Ramsar <- LongSeaTable %>%
     relocate(Category, .before = everything()) %>%
     dplyr::select(-Natura_2000)
 
-AllNatura2000 <- list(Total, Habitatomrade, fuglebeskyt, Ramsar) %>%
+Habitatnaturtype <- LongSeaTable %>%
+    dplyr::filter(Natura_2000 == "Yes" & Habitatnaturtype == "Yes") %>%
+    dplyr::select(Natura_2000, Area_Sq_Km, Proportion) %>%
+    group_by_if(is.character) %>%
+    summarise_if(is.numeric, sum) %>%
+    mutate(Category = "Kun Habitatnaturtype") %>%
+    relocate(Category, .before = everything()) %>%
+    dplyr::select(-Natura_2000)
+
+Havstrategi_standard <- LongSeaTable %>%
+    dplyr::filter(Natura_2000 == "Yes" & Havstrategi_standard == "Yes") %>%
+    dplyr::select(Natura_2000, Area_Sq_Km, Proportion) %>%
+    group_by_if(is.character) %>%
+    summarise_if(is.numeric, sum) %>%
+    mutate(Category = "Kun Havstrategi standard") %>%
+    relocate(Category, .before = everything()) %>%
+    dplyr::select(-Natura_2000)
+
+AllNatura2000 <- list(Total, Habitatomrade, fuglebeskyt, Ramsar, Habitatnaturtype,
+    Havstrategi_standard) %>%
     purrr::reduce(bind_rows)
 ```
 
@@ -3360,11 +3379,13 @@ Show table 4 sea
 
 </summary>
 
-| Category          | Area_Sq_Km | Proportion |
-|:------------------|-----------:|-----------:|
-| Natura 2000 i alt | 30,478.814 |     29.022 |
-| Kun habitatomräde | 19,979.975 |     19.025 |
-| Kun ramsar        |  7,279.409 |      6.931 |
+| Category                 | Area_Sq_Km | Proportion |
+|:-------------------------|-----------:|-----------:|
+| Natura 2000 i alt        | 30,478.814 |     29.022 |
+| Kun habitatomräde        | 19,979.975 |     19.025 |
+| Kun ramsar               |  7,279.409 |      6.931 |
+| Kun Habitatnaturtype     |  7,589.061 |      7.226 |
+| Kun Havstrategi standard |  3,495.714 |      3.329 |
 
 Table 4.1: Areas in square kms and proportions of Natura 2000 with other
 groups

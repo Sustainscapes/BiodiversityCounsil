@@ -1958,7 +1958,16 @@ Habitatnaturtype <- LongSeaTable %>%
   relocate(Category, .before = everything()) %>%
   dplyr::select(-Natura_2000)
 
-AllNatura2000 <- list(Total, Habitatomrade, fuglebeskyt, Ramsar, Habitatnaturtype) %>%
+Havstrategi_standard <- LongSeaTable %>%
+  dplyr::filter(Natura_2000 == "Yes" & Havstrategi_standard == "Yes") %>%
+  dplyr::select(Natura_2000, Area_Sq_Km, Proportion) %>%
+  group_by_if(is.character) %>%
+  summarise_if(is.numeric, sum) %>%
+  mutate(Category = "Kun Havstrategi standard") %>%
+  relocate(Category, .before = everything()) %>%
+  dplyr::select(-Natura_2000)
+
+AllNatura2000 <- list(Total, Habitatomrade, fuglebeskyt, Ramsar, Habitatnaturtype, Havstrategi_standard) %>%
   purrr::reduce(bind_rows)
 
 ## ---- Show-SeaTable4 --------
