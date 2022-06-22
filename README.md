@@ -1,7 +1,7 @@
 Dataset generation for the Danish Biodiversity council
 ================
 Derek Corcoran
-21/06, 2022
+22/06, 2022
 
 -   [1 Objective](#1-objective)
 -   [2 Packages needed](#2-packages-needed)
@@ -26,8 +26,14 @@ Derek Corcoran
         -   [4.1.1 Denmark’s Exclusive Economic Zone
             (EEZ)](#411-denmarks-exclusive-economic-zone-eez)
         -   [4.1.2 Natura 2000](#412-natura-2000)
-        -   [4.1.3 Nature and wildlife
-            reservations](#413-nature-and-wildlife-reservations)
+        -   [4.1.3 Habitatomrade](#413-habitatomrade)
+        -   [4.1.4 Habitatnaturtype](#414-habitatnaturtype)
+        -   [4.1.5 Ramsar](#415-ramsar)
+        -   [4.1.6 Havstrategi standard](#416-havstrategi-standard)
+        -   [4.1.7 Havstrategi streng](#417-havstrategi-streng)
+        -   [4.1.8 Natur Vildt Reservater](#418-natur-vildt-reservater)
+        -   [4.1.9 Fredninger](#419-fredninger)
+    -   [4.2 Results](#42-results)
 -   [5 Session info](#5-session-info)
 -   [6 References](#6-references)
 
@@ -2838,6 +2844,8 @@ SeaOfDenmark <- mregions::mr_shp("Denmark:eez") %>%
     terra::project(terra::crs(DK))
 
 Area_Sea_DK <- expanse(SeaOfDenmark)
+
+TemplateSea <- terra::extend(Template, SeaOfDenmark)
 ```
 
 </details>
@@ -2850,8 +2858,8 @@ kilometers
 
 ### 4.1.2 Natura 2000
 
-This was already rasterized above, so we only need to mask it to sea and
-save it
+We had to rerasterize the shapefile using a template for the sea of
+Denmark as shown below
 
 <details style="\&quot;margin-bottom:10px;\&quot;">
 <summary>
@@ -2863,16 +2871,21 @@ Crop and save natura 2000 sea
 ``` r
 # read natura2000
 
-Natura2000 <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Natura2000.tif")
+Natura2000 <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/Natura2000 MiljøGIS Maj2022/pg-natura_2000_omraader_natura2000.shp")
+Natura2000$Natura_2000 <- "Yes"
+Natura2000 <- Natura2000[, c("Natura_2000")]
+
+Natura2000 <- aggregate(Natura2000, by = "Natura_2000")
+Natura2000_Croped_Sea <- terra::mask(Natura2000, SeaOfDenmark)
 
 
 # Write raw rasters to disk
 
-Natura2000_Croped_Sea <- terra::mask(Natura2000, SeaOfDenmark)
+Rast_Natura2000_Croped_Sea <- terra::rasterize(Natura2000_Croped_Sea, TemplateSea)
 
 # Write croped rasters to disk
 
-writeRaster(Natura2000_Croped_Sea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Natura2000_Croped_Sea.tif",
+writeRaster(Rast_Natura2000_Croped_Sea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Natura2000_Croped_Sea.tif",
     overwrite = TRUE, gdal = c("COMPRESS=DEFLATE", "TFW=YES", "of=COG"))
 
 
@@ -2892,38 +2905,42 @@ the results can be seen in figure
 ![Figure 4.2: Plot of the areas of Natura 2000 within the sea of
 Denmark](README_files/figure-gfm/PlotNatura2000Sea-1.png)
 
-### 4.1.3 Nature and wildlife reservations
+### 4.1.3 Habitatomrade
 
-This was already rasterized above, so we only need to mask it to sea and
-save it
+We had to rerasterize the shapefile using a template for the sea of
+Denmark as shown below
 
 <details style="\&quot;margin-bottom:10px;\&quot;">
 <summary>
 
-Nature and wildlife reservations
+Crop and save Habitatomrade sea
 
 </summary>
 
 ``` r
-# read NaturaOgVildtreservater
+Habitatomrade <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/HABITAT_OMRAADER/HABITAT_OMRAADER.shp")
 
-NaturaOgVildtreservater <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_NaturaOgVildtreservater.tif")
+Habitatomrade$Habitatomrade <- "Yes"
+Habitatomrade <- Habitatomrade[, c("Habitatomrade")]
+
+Habitatomrade <- aggregate(Habitatomrade, by = "Habitatomrade")
+Habitatomrade_Croped_Sea <- terra::mask(Habitatomrade, SeaOfDenmark)
 
 
 # Write raw rasters to disk
 
-NaturaOgVildtreservater_Croped_Sea <- terra::mask(NaturaOgVildtreservater, SeaOfDenmark)
+Rast_Habitatomrade_Croped_Sea <- terra::rasterize(Habitatomrade_Croped_Sea, TemplateSea)
 
 # Write croped rasters to disk
 
-writeRaster(NaturaOgVildtreservater_Croped_Sea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_NaturaOgVildtreservater_Croped_Sea.tif",
+writeRaster(Rast_Habitatomrade_Croped_Sea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Habitatomrade_Croped_Sea.tif",
     overwrite = TRUE, gdal = c("COMPRESS=DEFLATE", "TFW=YES", "of=COG"))
 
 
 # save as cloud optimized rasters
 
-sf::gdal_utils("warp", source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_NaturaOgVildtreservater_Croped_Sea.tif",
-    destination = "RasterizedCOG/Rast_NaturaOgVildtreservater_Croped_Sea.tif", options = c("-of",
+sf::gdal_utils("warp", source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Habitatomrade_Croped_Sea.tif",
+    destination = "RasterizedCOG/Rast_Habitatomrade_Croped_Sea.tif", options = c("-of",
         "COG", "-co", "RESAMPLING=NEAREST", "-co", "TILING_SCHEME=GoogleMapsCompatible",
         "-co", "COMPRESS=DEFLATE", "-co", "NUM_THREADS=46"))
 ```
@@ -2931,10 +2948,345 @@ sf::gdal_utils("warp", source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/R
 </details>
 
 the results can be seen in figure
-<a href="#fig:PlotNaturaOgVildtreservaterSea">4.3</a>
+<a href="#fig:PlotHabitatomradeSea">4.3</a>
 
-![Figure 4.3: Plot of the areas of Natura 2000 within the sea of
-Denmark](README_files/figure-gfm/PlotNaturaOgVildtreservaterSea-1.png)
+![Figure 4.3: Plot of the areas of Habitatomrade within the sea of
+Denmark](README_files/figure-gfm/PlotHabitatomradeSea-1.png)
+
+### 4.1.4 Habitatnaturtype
+
+We had to rerasterize the shapefile using a template for the sea of
+Denmark as shown below
+
+<details style="\&quot;margin-bottom:10px;\&quot;">
+<summary>
+
+Crop and save Habitatnaturtype sea
+
+</summary>
+
+``` r
+Habitatnaturtype <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/np3h2021_shp_download/np3h2021_marine_kortlaeg_2004_2018.shp")
+
+Habitatnaturtype$Habitatnaturtype <- Habitatnaturtype$Naturnavn
+Habitatnaturtype <- Habitatnaturtype[, c("Habitatnaturtype")]
+
+Habitatnaturtype <- aggregate(Habitatnaturtype, by = "Habitatnaturtype")
+Habitatnaturtype_Croped_Sea <- terra::mask(Habitatnaturtype, SeaOfDenmark)
+
+
+# Write raw rasters to disk
+
+Rast_Habitatnaturtype_Croped_Sea <- terra::rasterize(Habitatnaturtype_Croped_Sea,
+    TemplateSea)
+
+# Write croped rasters to disk
+
+writeRaster(Rast_Habitatnaturtype_Croped_Sea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Habitatnaturtype_Croped_Sea.tif",
+    overwrite = TRUE, gdal = c("COMPRESS=DEFLATE", "TFW=YES", "of=COG"))
+
+# save as cloud optimized rasters
+
+sf::gdal_utils("warp", source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Habitatnaturtype_Croped_Sea.tif",
+    destination = "RasterizedCOG/Rast_Habitatnaturtype_Croped_Sea.tif", options = c("-of",
+        "COG", "-co", "RESAMPLING=NEAREST", "-co", "TILING_SCHEME=GoogleMapsCompatible",
+        "-co", "COMPRESS=DEFLATE", "-co", "NUM_THREADS=46"))
+```
+
+</details>
+
+the results can be seen in figure
+<a href="#fig:PlotHabitatnaturtypeSea">4.4</a>
+
+![Figure 4.4: Plot of the areas of Habitatnaturtype within the sea of
+Denmark](README_files/figure-gfm/PlotHabitatnaturtypeSea-1.png)
+
+### 4.1.5 Ramsar
+
+We had to rerasterize the shapefile using a template for the sea of
+Denmark as shown below
+
+<details style="\&quot;margin-bottom:10px;\&quot;">
+<summary>
+
+Crop and save Ramsar sea
+
+</summary>
+
+``` r
+Ramsar <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/RAMSAR/ramsar.shp")
+
+Ramsar$Ramsar <- "Yes"
+Ramsar <- Ramsar[, c("Ramsar")]
+
+Ramsar <- aggregate(Ramsar, by = "Ramsar")
+Ramsar_Croped_Sea <- terra::mask(Ramsar, SeaOfDenmark)
+
+
+# Write raw rasters to disk
+
+Rast_Ramsar_Croped_Sea <- terra::rasterize(Ramsar_Croped_Sea, TemplateSea)
+
+# Write croped rasters to disk
+
+writeRaster(Rast_Ramsar_Croped_Sea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Ramsar_Croped_Sea.tif",
+    overwrite = TRUE, gdal = c("COMPRESS=DEFLATE", "TFW=YES", "of=COG"))
+
+# save as cloud optimized rasters
+
+sf::gdal_utils("warp", source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Ramsar_Croped_Sea.tif",
+    destination = "RasterizedCOG/Rast_Ramsar_Croped_Sea.tif", options = c("-of",
+        "COG", "-co", "RESAMPLING=NEAREST", "-co", "TILING_SCHEME=GoogleMapsCompatible",
+        "-co", "COMPRESS=DEFLATE", "-co", "NUM_THREADS=46"))
+```
+
+</details>
+
+the results can be seen in figure <a href="#fig:PlotRamsarSea">4.5</a>
+
+![Figure 4.5: Plot of the areas of Ramsar within the sea of
+Denmark](README_files/figure-gfm/PlotRamsarSea-1.png)
+
+### 4.1.6 Havstrategi standard
+
+We had to rerasterize the shapefile using a template for the sea of
+Denmark as shown below
+
+<details style="\&quot;margin-bottom:10px;\&quot;">
+<summary>
+
+Crop and save Havstrategi-standard sea
+
+</summary>
+
+``` r
+Havstrategi_standard_1 <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/HAVSTRATEGI_OMRAADER/download-FF9FC53C-80BB-4A0E-88A2-E6C543CB686/download-FF9FC53C-80BB-4A0E-88A2-E6C543CB686/havstrategi-omr_foraar2016.shp")
+Havstrategi_standard_2 <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/HAVSTRATEGI_OMRAADER/Havstrat_omr Nordso_Bornh_Hoering2021/H\242ringsportalen_GIS_data/Nye_havstrategiomraader_horing_26032021.shp")
+
+Havstrategi_standard <- rbind(Havstrategi_standard_1, Havstrategi_standard_2)
+
+Havstrategi_standard$Havstrategi_standard <- "Yes"
+Havstrategi_standard <- Havstrategi_standard[, c("Havstrategi_standard")]
+
+Havstrategi_standard <- aggregate(Havstrategi_standard, by = "Havstrategi_standard")
+Havstrategi_standard_Croped_Sea <- terra::mask(Havstrategi_standard, SeaOfDenmark)
+
+
+# Write raw rasters to disk
+
+Havstrategi_standard_Croped_Sea <- terra::rasterize(Havstrategi_standard_Croped_Sea,
+    TemplateSea)
+
+# Write croped rasters to disk
+
+writeRaster(Havstrategi_standard_Croped_Sea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Havstrategi_standard_Croped_Sea.tif",
+    overwrite = TRUE, gdal = c("COMPRESS=DEFLATE", "TFW=YES", "of=COG"))
+
+# save as cloud optimized rasters
+
+sf::gdal_utils("warp", source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Havstrategi_standard_Croped_Sea.tif",
+    destination = "RasterizedCOG/Havstrategi_standard_Croped_Sea.tif", options = c("-of",
+        "COG", "-co", "RESAMPLING=NEAREST", "-co", "TILING_SCHEME=GoogleMapsCompatible",
+        "-co", "COMPRESS=DEFLATE", "-co", "NUM_THREADS=46"))
+```
+
+</details>
+
+the results can be seen in figure
+<a href="#fig:PlotHavstrategiStandardSea">4.6</a>
+
+![Figure 4.6: Plot of the areas of Havstrategi standard within the sea
+of Denmark](README_files/figure-gfm/PlotHavstrategiStandardSea-1.png)
+
+### 4.1.7 Havstrategi streng
+
+We had to rerasterize the shapefile using a template for the sea of
+Denmark as shown below
+
+<details style="\&quot;margin-bottom:10px;\&quot;">
+<summary>
+
+Crop and save Havstrategi streng sea
+
+</summary>
+
+``` r
+Havstrategi_streng <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/HAVSTRATEGI_OMRAADER/Havstrat_omr Nordso_Bornh_Hoering2021/H\242ringsportalen_GIS_data/Nye_strengt_beskyttede_omraader_horing_26032021.shp")
+
+Havstrategi_streng$Havstrategi_streng <- "Yes"
+Havstrategi_streng <- Havstrategi_streng[, c("Havstrategi_streng")]
+
+Havstrategi_streng <- aggregate(Havstrategi_streng, by = "Havstrategi_streng")
+Havstrategi_streng_Croped_Sea <- terra::mask(Havstrategi_streng, SeaOfDenmark)
+
+
+# Write raw rasters to disk
+
+Havstrategi_streng_Croped_Sea <- terra::rasterize(Havstrategi_streng_Croped_Sea,
+    TemplateSea)
+
+# Write croped rasters to disk
+
+writeRaster(Havstrategi_streng_Croped_Sea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Havstrategi_streng_Croped_Sea.tif",
+    overwrite = TRUE, gdal = c("COMPRESS=DEFLATE", "TFW=YES", "of=COG"))
+
+# save as cloud optimized rasters
+
+sf::gdal_utils("warp", source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Havstrategi_streng_Croped_Sea.tif",
+    destination = "RasterizedCOG/Havstrategi_streng_Croped_Sea.tif", options = c("-of",
+        "COG", "-co", "RESAMPLING=NEAREST", "-co", "TILING_SCHEME=GoogleMapsCompatible",
+        "-co", "COMPRESS=DEFLATE", "-co", "NUM_THREADS=46"))
+```
+
+</details>
+
+the results can be seen in figure
+<a href="#fig:PlotHavstrategiStandardSea">4.6</a>
+
+![Figure 4.7: Plot of the areas of Havstrategi streng within the sea of
+Denmark](README_files/figure-gfm/PlotHavstrategiStrengSea-1.png)
+
+### 4.1.8 Natur Vildt Reservater
+
+We had to rerasterize the shapefile using a template for the sea of
+Denmark as shown below
+
+<details style="\&quot;margin-bottom:10px;\&quot;">
+<summary>
+
+Crop and save Natur Vildt Reservater sea
+
+</summary>
+
+``` r
+Natur_Vildt_Reservater <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/NATUR_VILDT_RESERVATER/NATUR_VILDT_RESERVATER.shp")
+
+Natur_Vildt_Reservater$Natur_Vildt_Reservater <- "Yes"
+Natur_Vildt_Reservater <- Natur_Vildt_Reservater[, c("Natur_Vildt_Reservater")]
+
+Natur_Vildt_Reservater <- aggregate(Natur_Vildt_Reservater, by = "Natur_Vildt_Reservater")
+Natur_Vildt_Reservater_Croped_Sea <- terra::mask(Natur_Vildt_Reservater, SeaOfDenmark)
+
+
+# Write raw rasters to disk
+
+Natur_Vildt_Reservater_Croped_Sea <- terra::rasterize(Natur_Vildt_Reservater_Croped_Sea,
+    TemplateSea)
+
+# Write croped rasters to disk
+
+writeRaster(Natur_Vildt_Reservater_Croped_Sea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Natur_Vildt_Reservater_Croped_Sea.tif",
+    overwrite = TRUE, gdal = c("COMPRESS=DEFLATE", "TFW=YES", "of=COG"))
+
+# save as cloud optimized rasters
+
+sf::gdal_utils("warp", source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Natur_Vildt_Reservater_Croped_Sea.tif",
+    destination = "RasterizedCOG/Natur_Vildt_Reservater_Croped_Sea.tif", options = c("-of",
+        "COG", "-co", "RESAMPLING=NEAREST", "-co", "TILING_SCHEME=GoogleMapsCompatible",
+        "-co", "COMPRESS=DEFLATE", "-co", "NUM_THREADS=46"))
+```
+
+</details>
+
+the results can be seen in figure
+<a href="#fig:PlotNaturVildtReservaterSea">4.8</a>
+
+![Figure 4.8: Plot of the areas of Natur Vildt Reservater within the sea
+of Denmark](README_files/figure-gfm/PlotNaturVildtReservaterSea-1.png)
+
+### 4.1.9 Fredninger
+
+We had to rerasterize the shapefile using a template for the sea of
+Denmark as shown below
+
+<details style="\&quot;margin-bottom:10px;\&quot;">
+<summary>
+
+Crop and save Fredninger sea
+
+</summary>
+
+``` r
+Fredninger <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/IUCN beskyt hav/Beskyt_omr_hav_IUCN_m_info_2.shp")
+
+Fredninger$Fredninger <- "Yes"
+Fredninger <- Fredninger[, c("Fredninger")]
+
+Fredninger <- aggregate(Fredninger, by = "Fredninger")
+Fredninger_Croped_Sea <- terra::mask(Fredninger, SeaOfDenmark)
+
+
+# Write raw rasters to disk
+
+Fredninger_Croped_Sea <- terra::rasterize(Fredninger_Croped_Sea, TemplateSea)
+
+# Write croped rasters to disk
+
+writeRaster(Fredninger_Croped_Sea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Fredninger_Croped_Sea.tif",
+    overwrite = TRUE, gdal = c("COMPRESS=DEFLATE", "TFW=YES", "of=COG"))
+
+# save as cloud optimized rasters
+
+sf::gdal_utils("warp", source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Fredninger_Croped_Sea.tif",
+    destination = "RasterizedCOG/Fredninger_Croped_Sea.tif", options = c("-of", "COG",
+        "-co", "RESAMPLING=NEAREST", "-co", "TILING_SCHEME=GoogleMapsCompatible",
+        "-co", "COMPRESS=DEFLATE", "-co", "NUM_THREADS=46"))
+```
+
+</details>
+
+the results can be seen in figure
+<a href="#fig:PlotFredningerSea">4.9</a>
+
+![Figure 4.9: Plot of the areas of Fredninger within the sea of
+Denmark](README_files/figure-gfm/PlotFredningerSea-1.png)
+
+## 4.2 Results
+
+To get the results we need to make a stack of all the layers
+
+``` r
+Rast_Natura2000_Croped_Sea <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Natura2000_Croped_Sea.tif")
+
+Rast_Habitatomrade_Croped_Sea <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Habitatomrade_Croped_Sea.tif")
+
+Rast_Habitatnaturtype_Croped_Sea <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Habitatnaturtype_Croped_Sea.tif")
+
+Rast_Ramsar_Croped_Sea <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Ramsar_Croped_Sea.tif")
+
+Havstrategi_standard_Croped_Sea <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Havstrategi_standard_Croped_Sea.tif")
+
+Havstrategi_streng_Croped_Sea <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Havstrategi_streng_Croped_Sea.tif")
+
+Natur_Vildt_Reservater_Croped_Sea <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Natur_Vildt_Reservater_Croped_Sea.tif")
+
+Fredninger_Croped_Sea <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Fredninger_Croped_Sea.tif")
+
+AllSea <- c(Rast_Natura2000_Croped_Sea, Rast_Habitatomrade_Croped_Sea, Rast_Habitatnaturtype_Croped_Sea,
+    Rast_Ramsar_Croped_Sea, Havstrategi_standard_Croped_Sea, Havstrategi_streng_Croped_Sea,
+    Natur_Vildt_Reservater_Croped_Sea, Fredninger_Croped_Sea)
+writeRaster(AllSea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/AllSea.tif", overwrite = TRUE,
+    gdal = c("COMPRESS=DEFLATE", "TFW=YES", "of=COG"))
+```
+
+and then we crosstabulate to solve for all the intersections
+
+``` r
+AllSea <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/AllSea.tif")
+
+dir.create("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/SeaTiles")
+
+writeRaster(AllSea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/SeaTiles/AllSea.tif",
+    overwrite = TRUE, gdal = c("COMPRESS=DEFLATE", "TFW=YES", "of=COG"))
+
+
+# AreaSea <- crosstab(AllSea, useNA=T, long=TRUE)
+
+# AreaSea <- readRDS('Area_Total_Sea.rds') AreaSea <-
+# AreaSea[!(rowSums(is.na(AreaSea)) == max(rowSums(is.na(AreaSea)))),]
+
+# saveRDS(AreaSea, 'Area_Total_Sea.rds')
+```
 
 # 5 Session info
 

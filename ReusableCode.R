@@ -1894,9 +1894,14 @@ writeRaster(AllSea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/AllSea.tif", 
 
 AllSea <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/AllSea.tif")
 
-AreaSea <- crosstab(AllSea, useNA=T, long=TRUE)
+dir.create("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/SeaTiles")
 
-AreaSea <- readRDS("Area_Total_Sea.rds")
-AreaSea <- AreaSea[!(rowSums(is.na(AreaSea)) == max(rowSums(is.na(AreaSea)))),]
+writeRaster(AllSea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/SeaTiles/AllSea.tif", overwrite=TRUE, gdal=c("COMPRESS=DEFLATE", "TFW=YES","of=COG"))
 
-saveRDS(AreaSea, "Area_Total_Sea.rds")
+
+#AreaSea <- crosstab(AllSea, useNA=T, long=TRUE)
+
+#AreaSea <- readRDS("Area_Total_Sea.rds")
+#AreaSea <- AreaSea[!(rowSums(is.na(AreaSea)) == max(rowSums(is.na(AreaSea)))),]
+
+#saveRDS(AreaSea, "Area_Total_Sea.rds")

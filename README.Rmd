@@ -600,13 +600,13 @@ the results can be seen in figure \@ref(fig:PlotFredningerSea)
 
 To get the results we need to make a stack of all the layers
 
-```{r AllStackSea}
+```{r AllStackSea, eval = F}
 
 ```
 
 and then we crosstabulate to solve for all the intersections
 
-```{r crosstabSea}
+```{r crosstabSea, eval = F}
 
 ```
 
