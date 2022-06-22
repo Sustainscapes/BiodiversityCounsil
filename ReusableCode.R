@@ -1905,3 +1905,63 @@ writeRaster(AllSea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/SeaTiles/AllS
 #AreaSea <- AreaSea[!(rowSums(is.na(AreaSea)) == max(rowSums(is.na(AreaSea)))),]
 
 #saveRDS(AreaSea, "Area_Total_Sea.rds")
+
+## ---- SeaTable4 --------
+
+LongSeaTable <- readRDS("LongSeaTable.rds") %>%
+  mutate(Area_Sq_Km = (Frequency*100)/1000000, Proportion = ((Frequency*100)/Area_Sea_DK)*100) %>%
+  dplyr::filter(Proportion < 100)
+
+Total <- LongSeaTable %>%
+  dplyr::filter(Natura_2000 == "Yes") %>%
+  dplyr::select(Natura_2000, Area_Sq_Km, Proportion) %>%
+  group_by_if(is.character) %>%
+  summarise_if(is.numeric, sum) %>%
+  mutate(Category = "Natura 2000 i alt") %>%
+  relocate(Category, .before = everything()) %>%
+  dplyr::select(-Natura_2000)
+
+Habitatomrade <- LongSeaTable %>%
+  dplyr::filter(Natura_2000 == "Yes" & Habitatomrade == "Yes") %>%
+  dplyr::select(Natura_2000, Area_Sq_Km, Proportion) %>%
+  group_by_if(is.character) %>%
+  summarise_if(is.numeric, sum) %>%
+  mutate(Category = "Kun habitatomräde") %>%
+  relocate(Category, .before = everything()) %>%
+  dplyr::select(-Natura_2000)
+
+# Natura 2000 that is not Habitatomrade
+fuglebeskyt  <- LongSeaTable %>%
+  dplyr::filter(Natura_2000 == "Yes" & Habitatomrade != "Yes") %>%
+  dplyr::select(Natura_2000, Area_Sq_Km, Proportion) %>%
+  group_by_if(is.character) %>%
+  summarise_if(is.numeric, sum) %>%
+  mutate(Category = "Fuglebeskyt") %>%
+  relocate(Category, .before = everything()) %>%
+  dplyr::select(-Natura_2000)
+
+Ramsar <- LongSeaTable %>%
+  dplyr::filter(Natura_2000 == "Yes" & Ramsar == "Yes") %>%
+  dplyr::select(Natura_2000, Area_Sq_Km, Proportion) %>%
+  group_by_if(is.character) %>%
+  summarise_if(is.numeric, sum) %>%
+  mutate(Category = "Kun ramsar") %>%
+  relocate(Category, .before = everything()) %>%
+  dplyr::select(-Natura_2000)
+
+Habitatnaturtype <- LongSeaTable %>%
+  dplyr::filter(Natura_2000 == "Yes" & Habitatnaturtype == "Yes") %>%
+  dplyr::select(Natura_2000, Area_Sq_Km, Proportion) %>%
+  group_by_if(is.character) %>%
+  summarise_if(is.numeric, sum) %>%
+  mutate(Category = "Kun Habitatnaturtype") %>%
+  relocate(Category, .before = everything()) %>%
+  dplyr::select(-Natura_2000)
+
+AllNatura2000 <- list(Total, Habitatomrade, fuglebeskyt, Ramsar, Habitatnaturtype) %>%
+  purrr::reduce(bind_rows)
+
+## ---- Show-SeaTable4 --------
+
+knitr::kable(AllNatura2000, digits = 3, caption = "Areas in square kms and proportions of Natura 2000 with other groups", format.args	= list(big.mark = ','))
+

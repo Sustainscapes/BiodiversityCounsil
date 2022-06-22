@@ -34,6 +34,8 @@ Derek Corcoran
         -   [4.1.8 Natur Vildt Reservater](#418-natur-vildt-reservater)
         -   [4.1.9 Fredninger](#419-fredninger)
     -   [4.2 Results](#42-results)
+        -   [4.2.1 NOTE](#421-note)
+        -   [4.2.2 Natura 2000](#422-natura-2000)
 -   [5 Session info](#5-session-info)
 -   [6 References](#6-references)
 
@@ -3287,6 +3289,87 @@ writeRaster(AllSea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/SeaTiles/AllS
 
 # saveRDS(AreaSea, 'Area_Total_Sea.rds')
 ```
+
+### 4.2.1 NOTE
+
+**For now this code is replaced by the code in the file TileRaster.R**
+
+### 4.2.2 Natura 2000
+
+Code for table 4 sea
+
+<details style="\&quot;margin-bottom:10px;\&quot;">
+<summary>
+
+Create table 4 sea
+
+</summary>
+
+``` r
+LongSeaTable <- readRDS("LongSeaTable.rds") %>%
+    mutate(Area_Sq_Km = (Frequency * 100)/1e+06, Proportion = ((Frequency * 100)/Area_Sea_DK) *
+        100) %>%
+    dplyr::filter(Proportion < 100)
+
+Total <- LongSeaTable %>%
+    dplyr::filter(Natura_2000 == "Yes") %>%
+    dplyr::select(Natura_2000, Area_Sq_Km, Proportion) %>%
+    group_by_if(is.character) %>%
+    summarise_if(is.numeric, sum) %>%
+    mutate(Category = "Natura 2000 i alt") %>%
+    relocate(Category, .before = everything()) %>%
+    dplyr::select(-Natura_2000)
+
+Habitatomrade <- LongSeaTable %>%
+    dplyr::filter(Natura_2000 == "Yes" & Habitatomrade == "Yes") %>%
+    dplyr::select(Natura_2000, Area_Sq_Km, Proportion) %>%
+    group_by_if(is.character) %>%
+    summarise_if(is.numeric, sum) %>%
+    mutate(Category = "Kun habitatomräde") %>%
+    relocate(Category, .before = everything()) %>%
+    dplyr::select(-Natura_2000)
+
+# Natura 2000 that is not Habitatomrade
+fuglebeskyt <- LongSeaTable %>%
+    dplyr::filter(Natura_2000 == "Yes" & Habitatomrade != "Yes") %>%
+    dplyr::select(Natura_2000, Area_Sq_Km, Proportion) %>%
+    group_by_if(is.character) %>%
+    summarise_if(is.numeric, sum) %>%
+    mutate(Category = "Fuglebeskyt") %>%
+    relocate(Category, .before = everything()) %>%
+    dplyr::select(-Natura_2000)
+
+Ramsar <- LongSeaTable %>%
+    dplyr::filter(Natura_2000 == "Yes" & Ramsar == "Yes") %>%
+    dplyr::select(Natura_2000, Area_Sq_Km, Proportion) %>%
+    group_by_if(is.character) %>%
+    summarise_if(is.numeric, sum) %>%
+    mutate(Category = "Kun ramsar") %>%
+    relocate(Category, .before = everything()) %>%
+    dplyr::select(-Natura_2000)
+
+AllNatura2000 <- list(Total, Habitatomrade, fuglebeskyt, Ramsar) %>%
+    purrr::reduce(bind_rows)
+```
+
+</details>
+<details style="\&quot;margin-bottom:10px;\&quot;">
+<summary>
+
+Show table 4 sea
+
+</summary>
+
+| Category          | Area_Sq_Km | Proportion |
+|:------------------|-----------:|-----------:|
+| Natura 2000 i alt | 30,478.814 |     29.022 |
+| Kun habitatomräde | 19,979.975 |     19.025 |
+| Kun ramsar        |  7,279.409 |      6.931 |
+
+Table 4.1: Areas in square kms and proportions of Natura 2000 with other
+groups
+
+</details>
 
 # 5 Session info
 
