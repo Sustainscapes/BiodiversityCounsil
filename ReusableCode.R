@@ -1835,7 +1835,7 @@ Fredninger <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/IUCN beskyt hav/Besk
 Fredninger$Fredninger <- "Yes"
 Fredninger <- Fredninger[,c("Fredninger")]
 
-Fredninger <- aggregate(Fredningerr, by='Fredninger')
+Fredninger <- aggregate(Fredninger, by='Fredninger')
 Fredninger_Croped_Sea <- terra::mask(Fredninger, SeaOfDenmark)
 
 
@@ -1867,6 +1867,22 @@ plot(Fredninger_Croped_Sea, add =T, legend = "bottom")
 
 ## ---- AllStackSea --------
 
+Rast_Natura2000_Croped_Sea <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Natura2000_Croped_Sea.tif")
+
+Rast_Habitatomrade_Croped_Sea <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Habitatomrade_Croped_Sea.tif")
+
+Rast_Habitatnaturtype_Croped_Sea <-  terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Habitatnaturtype_Croped_Sea.tif")
+
+Rast_Ramsar_Croped_Sea <-  terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Ramsar_Croped_Sea.tif")
+
+Havstrategi_standard_Croped_Sea <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Havstrategi_standard_Croped_Sea.tif")
+
+Havstrategi_streng_Croped_Sea <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Havstrategi_streng_Croped_Sea.tif")
+
+Natur_Vildt_Reservater_Croped_Sea <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Natur_Vildt_Reservater_Croped_Sea.tif")
+
+Fredninger_Croped_Sea <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Fredninger_Croped_Sea.tif")
+
 AllSea <- c(Rast_Natura2000_Croped_Sea, Rast_Habitatomrade_Croped_Sea,
             Rast_Habitatnaturtype_Croped_Sea, Rast_Ramsar_Croped_Sea,
             Havstrategi_standard_Croped_Sea, Havstrategi_streng_Croped_Sea,
@@ -1875,6 +1891,8 @@ writeRaster(AllSea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/AllSea.tif", 
 
 
 ## ---- crosstabSea --------
+
+AllSea <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/AllSea.tif")
 
 AreaSea <- crosstab(AllSea, useNA=T, long=TRUE)
 
