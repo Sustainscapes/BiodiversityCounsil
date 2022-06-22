@@ -614,6 +614,24 @@ and then we crosstabulate to solve for all the intersections
 
 **For now this code is replaced by the code in the file TileRaster.R**
 
+### General marine overlap
+
+Code for table 1 sea
+
+<details style=\"margin-bottom:10px;\">
+<summary>Create table 1 sea</summary>
+```{r SeaTable1}
+
+```
+</details>
+
+<details style=\"margin-bottom:10px;\">
+<summary>Show table 1 sea</summary>
+```{r Show-SeaTable1, cache = F, echo = F}
+
+```
+</details>
+
 ### Natura 2000
 
 Code for table 4 sea
