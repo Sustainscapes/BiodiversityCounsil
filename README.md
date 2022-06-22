@@ -3362,9 +3362,95 @@ Habitatomrade_Sea_Table1_Appart <- Habitatomrade_Sea_Table1a %>%
 Habitatomrade_Sea_Table1 <- full_join(Habitatomrade_Sea_Table1_Totals, Habitatomrade_Sea_Table1_Appart) %>%
     relocate(Class, .before = everything())
 
-TotalOverlap <- list(Natura2000_Sea_Table1, Habitatomrade_Sea_Table1) %>%
+##
+
+Habitatnaturtype_Sea_Table1a <- LongSeaTable %>%
+    dplyr::filter(!is.na(Habitatnaturtype)) %>%
+    mutate(Overlaped = case_when(is.na(Natura_2000) & is.na(Habitatomrade) & is.na(Ramsar) &
+        is.na(Havstrategi_standard) & is.na(Havstrategi_streng) & is.na(Natur_Vildt_Reservater) &
+        is.na(Fredninger) ~ "No", TRUE ~ "Yes")) %>%
+    group_by(Habitatnaturtype, Overlaped) %>%
+    summarise_if(is.numeric, sum) %>%
+    dplyr::select(-Frequency)
+
+## Only here
+
+
+Habitatnaturtype_Sea_Table1_Totals <- Habitatnaturtype_Sea_Table1a %>%
+    ungroup() %>%
+    summarise_if(is.numeric, sum) %>%
+    mutate(Class = "Habitatnaturtype")
+
+Habitatnaturtype_Sea_Table1_Appart <- Habitatnaturtype_Sea_Table1a %>%
+    mutate(Class = "Habitatnaturtype") %>%
+    ungroup() %>%
+    dplyr::select(-Proportion, -Habitatnaturtype) %>%
+    tidyr::pivot_wider(names_from = Overlaped, values_from = Area_Sq_Km) %>%
+    rename(Area_Overlapped = Yes)
+
+Habitatnaturtype_Sea_Table1 <- full_join(Habitatnaturtype_Sea_Table1_Totals, Habitatnaturtype_Sea_Table1_Appart) %>%
+    relocate(Class, .before = everything())
+
+###
+
+Ramsar_Sea_Table1a <- LongSeaTable %>%
+    dplyr::filter(!is.na(Ramsar)) %>%
+    mutate(Overlaped = case_when(is.na(Natura_2000) & is.na(Habitatnaturtype) & is.na(Habitatomrade) &
+        is.na(Havstrategi_standard) & is.na(Havstrategi_streng) & is.na(Natur_Vildt_Reservater) &
+        is.na(Fredninger) ~ "No", TRUE ~ "Yes")) %>%
+    group_by(Ramsar, Overlaped) %>%
+    summarise_if(is.numeric, sum) %>%
+    dplyr::select(-Frequency)
+
+Ramsar_Sea_Table1_Totals <- Ramsar_Sea_Table1a %>%
+    ungroup() %>%
+    summarise_if(is.numeric, sum) %>%
+    mutate(Class = "Ramsar")
+
+Ramsar_Sea_Table1_Appart <- Ramsar_Sea_Table1a %>%
+    mutate(Class = "Ramsar") %>%
+    ungroup() %>%
+    dplyr::select(-Proportion, -Ramsar) %>%
+    tidyr::pivot_wider(names_from = Overlaped, values_from = Area_Sq_Km) %>%
+    rename(Area_Overlapped = Yes)
+
+Ramsar_Sea_Table1 <- full_join(Ramsar_Sea_Table1_Totals, Ramsar_Sea_Table1_Appart) %>%
+    relocate(Class, .before = everything())
+
+##
+
+Havstrategi_standard_Sea_Table1a <- LongSeaTable %>%
+    dplyr::filter(!is.na(Havstrategi_standard)) %>%
+    mutate(Overlaped = case_when(is.na(Natura_2000) & is.na(Habitatnaturtype) & is.na(Ramsar) &
+        is.na(Habitatomrade) & is.na(Havstrategi_streng) & is.na(Natur_Vildt_Reservater) &
+        is.na(Fredninger) ~ "No", TRUE ~ "Yes")) %>%
+    group_by(Havstrategi_standard, Overlaped) %>%
+    summarise_if(is.numeric, sum) %>%
+    dplyr::select(-Frequency)
+
+Havstrategi_standard_Sea_Table1_Totals <- Havstrategi_standard_Sea_Table1a %>%
+    ungroup() %>%
+    summarise_if(is.numeric, sum) %>%
+    mutate(Class = "Havstrategi_standard")
+
+Havstrategi_standard_Sea_Table1_Appart <- Havstrategi_standard_Sea_Table1a %>%
+    mutate(Class = "Havstrategi_standard") %>%
+    ungroup() %>%
+    dplyr::select(-Proportion, -Havstrategi_standard) %>%
+    tidyr::pivot_wider(names_from = Overlaped, values_from = Area_Sq_Km) %>%
+    rename(Area_Overlapped = Yes, Area_Exclusive = No)
+
+Havstrategi_standard_Sea_Table1 <- full_join(Havstrategi_standard_Sea_Table1_Totals,
+    Havstrategi_standard_Sea_Table1_Appart) %>%
+    relocate(Class, .before = everything())
+
+
+TotalOverlap <- list(Natura2000_Sea_Table1, Habitatomrade_Sea_Table1, Habitatnaturtype_Sea_Table1,
+    Ramsar_Sea_Table1, Havstrategi_standard_Sea_Table1) %>%
     purrr::reduce(bind_rows) %>%
     arrange(desc(Area_Sq_Km))
+
+TotalOverlap[is.na(TotalOverlap)] <- 0
 ```
 
 </details>
@@ -3375,10 +3461,13 @@ Show table 1 sea
 
 </summary>
 
-| Class         | Area_Sq_Km | Proportion | Area_Exclusive | Area_Overlapped |
-|:--------------|-----------:|-----------:|---------------:|----------------:|
-| Nautra_2000   |  30,478.81 |      29.02 |       7,332.28 |       23,146.53 |
-| Habitatomrade |  19,979.98 |      19.02 |           0.00 |       19,979.98 |
+| Class                | Area_Sq_Km | Proportion | Area_Exclusive | Area_Overlapped |
+|:---------------------|-----------:|-----------:|---------------:|----------------:|
+| Nautra_2000          |  30,478.81 |      29.02 |       7,332.28 |       23,146.53 |
+| Habitatomrade        |  19,979.98 |      19.02 |           0.00 |       19,979.98 |
+| Habitatnaturtype     |   7,589.06 |       7.23 |           0.00 |        7,589.06 |
+| Ramsar               |   7,279.41 |       6.93 |           0.00 |        7,279.41 |
+| Havstrategi_standard |   7,157.34 |       6.82 |       2,264.05 |        4,893.29 |
 
 Table 4.1: Areas in square kms and proportions of the sea of Denmark and
 their overlaps
