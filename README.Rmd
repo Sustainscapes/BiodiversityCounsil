@@ -610,6 +610,28 @@ and then we crosstabulate to solve for all the intersections
 
 ```
 
+### NOTE
+
+**For now this code is replaced by the code in the file TileRaster.R**
+
+### Natura 2000
+
+Code for table 4 sea
+
+<details style=\"margin-bottom:10px;\">
+<summary>Create table 4 sea</summary>
+```{r SeaTable4}
+
+```
+</details>
+
+<details style=\"margin-bottom:10px;\">
+<summary>Show table 4 sea</summary>
+```{r Show-SeaTable4, cache = F, echo = F}
+
+```
+</details>
+
 # Session info
 
 <details style=\"margin-bottom:10px;\">
