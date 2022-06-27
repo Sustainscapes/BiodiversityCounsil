@@ -915,3 +915,44 @@ Table2_Final <- list(Table2_All_Total, Table2_All_Natura2000, Table2_All_Habitat
   arrange(desc(Area))
 
 openxlsx::write.xlsx(Table2_Final, "Table2_Terrestrial.xlsx")
+
+#### Make table 1
+
+ForTable1 <- Long_Table_All2 %>%
+  dplyr::select("Natura_2000", "NaturaOgVildtreservater",
+                "IUCN", "Urort_Skov", "Naturnationalparks", "Stoette", "Fond","Proportion", "Area_Sq_Km", "Habitats_P3") %>%
+  mutate(Habitats_P3 = ifelse(!is.na(Habitats_P3), "Yes", NA)) %>%
+  group_by_if(is.character) %>%
+  summarise_if(is.numeric, sum) %>%
+  ungroup() %>%
+  filter(!(is.na(Natura_2000) & is.na(NaturaOgVildtreservater) & is.na(IUCN) & is.na(Urort_Skov) & is.na(Naturnationalparks) & is.na(Stoette) & is.na(Fond) & is.na(Habitats_P3))) %>%
+  rowwise() %>%
+  mutate(Yes = sum(c_across(Natura_2000:Habitats_P3) == "Yes", na.rm = TRUE))
+
+
+NoOverlap <- ForTable1 %>%
+  dplyr::filter(Yes == 1) %>%
+  pivot_longer(Natura_2000:Habitats_P3) %>%
+  dplyr::filter(!is.na(value)) %>%
+  dplyr::select(-value, -Yes) %>%
+  rename(Exclusive= Area_Sq_Km, Proportion_Exclusive = Proportion)
+
+Overlap <- ForTable1 %>%
+  dplyr::filter(Yes > 1) %>%
+  pivot_longer(Natura_2000:Habitats_P3) %>%
+  dplyr::filter(!is.na(value)) %>%
+  dplyr::select(-value, -Yes) %>%
+  group_by(name) %>%
+  summarise_all(sum) %>%
+  rename(Overlapped= Area_Sq_Km, Proportion_Overlap = Proportion)
+
+
+Table1 <- full_join(Overlap, NoOverlap) %>%
+  mutate(Total_area =  Overlapped + Exclusive, Proportion = Proportion_Overlap + Proportion_Exclusive) %>%
+  dplyr::select(name, Total_area, Proportion, Exclusive, Overlapped)
+
+
+openxlsx::write.xlsx(Table1, "Table1_Terrestrial.xlsx")
+
+
+### Table3 terrestrial
