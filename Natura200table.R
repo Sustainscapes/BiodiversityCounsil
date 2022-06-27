@@ -320,6 +320,12 @@ Long_Table_All2 <- Long_Table_All2 %>%
   full_join(Paragraph3_DF) %>%
   dplyr::select(-Paragraph_3_Klit)
 
+Ownership_DF <- data.frame(Ownership  = 0:(length(levels(Rast_Ownersip_Croped)[[1]]) - 1), ownership = levels(Rast_Ownersip_Croped)[[1]])
+
+Long_Table_All2 <- Long_Table_All2 %>%
+  full_join(Ownership_DF) %>%
+  dplyr::select(-Ownership)
+
 Long_Table_All2 <- Long_Table_All2[!(rowSums(is.na(Long_Table_All2)) == max(rowSums(is.na(Long_Table_All2)))),]
 
 
