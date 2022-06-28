@@ -371,7 +371,7 @@ Table2_Soer <- Long_Table_All2 %>%
   mutate(type = "Total")
 
 Table2_Drevet_Skov <- Long_Table_All2 %>%
-#  dplyr::filter(!is.na(Natura_2000) | !is.na(Habitatnaturtype) | !is.na(NaturaOgVildtreservater) | !is.na(IUCN) | !is.na(Urort_Skov) | !is.na(Naturnationalparks) | !is.na(Stoette) | !is.na(Fond) | !is.na(Habitats_P3)) %>%
+  dplyr::filter(!is.na(Natura_2000) | !is.na(Habitatnaturtype) | !is.na(NaturaOgVildtreservater) | !is.na(IUCN) | !is.na(Urort_Skov) | !is.na(Naturnationalparks) | !is.na(Stoette) | !is.na(Fond) | !is.na(Habitats_P3)) %>%
   dplyr::filter(is.na(Habitats_P3), is.na(Urort_Skov), !is.na(Forest)) %>%
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Drevet_Skov = Area_Sq_Km) %>%
