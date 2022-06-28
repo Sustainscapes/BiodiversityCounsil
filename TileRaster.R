@@ -224,5 +224,6 @@ Table2_Final <- rbind(Table2_Total, Table2) %>%
   relocate(name, .before = everything()) %>%
   arrange(desc(Area_Sq_Km))
 
+openxlsx::write.xlsx(Table2_Final, "Table2_Marine.xlsx")
 
 

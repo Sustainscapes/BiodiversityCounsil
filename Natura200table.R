@@ -335,6 +335,8 @@ saveRDS(Long_Table_All2, "NewTable2.rds")
 
 #Row 1
 
+Long_Table_All2 <- readRDS("NewTable2.rds")
+
 Long_Table_All2 <- Long_Table_All2 %>%
   dplyr::filter(!is.na(Natura_2000) | !is.na(Habitatnaturtype) | !is.na(NaturaOgVildtreservater) | !is.na(IUCN) | !is.na(Urort_Skov) | !is.na(Naturnationalparks) | !is.na(Stoette) | !is.na(Fond) | !is.na(Habitats_P3))
 
@@ -369,8 +371,8 @@ Table2_Soer <- Long_Table_All2 %>%
   mutate(type = "Total")
 
 Table2_Drevet_Skov <- Long_Table_All2 %>%
-  dplyr::filter(!is.na(Natura_2000) | !is.na(Habitatnaturtype) | !is.na(NaturaOgVildtreservater) | !is.na(IUCN) | !is.na(Urort_Skov) | !is.na(Naturnationalparks) | !is.na(Stoette) | !is.na(Fond) | !is.na(Habitats_P3)) %>%
-  dplyr::filter(is.na(Habitats_P3), is.na(Urort_Skov)) %>%
+#  dplyr::filter(!is.na(Natura_2000) | !is.na(Habitatnaturtype) | !is.na(NaturaOgVildtreservater) | !is.na(IUCN) | !is.na(Urort_Skov) | !is.na(Naturnationalparks) | !is.na(Stoette) | !is.na(Fond) | !is.na(Habitats_P3)) %>%
+  dplyr::filter(is.na(Habitats_P3), is.na(Urort_Skov), !is.na(Forest)) %>%
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Drevet_Skov = Area_Sq_Km) %>%
   mutate(type = "Total")
@@ -428,7 +430,7 @@ Table2_Soer <- Long_Table_All2 %>%
 
 Table2_Drevet_Skov <- Long_Table_All2 %>%
   dplyr::filter(Natura_2000 == "Yes") %>%
-  dplyr::filter(is.na(Habitats_P3), is.na(Urort_Skov)) %>%
+  dplyr::filter(is.na(Habitats_P3), is.na(Urort_Skov), !is.na(Forest)) %>%
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Drevet_Skov = Area_Sq_Km) %>%
   mutate(type = "Natura_2000")
@@ -486,7 +488,7 @@ Table2_Soer <- Long_Table_All2 %>%
 
 Table2_Drevet_Skov <- Long_Table_All2 %>%
   dplyr::filter(Habitatnaturtype == "Yes") %>%
-  dplyr::filter(is.na(Habitats_P3), is.na(Urort_Skov)) %>%
+  dplyr::filter(is.na(Habitats_P3), is.na(Urort_Skov), !is.na(Forest)) %>%
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Drevet_Skov = Area_Sq_Km) %>%
   mutate(type = "Habitatnaturtype")
@@ -544,7 +546,7 @@ Table2_Soer <- Long_Table_All2 %>%
 
 Table2_Drevet_Skov <- Long_Table_All2 %>%
   dplyr::filter(!is.na(Habitats_P3)) %>%
-  dplyr::filter(is.na(Habitats_P3), is.na(Urort_Skov)) %>%
+  dplyr::filter(is.na(Habitats_P3), is.na(Urort_Skov), !is.na(Forest)) %>%
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Drevet_Skov = Area_Sq_Km) %>%
   mutate(type = "Paragraph_3_klit")
@@ -602,7 +604,7 @@ Table2_Soer <- Long_Table_All2 %>%
 
 Table2_Drevet_Skov <- Long_Table_All2 %>%
   dplyr::filter(!is.na(NaturaOgVildtreservater)) %>%
-  dplyr::filter(is.na(Habitats_P3), is.na(Urort_Skov)) %>%
+  dplyr::filter(is.na(Habitats_P3), is.na(Urort_Skov), !is.na(Forest)) %>%
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Drevet_Skov = Area_Sq_Km) %>%
   mutate(type = "NaturaOgVildtreservater")
@@ -660,7 +662,7 @@ Table2_Soer <- Long_Table_All2 %>%
 
 Table2_Drevet_Skov <- Long_Table_All2 %>%
   dplyr::filter(!is.na(IUCN)) %>%
-  dplyr::filter(is.na(Habitats_P3), is.na(Urort_Skov)) %>%
+  dplyr::filter(is.na(Habitats_P3), is.na(Urort_Skov), !is.na(Forest)) %>%
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Drevet_Skov = Area_Sq_Km) %>%
   mutate(type = "IUCN")
@@ -718,7 +720,7 @@ Table2_Soer <- Long_Table_All2 %>%
 
 Table2_Drevet_Skov <- Long_Table_All2 %>%
   dplyr::filter(!is.na(Urort_Skov)) %>%
-  dplyr::filter(is.na(Habitats_P3), is.na(Urort_Skov)) %>%
+  dplyr::filter(is.na(Habitats_P3), is.na(Urort_Skov), !is.na(Forest)) %>%
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Drevet_Skov = Area_Sq_Km) %>%
   mutate(type = "Urort_Skov")
@@ -776,7 +778,7 @@ Table2_Soer <- Long_Table_All2 %>%
 
 Table2_Drevet_Skov <- Long_Table_All2 %>%
   dplyr::filter(!is.na(Naturnationalparks)) %>%
-  dplyr::filter(is.na(Habitats_P3), is.na(Urort_Skov)) %>%
+  dplyr::filter(is.na(Habitats_P3), is.na(Urort_Skov), !is.na(Forest)) %>%
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Drevet_Skov = Area_Sq_Km) %>%
   mutate(type = "Naturnationalparks")
@@ -834,7 +836,7 @@ Table2_Soer <- Long_Table_All2 %>%
 
 Table2_Drevet_Skov <- Long_Table_All2 %>%
   dplyr::filter(!is.na(Stoette)) %>%
-  dplyr::filter(is.na(Habitats_P3), is.na(Urort_Skov)) %>%
+  dplyr::filter(is.na(Habitats_P3), is.na(Urort_Skov), !is.na(Forest)) %>%
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Drevet_Skov = Area_Sq_Km) %>%
   mutate(type = "Stoette")
@@ -892,7 +894,7 @@ Table2_Soer <- Long_Table_All2 %>%
 
 Table2_Drevet_Skov <- Long_Table_All2 %>%
   dplyr::filter(!is.na(Fond)) %>%
-  dplyr::filter(is.na(Habitats_P3), is.na(Urort_Skov)) %>%
+  dplyr::filter(is.na(Habitats_P3), is.na(Urort_Skov), !is.na(Forest)) %>%
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Drevet_Skov = Area_Sq_Km) %>%
   mutate(type = "Fond")
@@ -970,7 +972,8 @@ Table1 <- full_join(Overlap, NoOverlap) %>%
   dplyr::select(name,Proportion, Total_area,  Exclusive, Overlapped)
 
 Table1 <- bind_rows(Total, Table1) %>%
-  dplyr::select(name,Proportion, Total_area,  Exclusive, Overlapped)
+  dplyr::select(name,Proportion, Total_area,  Exclusive, Overlapped) %>%
+  arrange(desc(Total_area))
 
 openxlsx::write.xlsx(Table1, "Table1_Terrestrial.xlsx")
 
