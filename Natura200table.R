@@ -261,8 +261,8 @@ Forest <-  terra::rast("O:/Nat_BDR-data/Arealanalyse/RAW/Basemap03_tree_cover_NE
 Forerst <- Forest %>% mask(DK)
 
 Forerst[Forerst< 1] <- NA
-Forerst[Forerst > 4] <- NA
-Forerst[Forerst >= 1 & Forerst <= 4] <- 1
+Forerst[Forerst == 4] <- NA
+Forerst[Forerst %in% c(1,2,3,5)] <- 1
 
 markblokkort <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/Markblokke2021/Markblokke2021.shp")
 
@@ -927,6 +927,8 @@ openxlsx::write.xlsx(Table2_Final, "Table2_Terrestrial.xlsx")
 
 #### Make table 1
 
+Long_Table_All2 <- readRDS("NewTable2.rds")
+
 ForTable1 <- Long_Table_All2 %>%
   dplyr::select("Natura_2000", "NaturaOgVildtreservater",
                 "IUCN", "Urort_Skov", "Naturnationalparks", "Stoette", "Fond","Proportion", "Area_Sq_Km", "Habitats_P3") %>%
@@ -938,6 +940,13 @@ ForTable1 <- Long_Table_All2 %>%
   rowwise() %>%
   mutate(Yes = sum(c_across(Natura_2000:Habitats_P3) == "Yes", na.rm = TRUE))
 
+
+Total <- ForTable1 %>%
+  ungroup() %>%
+  dplyr::select(-Yes) %>%
+  summarise_if(is.numeric,sum) %>%
+  rename(Total_area= Area_Sq_Km, Proportion = Proportion) %>%
+  mutate(name = "Total")
 
 NoOverlap <- ForTable1 %>%
   dplyr::filter(Yes == 1) %>%
@@ -958,8 +967,10 @@ Overlap <- ForTable1 %>%
 
 Table1 <- full_join(Overlap, NoOverlap) %>%
   mutate(Total_area =  Overlapped + Exclusive, Proportion = Proportion_Overlap + Proportion_Exclusive) %>%
-  dplyr::select(name, Total_area, Proportion, Exclusive, Overlapped)
+  dplyr::select(name,Proportion, Total_area,  Exclusive, Overlapped)
 
+Table1 <- bind_rows(Total, Table1) %>%
+  dplyr::select(name,Proportion, Total_area,  Exclusive, Overlapped)
 
 openxlsx::write.xlsx(Table1, "Table1_Terrestrial.xlsx")
 
