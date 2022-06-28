@@ -2131,6 +2131,9 @@ TotalOverlap <- list(Natura2000_Sea_Table1, Habitatomrade_Sea_Table1, Habitatnat
 
 TotalOverlap[is.na(TotalOverlap)] <- 0
 
+openxlsx::write.xlsx(TotalOverlap, "Table1_Marine.xlsx")
+
+
 ## ---- Show-SeaTable1 --------
 
 knitr::kable(TotalOverlap, digits = 2, caption = "Areas in square kms and proportions of the sea of Denmark and their overlaps", format.args	= list(big.mark = ','))
@@ -2213,6 +2216,8 @@ Natur_Vildt_Reservater <- LongSeaTable %>%
   dplyr::select(-Natura_2000)
 AllNatura2000 <- list(Total, Habitatomrade, fuglebeskyt, Ramsar, Habitatnaturtype, Havstrategi_standard, Havstrategi_streng, Natur_Vildt_Reservater) %>%
   purrr::reduce(bind_rows) %>% arrange(desc(Area_Sq_Km))
+
+openxlsx::write.xlsx(AllNatura2000, "Table4_Marine.xlsx")
 
 ## ---- Show-SeaTable4 --------
 
