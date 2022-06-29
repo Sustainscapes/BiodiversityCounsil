@@ -1859,6 +1859,8 @@ plot(Natur_Vildt_Reservater_Croped_Sea, add =T, legend = "bottom")
 ## ---- Fredninger-sea-raster --------
 
 Fredninger <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/IUCN beskyt hav/Beskyt_omr_hav_IUCN_m_info_2.shp")
+Fredninger <- Fredninger[Fredninger$Type == "Fredning" & Naturbesk_ == "Ja",]
+
 
 Fredninger$Fredninger <- "Yes"
 Fredninger <- Fredninger[,c("Fredninger")]
