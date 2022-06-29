@@ -1507,17 +1507,25 @@ knitr::kable(Ownership_Table, digits = 3, caption = "Total area for areas by own
 
 ## ---- build-P3-Ownership-table --------
 
-P3_Ownership <- Ownership_Long_Table %>%
+Long_Table_All2 <- readRDS("NewTable2.rds")
+
+P3_Ownership <- Long_Table_All2 %>%
+  dplyr::select("Natura_2000", "NaturaOgVildtreservater",
+                "IUCN", "Urort_Skov", "Naturnationalparks", "Stoette", "Fond", "Proportion", "Area_Sq_Km", "Habitats_P3",
+                "ownership") %>%
+  rowwise() %>%
+  mutate(Yes = sum(c_across(Natura_2000:Fond) == "Yes", na.rm = TRUE)) %>%
   dplyr::filter(!is.na(Habitats_P3)) %>%
-  dplyr::mutate(Status = ifelse(is.na(Natura_2000) & is.na(Urort_Skov) & is.na(NaturaOgVildtreservater) & is.na(Naturnationalparker), "Exclusive", "Overlaps")) %>%
-  dplyr::select(Freq, Habitats_P3, ownership, Status) %>%
+  dplyr::mutate(Status = ifelse(Yes == 0, "Exclusive", "Overlaps")) %>%
+  dplyr::select(Area_Sq_Km, Habitats_P3, ownership, Status) %>%
   dplyr::mutate(Habitats_P3 = ifelse(is.na(Habitats_P3), NA, "Yes")) %>%
   mutate(ownership = ifelse(is.na(ownership), "Unknown", ownership)) %>%
   group_by(Habitats_P3, ownership, Status) %>%
-  summarise(Area_Sq_Km = (sum(Freq)*100)/1000000) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   ungroup() %>%
   dplyr::select(-Habitats_P3) %>%
-  pivot_wider(names_from = ownership, values_from = Area_Sq_Km)
+  pivot_wider(names_from = ownership, values_from = Area_Sq_Km) %>%
+  mutate(Total = Kommunal + Privat + Statslig + Unknown)
 
 saveRDS(P3_Ownership, "P3_Ownership.rds")
 readr::write_csv(P3_Ownership, "P3_Ownership.csv")
@@ -1529,7 +1537,27 @@ knitr::kable(P3_Ownership, digits = 3, caption = "Total area for paragraph 3 and
 
 ## ---- build-Skov-Ownership-table --------
 
-Urort_Skov_Ownership <- Ownership_Long_Table %>%
+Long_Table_All2 <- readRDS("NewTable2.rds")
+
+Urort_Skov_Ownership <- Long_Table_All2 %>%
+  dplyr::select("Natura_2000", "NaturaOgVildtreservater",
+                "IUCN", "Habitats_P3", "Naturnationalparks", "Stoette", "Fond", "Proportion", "Area_Sq_Km", "Urort_Skov",
+                "ownership") %>%
+  dplyr::mutate(Habitats_P3 = ifelse(is.na(Habitats_P3), NA, "Yes")) %>%
+  rowwise() %>%
+  mutate(Yes = sum(c_across(Natura_2000:Fond) == "Yes", na.rm = TRUE)) %>%
+  dplyr::filter(!is.na(Urort_Skov)) %>%
+  dplyr::mutate(Status = ifelse(Yes == 0, "Exclusive", "Overlaps")) %>%
+  dplyr::select(Area_Sq_Km, Urort_Skov, ownership, Status) %>%
+  mutate(ownership = ifelse(is.na(ownership), "Unknown", ownership)) %>%
+  group_by(Urort_Skov, ownership, Status) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  ungroup() %>%
+  dplyr::select(-Urort_Skov) %>%
+  pivot_wider(names_from = ownership, values_from = Area_Sq_Km) %>%
+  mutate(Total = Kommunal + Privat + Statslig + Unknown)
+
+Urort_Skov_Ownership <- Long_Table_All2 %>%
   dplyr::filter(!is.na(Urort_Skov)) %>%
   dplyr::mutate(Status = ifelse(is.na(Natura_2000) & is.na(Habitats_P3) & is.na(NaturaOgVildtreservater) & is.na(Naturnationalparker), "Exclusive", "Overlaps")) %>%
   dplyr::select(Freq, Urort_Skov, Status) %>%

@@ -6,6 +6,7 @@ library(tidyverse)
 library(mregions)
 
 Template <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_markblokkort_Croped.tif")
+Template <- terra::rast("RasterizedCOG/Rast_COG_p3_klit_Croped.tif")
 
 values(Template) <- 1
 

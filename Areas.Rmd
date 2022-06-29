@@ -47,3 +47,59 @@ DT::datatable(shared_Areas, extensions = 'Buttons', filter = 'top',
 ```
 
 
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin="" />
+
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+
+<script src="https://unpkg.com/georaster"></script>
+
+<script src="https://unpkg.com/georaster-layer-for-leaflet/dist/georaster-layer-for-leaflet.min.js"></script>
+
+
+
+```{r, warning = FALSE}
+leaflet(width = 0, height = 0)
+```
+
+
+<div id = "map" style="width: 100%; height: 480px; position: relative;"></div>
+
+<script>
+  // Load base tiles ----
+
+  // OpenStreetMap Tiles
+  var OpenStreetMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  });
+
+  // Initiate leaflet ----
+  // This needs to be done before loading the Georasters
+  var map = L.map('map', { 
+      center: [56.25, 12], // Centered on Denmark
+      zoom: 7, // Worked well
+      layers: [OpenStreetMap] // Default layers
+  });
+
+  // Set URL to cog
+  var random_rast_dk_url = "https://biodiversitycounciltifs.s3.eu-central-1.amazonaws.com/Paragraph3_Optimized.tif"
+
+  //  Load georaster layer and add to map
+  parseGeoraster(random_rast_dk_url).then(georaster => {
+      var random_rast_dk = new GeoRasterLayer({
+          georaster,
+          opacity: 0.75,
+          resolution: 128, // 128 seems to be a good compromise
+          pixelValuesToColorFn: function(pixelValues){
+              var pixelValue = pixelValues[0]; 
+              if (pixelValue >= 1 && pixelValue <= 2){
+                  var colour = (pixelValue == 1 ? "Purple": "DarkGreen"); 
+                  return colour;
+              } else {
+                  return undefined;
+              }   
+          }
+      });       
+      random_rast_dk.addTo(map);
+  });
+
+</script>
