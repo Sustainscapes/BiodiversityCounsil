@@ -2079,14 +2079,19 @@ Fredninger_Sea_Table1 <- full_join(Fredninger_Sea_Table1_Totals, Fredninger_Sea_
 
 ##
 
+Total_Sea_Table1a <- LongSeaTable %>%
+  dplyr::filter(!is.na(Natura_2000) | !is.na(Havstrategi_standard) | !is.na(Havstrategi_streng) | !is.na(Natur_Vildt_Reservater) |
+                                 !is.na(Fredninger)) %>%
+  summarise_if(is.numeric, sum) %>%
+  dplyr::select(-Frequency) %>% mutate(Class = "Total")
 
-TotalOverlap <- list(Natura2000_Sea_Table1, Havstrategi_standard_Sea_Table1, Havstrategi_streng_Sea_Table1, Natur_Vildt_Reservater_Sea_Table1, Fredninger_Sea_Table1) %>%
+
+TotalOverlap <- list(Total_Sea_Table1a, Natura2000_Sea_Table1, Havstrategi_standard_Sea_Table1, Havstrategi_streng_Sea_Table1, Natur_Vildt_Reservater_Sea_Table1, Fredninger_Sea_Table1) %>%
   purrr::reduce(bind_rows) %>%
   arrange(desc(Area_Sq_Km))
 
 TotalOverlap[is.na(TotalOverlap)] <- 0
 
-Total <-
 
 openxlsx::write.xlsx(TotalOverlap, "Table1_Marine.xlsx")
 
@@ -2118,7 +2123,7 @@ Habitatomrade <- LongSeaTable %>%
 
 # Natura 2000 that is not Habitatomrade
 fuglebeskyt  <- LongSeaTable %>%
-  dplyr::filter(Natura_2000 == "Yes" & Habitatomrade != "Yes") %>%
+  dplyr::filter(Natura_2000 == "Yes" & Fuglebeskyt == "Yes") %>%
   dplyr::select(Natura_2000, Area_Sq_Km, Proportion) %>%
   group_by_if(is.character) %>%
   summarise_if(is.numeric, sum) %>%
@@ -2171,7 +2176,19 @@ Natur_Vildt_Reservater <- LongSeaTable %>%
   mutate(Category = "Vildt Reservater") %>%
   relocate(Category, .before = everything()) %>%
   dplyr::select(-Natura_2000)
-AllNatura2000 <- list(Total, Habitatomrade, fuglebeskyt, Ramsar, Habitatnaturtype, Havstrategi_standard, Havstrategi_streng, Natur_Vildt_Reservater) %>%
+
+
+Natur_Habitatomrade_Fugle <- LongSeaTable %>%
+  dplyr::filter(Natura_2000 == "Yes" & Habitatomrade == "Yes" & Fuglebeskyt == "Yes") %>%
+  dplyr::select(Natura_2000, Area_Sq_Km, Proportion) %>%
+  group_by_if(is.character) %>%
+  summarise_if(is.numeric, sum) %>%
+  mutate(Category = "Habitatatomr. og fuglebesk.") %>%
+  relocate(Category, .before = everything()) %>%
+  dplyr::select(-Natura_2000)
+
+
+AllNatura2000 <- list(Total, Habitatomrade, fuglebeskyt, Ramsar, Habitatnaturtype, Havstrategi_standard, Havstrategi_streng, Natur_Vildt_Reservater, Natur_Habitatomrade_Fugle) %>%
   purrr::reduce(bind_rows) %>% arrange(desc(Area_Sq_Km))
 
 openxlsx::write.xlsx(AllNatura2000, "Table4_Marine.xlsx")
