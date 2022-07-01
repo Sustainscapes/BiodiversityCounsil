@@ -1,7 +1,7 @@
 Dataset generation for the Danish Biodiversity council
 ================
 Derek Corcoran
-22/06, 2022
+30/06, 2022
 
 -   [1 Objective](#1-objective)
 -   [2 Packages needed](#2-packages-needed)
@@ -2711,18 +2711,25 @@ Creation of the Ownership table for paragraph 3
 </summary>
 
 ``` r
-P3_Ownership <- Ownership_Long_Table %>%
+Long_Table_All2 <- readRDS("NewTable2.rds")
+
+P3_Ownership <- Long_Table_All2 %>%
+    dplyr::select("Natura_2000", "NaturaOgVildtreservater", "IUCN", "Urort_Skov",
+        "Naturnationalparks", "Stoette", "Fond", "Proportion", "Area_Sq_Km", "Habitats_P3",
+        "ownership") %>%
+    rowwise() %>%
+    mutate(Yes = sum(c_across(Natura_2000:Fond) == "Yes", na.rm = TRUE)) %>%
     dplyr::filter(!is.na(Habitats_P3)) %>%
-    dplyr::mutate(Status = ifelse(is.na(Natura_2000) & is.na(Urort_Skov) & is.na(NaturaOgVildtreservater) &
-        is.na(Naturnationalparker), "Exclusive", "Overlaps")) %>%
-    dplyr::select(Freq, Habitats_P3, ownership, Status) %>%
+    dplyr::mutate(Status = ifelse(Yes == 0, "Exclusive", "Overlaps")) %>%
+    dplyr::select(Area_Sq_Km, Habitats_P3, ownership, Status) %>%
     dplyr::mutate(Habitats_P3 = ifelse(is.na(Habitats_P3), NA, "Yes")) %>%
     mutate(ownership = ifelse(is.na(ownership), "Unknown", ownership)) %>%
     group_by(Habitats_P3, ownership, Status) %>%
-    summarise(Area_Sq_Km = (sum(Freq) * 100)/1e+06) %>%
+    summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
     ungroup() %>%
     dplyr::select(-Habitats_P3) %>%
-    pivot_wider(names_from = ownership, values_from = Area_Sq_Km)
+    pivot_wider(names_from = ownership, values_from = Area_Sq_Km) %>%
+    mutate(Total = Kommunal + Privat + Statslig + Unknown)
 
 saveRDS(P3_Ownership, "P3_Ownership.rds")
 readr::write_csv(P3_Ownership, "P3_Ownership.csv")
@@ -2747,10 +2754,10 @@ Ownership table paragraph 3
 
 </summary>
 
-| Status    | Kommunal |    Privat | Statslig | Unknown |
-|:----------|---------:|----------:|---------:|--------:|
-| Exclusive |  149.642 | 2,185.322 |  137.671 |  76.186 |
-| Overlaps  |   37.818 | 1,008.074 |  744.672 | 197.719 |
+| Status    | Kommunal |    Privat | Statslig | Unknown |     Total |
+|:----------|---------:|----------:|---------:|--------:|----------:|
+| Exclusive |  140.138 | 2,114.140 |  130.560 |  68.297 | 2,453.135 |
+| Overlaps  |   47.322 | 1,079.256 |  751.783 | 205.608 | 2,083.969 |
 
 Table 3.5: Total area for paragraph 3 and klit in square kilometers
 separated by ownership
@@ -2770,15 +2777,26 @@ Creation of the Ownership table for untouched forest
 </summary>
 
 ``` r
-Urort_Skov_Ownership <- Ownership_Long_Table %>%
+Long_Table_All2 <- readRDS("NewTable2.rds")
+
+Urort_Skov_Ownership <- Long_Table_All2 %>%
+    dplyr::select("Natura_2000", "NaturaOgVildtreservater", "IUCN", "Habitats_P3",
+        "Naturnationalparks", "Stoette", "Fond", "Proportion", "Area_Sq_Km", "Urort_Skov",
+        "ownership") %>%
+    dplyr::mutate(Habitats_P3 = ifelse(is.na(Habitats_P3), NA, "Yes")) %>%
+    rowwise() %>%
+    mutate(Yes = sum(c_across(Natura_2000:Fond) == "Yes", na.rm = TRUE)) %>%
     dplyr::filter(!is.na(Urort_Skov)) %>%
-    dplyr::mutate(Status = ifelse(is.na(Natura_2000) & is.na(Habitats_P3) & is.na(NaturaOgVildtreservater) &
-        is.na(Naturnationalparker), "Exclusive", "Overlaps")) %>%
-    dplyr::select(Freq, Urort_Skov, Status) %>%
-    group_by(Urort_Skov, Status) %>%
-    summarise(Area_Sq_Km = (sum(Freq) * 100)/1e+06) %>%
+    dplyr::mutate(Status = ifelse(Yes == 0, "Exclusive", "Overlaps")) %>%
+    dplyr::select(Area_Sq_Km, Urort_Skov, ownership, Status) %>%
+    mutate(ownership = ifelse(is.na(ownership), "Unknown", ownership)) %>%
+    group_by(Urort_Skov, ownership, Status) %>%
+    summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
     ungroup() %>%
-    pivot_wider(names_from = Urort_Skov, values_from = Area_Sq_Km)
+    dplyr::select(-Urort_Skov) %>%
+    pivot_wider(names_from = ownership, values_from = Area_Sq_Km) %>%
+    mutate(Total = Kommunal + Privat + Statslig + Unknown)
+
 
 saveRDS(Urort_Skov_Ownership, "Urort_Skov_Ownership.rds")
 readr::write_csv(Urort_Skov_Ownership, "Urort_Skov_Ownership.csv")
@@ -2803,10 +2821,10 @@ Ownership table forest
 
 </summary>
 
-| Status    | Private |   State |
-|:----------|--------:|--------:|
-| Exclusive |   8.937 | 178.194 |
-| Overlaps  |  15.344 | 495.249 |
+| Status    | Kommunal | Privat | Statslig | Unknown |   Total |
+|:----------|---------:|-------:|---------:|--------:|--------:|
+| Exclusive |    0.043 |  2.483 |  169.024 |   1.198 | 172.748 |
+| Overlaps  |    0.426 | 31.390 |  482.353 |  10.810 | 524.980 |
 
 Table 3.6: Total area for untouched forest in square kilometers
 separated by ownership
@@ -2879,16 +2897,13 @@ Natura2000$Natura_2000 <- "Yes"
 Natura2000 <- Natura2000[, c("Natura_2000")]
 
 Natura2000 <- aggregate(Natura2000, by = "Natura_2000")
-Natura2000_Croped_Sea <- terra::mask(Natura2000, SeaOfDenmark)
+Rast_Natura2000_Sea <- terra::rasterize(Natura2000, TemplateSea)
 
-
-# Write raw rasters to disk
-
-Rast_Natura2000_Croped_Sea <- terra::rasterize(Natura2000_Croped_Sea, TemplateSea)
+Natura2000_Croped_Sea <- terra::mask(Rast_Natura2000_Sea, SeaOfDenmark)
 
 # Write croped rasters to disk
 
-writeRaster(Rast_Natura2000_Croped_Sea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Natura2000_Croped_Sea.tif",
+writeRaster(Natura2000_Croped_Sea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Natura2000_Croped_Sea.tif",
     overwrite = TRUE, gdal = c("COMPRESS=DEFLATE", "TFW=YES", "of=COG"))
 
 
@@ -2927,16 +2942,18 @@ Habitatomrade$Habitatomrade <- "Yes"
 Habitatomrade <- Habitatomrade[, c("Habitatomrade")]
 
 Habitatomrade <- aggregate(Habitatomrade, by = "Habitatomrade")
+
+Habitatomrade <- terra::rasterize(Habitatomrade, TemplateSea)
 Habitatomrade_Croped_Sea <- terra::mask(Habitatomrade, SeaOfDenmark)
 
 
 # Write raw rasters to disk
 
-Rast_Habitatomrade_Croped_Sea <- terra::rasterize(Habitatomrade_Croped_Sea, TemplateSea)
+
 
 # Write croped rasters to disk
 
-writeRaster(Rast_Habitatomrade_Croped_Sea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Habitatomrade_Croped_Sea.tif",
+writeRaster(Habitatomrade_Croped_Sea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Habitatomrade_Croped_Sea.tif",
     overwrite = TRUE, gdal = c("COMPRESS=DEFLATE", "TFW=YES", "of=COG"))
 
 
@@ -2975,17 +2992,13 @@ Habitatnaturtype$Habitatnaturtype <- Habitatnaturtype$Naturnavn
 Habitatnaturtype <- Habitatnaturtype[, c("Habitatnaturtype")]
 
 Habitatnaturtype <- aggregate(Habitatnaturtype, by = "Habitatnaturtype")
+Habitatnaturtype <- terra::rasterize(Habitatnaturtype, TemplateSea)
 Habitatnaturtype_Croped_Sea <- terra::mask(Habitatnaturtype, SeaOfDenmark)
 
 
-# Write raw rasters to disk
-
-Rast_Habitatnaturtype_Croped_Sea <- terra::rasterize(Habitatnaturtype_Croped_Sea,
-    TemplateSea)
-
 # Write croped rasters to disk
 
-writeRaster(Rast_Habitatnaturtype_Croped_Sea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Habitatnaturtype_Croped_Sea.tif",
+writeRaster(Habitatnaturtype_Croped_Sea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Habitatnaturtype_Croped_Sea.tif",
     overwrite = TRUE, gdal = c("COMPRESS=DEFLATE", "TFW=YES", "of=COG"))
 
 # save as cloud optimized rasters
@@ -3023,16 +3036,17 @@ Ramsar$Ramsar <- "Yes"
 Ramsar <- Ramsar[, c("Ramsar")]
 
 Ramsar <- aggregate(Ramsar, by = "Ramsar")
+Ramsar <- terra::rasterize(Ramsar, TemplateSea)
 Ramsar_Croped_Sea <- terra::mask(Ramsar, SeaOfDenmark)
 
 
 # Write raw rasters to disk
 
-Rast_Ramsar_Croped_Sea <- terra::rasterize(Ramsar_Croped_Sea, TemplateSea)
+
 
 # Write croped rasters to disk
 
-writeRaster(Rast_Ramsar_Croped_Sea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Ramsar_Croped_Sea.tif",
+writeRaster(Ramsar_Croped_Sea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Ramsar_Croped_Sea.tif",
     overwrite = TRUE, gdal = c("COMPRESS=DEFLATE", "TFW=YES", "of=COG"))
 
 # save as cloud optimized rasters
@@ -3162,19 +3176,21 @@ Crop and save Natur Vildt Reservater sea
 </summary>
 
 ``` r
-Natur_Vildt_Reservater <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/NATUR_VILDT_RESERVATER/NATUR_VILDT_RESERVATER.shp")
+Wildreserve <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/NATUR_VILDT_RESERVATER/NATUR_VILDT_RESERVATER.shp")
+
+# Eliminate the some of the reserves
+
+Natur_Vildt_Reservater <- Wildreserve[!(Wildreserve$Beken_navn %in% c("Agerø og Skibsted Fjord",
+    "Agger Tange", "Anholt", "Ertholmene", "Hesselø", "Hirsholmene", "Horsens Nørrestrand",
+    "Vorsø")), ]
 
 Natur_Vildt_Reservater$Natur_Vildt_Reservater <- "Yes"
 Natur_Vildt_Reservater <- Natur_Vildt_Reservater[, c("Natur_Vildt_Reservater")]
 
 Natur_Vildt_Reservater <- aggregate(Natur_Vildt_Reservater, by = "Natur_Vildt_Reservater")
+Natur_Vildt_Reservater <- terra::rasterize(Natur_Vildt_Reservater, TemplateSea)
 Natur_Vildt_Reservater_Croped_Sea <- terra::mask(Natur_Vildt_Reservater, SeaOfDenmark)
 
-
-# Write raw rasters to disk
-
-Natur_Vildt_Reservater_Croped_Sea <- terra::rasterize(Natur_Vildt_Reservater_Croped_Sea,
-    TemplateSea)
 
 # Write croped rasters to disk
 
@@ -3211,17 +3227,20 @@ Crop and save Fredninger sea
 
 ``` r
 Fredninger <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/IUCN beskyt hav/Beskyt_omr_hav_IUCN_m_info_2.shp")
+Fredninger <- Fredninger[Fredninger$Type == "Fredning" & Fredninger$Naturbesk_ ==
+    "Ja", ]
 
 Fredninger$Fredninger <- "Yes"
 Fredninger <- Fredninger[, c("Fredninger")]
 
 Fredninger <- aggregate(Fredninger, by = "Fredninger")
+Fredninger <- terra::rasterize(Fredninger, TemplateSea)
 Fredninger_Croped_Sea <- terra::mask(Fredninger, SeaOfDenmark)
 
 
 # Write raw rasters to disk
 
-Fredninger_Croped_Sea <- terra::rasterize(Fredninger_Croped_Sea, TemplateSea)
+
 
 # Write croped rasters to disk
 
@@ -3275,12 +3294,14 @@ writeRaster(AllSea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/AllSea.tif", 
 and then we crosstabulate to solve for all the intersections
 
 ``` r
-AllSea <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/AllSea.tif")
+# AllSea <-
+# terra::rast('O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/AllSea.tif')
 
-dir.create("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/SeaTiles")
+# dir.create('O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/SeaTiles')
 
-writeRaster(AllSea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/SeaTiles/AllSea.tif",
-    overwrite = TRUE, gdal = c("COMPRESS=DEFLATE", "TFW=YES", "of=COG"))
+# writeRaster(AllSea,
+# 'O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/SeaTiles/AllSea.tif',
+# overwrite=TRUE, gdal=c('COMPRESS=DEFLATE', 'TFW=YES','of=COG'))
 
 
 # AreaSea <- crosstab(AllSea, useNA=T, long=TRUE)
@@ -3314,8 +3335,7 @@ LongSeaTable <- readRDS("LongSeaTable.rds") %>%
 
 Natura2000_Sea_Table1a <- LongSeaTable %>%
     dplyr::filter(!is.na(Natura_2000)) %>%
-    mutate(Overlaped = case_when(is.na(Habitatomrade) & is.na(Habitatnaturtype) &
-        is.na(Ramsar) & is.na(Havstrategi_standard) & is.na(Havstrategi_streng) &
+    mutate(Overlaped = case_when(is.na(Havstrategi_standard) & is.na(Havstrategi_streng) &
         is.na(Natur_Vildt_Reservater) & is.na(Fredninger) ~ "No", TRUE ~ "Yes")) %>%
     group_by(Natura_2000, Overlaped) %>%
     summarise_if(is.numeric, sum) %>%
@@ -3336,94 +3356,13 @@ Natura2000_Sea_Table1_Appart <- Natura2000_Sea_Table1a %>%
 Natura2000_Sea_Table1 <- full_join(Natura2000_Sea_Table1_Totals, Natura2000_Sea_Table1_Appart) %>%
     relocate(Class, .before = everything())
 
-##
-
-Habitatomrade_Sea_Table1a <- LongSeaTable %>%
-    dplyr::filter(!is.na(Habitatomrade)) %>%
-    mutate(Overlaped = case_when(is.na(Natura_2000) & is.na(Habitatnaturtype) & is.na(Ramsar) &
-        is.na(Havstrategi_standard) & is.na(Havstrategi_streng) & is.na(Natur_Vildt_Reservater) &
-        is.na(Fredninger) ~ "No", TRUE ~ "Yes")) %>%
-    group_by(Habitatomrade, Overlaped) %>%
-    summarise_if(is.numeric, sum) %>%
-    dplyr::select(-Frequency)
-
-Habitatomrade_Sea_Table1_Totals <- Habitatomrade_Sea_Table1a %>%
-    ungroup() %>%
-    summarise_if(is.numeric, sum) %>%
-    mutate(Class = "Habitatomrade")
-
-Habitatomrade_Sea_Table1_Appart <- Habitatomrade_Sea_Table1a %>%
-    mutate(Class = "Habitatomrade") %>%
-    ungroup() %>%
-    dplyr::select(-Proportion, -Habitatomrade) %>%
-    tidyr::pivot_wider(names_from = Overlaped, values_from = Area_Sq_Km) %>%
-    rename(Area_Overlapped = Yes, Area_Exclusive = No)
-
-Habitatomrade_Sea_Table1 <- full_join(Habitatomrade_Sea_Table1_Totals, Habitatomrade_Sea_Table1_Appart) %>%
-    relocate(Class, .before = everything())
-
-##
-
-Habitatnaturtype_Sea_Table1a <- LongSeaTable %>%
-    dplyr::filter(!is.na(Habitatnaturtype)) %>%
-    mutate(Overlaped = case_when(is.na(Natura_2000) & is.na(Habitatomrade) & is.na(Ramsar) &
-        is.na(Havstrategi_standard) & is.na(Havstrategi_streng) & is.na(Natur_Vildt_Reservater) &
-        is.na(Fredninger) ~ "No", TRUE ~ "Yes")) %>%
-    group_by(Habitatnaturtype, Overlaped) %>%
-    summarise_if(is.numeric, sum) %>%
-    dplyr::select(-Frequency)
-
-## Only here
-
-
-Habitatnaturtype_Sea_Table1_Totals <- Habitatnaturtype_Sea_Table1a %>%
-    ungroup() %>%
-    summarise_if(is.numeric, sum) %>%
-    mutate(Class = "Habitatnaturtype")
-
-Habitatnaturtype_Sea_Table1_Appart <- Habitatnaturtype_Sea_Table1a %>%
-    mutate(Class = "Habitatnaturtype") %>%
-    ungroup() %>%
-    dplyr::select(-Proportion, -Habitatnaturtype) %>%
-    tidyr::pivot_wider(names_from = Overlaped, values_from = Area_Sq_Km) %>%
-    rename(Area_Overlapped = Yes)
-
-Habitatnaturtype_Sea_Table1 <- full_join(Habitatnaturtype_Sea_Table1_Totals, Habitatnaturtype_Sea_Table1_Appart) %>%
-    relocate(Class, .before = everything())
-
-###
-
-Ramsar_Sea_Table1a <- LongSeaTable %>%
-    dplyr::filter(!is.na(Ramsar)) %>%
-    mutate(Overlaped = case_when(is.na(Natura_2000) & is.na(Habitatnaturtype) & is.na(Habitatomrade) &
-        is.na(Havstrategi_standard) & is.na(Havstrategi_streng) & is.na(Natur_Vildt_Reservater) &
-        is.na(Fredninger) ~ "No", TRUE ~ "Yes")) %>%
-    group_by(Ramsar, Overlaped) %>%
-    summarise_if(is.numeric, sum) %>%
-    dplyr::select(-Frequency)
-
-Ramsar_Sea_Table1_Totals <- Ramsar_Sea_Table1a %>%
-    ungroup() %>%
-    summarise_if(is.numeric, sum) %>%
-    mutate(Class = "Ramsar")
-
-Ramsar_Sea_Table1_Appart <- Ramsar_Sea_Table1a %>%
-    mutate(Class = "Ramsar") %>%
-    ungroup() %>%
-    dplyr::select(-Proportion, -Ramsar) %>%
-    tidyr::pivot_wider(names_from = Overlaped, values_from = Area_Sq_Km) %>%
-    rename(Area_Overlapped = Yes)
-
-Ramsar_Sea_Table1 <- full_join(Ramsar_Sea_Table1_Totals, Ramsar_Sea_Table1_Appart) %>%
-    relocate(Class, .before = everything())
 
 ##
 
 Havstrategi_standard_Sea_Table1a <- LongSeaTable %>%
     dplyr::filter(!is.na(Havstrategi_standard)) %>%
-    mutate(Overlaped = case_when(is.na(Natura_2000) & is.na(Habitatnaturtype) & is.na(Ramsar) &
-        is.na(Habitatomrade) & is.na(Havstrategi_streng) & is.na(Natur_Vildt_Reservater) &
-        is.na(Fredninger) ~ "No", TRUE ~ "Yes")) %>%
+    mutate(Overlaped = case_when(is.na(Natura_2000) & is.na(Havstrategi_streng) &
+        is.na(Natur_Vildt_Reservater) & is.na(Fredninger) ~ "No", TRUE ~ "Yes")) %>%
     group_by(Havstrategi_standard, Overlaped) %>%
     summarise_if(is.numeric, sum) %>%
     dplyr::select(-Frequency)
@@ -3449,9 +3388,8 @@ Havstrategi_standard_Sea_Table1 <- full_join(Havstrategi_standard_Sea_Table1_Tot
 
 Havstrategi_streng_Sea_Table1a <- LongSeaTable %>%
     dplyr::filter(!is.na(Havstrategi_streng)) %>%
-    mutate(Overlaped = case_when(is.na(Natura_2000) & is.na(Habitatnaturtype) & is.na(Ramsar) &
-        is.na(Habitatomrade) & is.na(Havstrategi_standard) & is.na(Natur_Vildt_Reservater) &
-        is.na(Fredninger) ~ "No", TRUE ~ "Yes")) %>%
+    mutate(Overlaped = case_when(is.na(Natura_2000) & is.na(Havstrategi_standard) &
+        is.na(Natur_Vildt_Reservater) & is.na(Fredninger) ~ "No", TRUE ~ "Yes")) %>%
     group_by(Havstrategi_streng, Overlaped) %>%
     summarise_if(is.numeric, sum) %>%
     dplyr::select(-Frequency)
@@ -3476,9 +3414,8 @@ Havstrategi_streng_Sea_Table1 <- full_join(Havstrategi_streng_Sea_Table1_Totals,
 
 Natur_Vildt_Reservater_Sea_Table1a <- LongSeaTable %>%
     dplyr::filter(!is.na(Natur_Vildt_Reservater)) %>%
-    mutate(Overlaped = case_when(is.na(Natura_2000) & is.na(Habitatnaturtype) & is.na(Ramsar) &
-        is.na(Habitatomrade) & is.na(Havstrategi_streng) & is.na(Havstrategi_standard) &
-        is.na(Fredninger) ~ "No", TRUE ~ "Yes")) %>%
+    mutate(Overlaped = case_when(is.na(Natura_2000) & is.na(Havstrategi_streng) &
+        is.na(Havstrategi_standard) & is.na(Fredninger) ~ "No", TRUE ~ "Yes")) %>%
     group_by(Natur_Vildt_Reservater, Overlaped) %>%
     summarise_if(is.numeric, sum) %>%
     dplyr::select(-Frequency)
@@ -3503,9 +3440,9 @@ Natur_Vildt_Reservater_Sea_Table1 <- full_join(Natur_Vildt_Reservater_Sea_Table1
 
 Fredninger_Sea_Table1a <- LongSeaTable %>%
     dplyr::filter(!is.na(Fredninger)) %>%
-    mutate(Overlaped = case_when(is.na(Natura_2000) & is.na(Habitatnaturtype) & is.na(Ramsar) &
-        is.na(Habitatomrade) & is.na(Havstrategi_streng) & is.na(Havstrategi_standard) &
-        is.na(Natur_Vildt_Reservater) ~ "No", TRUE ~ "Yes")) %>%
+    mutate(Overlaped = case_when(is.na(Natura_2000) & is.na(Havstrategi_streng) &
+        is.na(Havstrategi_standard) & is.na(Natur_Vildt_Reservater) ~ "No", TRUE ~
+        "Yes")) %>%
     group_by(Fredninger, Overlaped) %>%
     summarise_if(is.numeric, sum) %>%
     dplyr::select(-Frequency)
@@ -3527,14 +3464,23 @@ Fredninger_Sea_Table1 <- full_join(Fredninger_Sea_Table1_Totals, Fredninger_Sea_
 
 ##
 
+Total_Sea_Table1a <- LongSeaTable %>%
+    dplyr::filter(!is.na(Natura_2000) | !is.na(Havstrategi_standard) | !is.na(Havstrategi_streng) |
+        !is.na(Natur_Vildt_Reservater) | !is.na(Fredninger)) %>%
+    summarise_if(is.numeric, sum) %>%
+    dplyr::select(-Frequency) %>%
+    mutate(Class = "Total")
 
-TotalOverlap <- list(Natura2000_Sea_Table1, Habitatomrade_Sea_Table1, Habitatnaturtype_Sea_Table1,
-    Ramsar_Sea_Table1, Havstrategi_standard_Sea_Table1, Havstrategi_streng_Sea_Table1,
-    Natur_Vildt_Reservater_Sea_Table1, Fredninger_Sea_Table1) %>%
+
+TotalOverlap <- list(Total_Sea_Table1a, Natura2000_Sea_Table1, Havstrategi_standard_Sea_Table1,
+    Havstrategi_streng_Sea_Table1, Natur_Vildt_Reservater_Sea_Table1, Fredninger_Sea_Table1) %>%
     purrr::reduce(bind_rows) %>%
     arrange(desc(Area_Sq_Km))
 
 TotalOverlap[is.na(TotalOverlap)] <- 0
+
+
+openxlsx::write.xlsx(TotalOverlap, "Table1_Marine.xlsx")
 ```
 
 </details>
@@ -3545,16 +3491,14 @@ Show table 1 sea
 
 </summary>
 
-| Class                  | Area_Sq_Km | Proportion | Area_Exclusive | Area_Overlapped |
-|:-----------------------|-----------:|-----------:|---------------:|----------------:|
-| Nautra_2000            |  30,478.81 |      29.02 |       7,332.28 |       23,146.53 |
-| Fredninger             |  21,292.45 |      20.27 |         310.04 |       20,982.41 |
-| Habitatomrade          |  19,979.98 |      19.02 |           0.00 |       19,979.98 |
-| Habitatnaturtype       |   7,589.06 |       7.23 |           0.00 |        7,589.06 |
-| Ramsar                 |   7,279.41 |       6.93 |           0.00 |        7,279.41 |
-| Havstrategi_standard   |   7,157.34 |       6.82 |       2,264.05 |        4,893.29 |
-| Havstrategi_streng     |   4,300.92 |       4.10 |           0.00 |        4,300.92 |
-| Natur_Vildt_Reservater |   3,415.99 |       3.25 |           8.34 |        3,407.65 |
+| Area_Sq_Km | Proportion | Class                  | Area_Exclusive | Area_Overlapped |
+|-----------:|-----------:|:-----------------------|---------------:|----------------:|
+|  30,039.05 |      28.60 | Total                  |           0.00 |            0.00 |
+|  26,284.82 |      25.03 | Nautra_2000            |      20,452.31 |        5,832.51 |
+|   7,157.34 |       6.82 | Havstrategi_standard   |       2,642.42 |        4,514.92 |
+|   4,300.92 |       4.10 | Havstrategi_streng     |           0.00 |        4,300.92 |
+|   2,378.00 |       2.26 | Natur_Vildt_Reservater |          87.37 |        2,290.63 |
+|      68.51 |       0.07 | Fredninger             |           3.90 |           64.61 |
 
 Table 4.1: Areas in square kms and proportions of the sea of Denmark and
 their overlaps
@@ -3587,17 +3531,17 @@ Habitatomrade <- LongSeaTable %>%
     dplyr::select(Natura_2000, Area_Sq_Km, Proportion) %>%
     group_by_if(is.character) %>%
     summarise_if(is.numeric, sum) %>%
-    mutate(Category = "Kun habitatomräde") %>%
+    mutate(Category = "Kun habitatomraade") %>%
     relocate(Category, .before = everything()) %>%
     dplyr::select(-Natura_2000)
 
 # Natura 2000 that is not Habitatomrade
 fuglebeskyt <- LongSeaTable %>%
-    dplyr::filter(Natura_2000 == "Yes" & Habitatomrade != "Yes") %>%
+    dplyr::filter(Natura_2000 == "Yes" & Fuglebeskyt == "Yes") %>%
     dplyr::select(Natura_2000, Area_Sq_Km, Proportion) %>%
     group_by_if(is.character) %>%
     summarise_if(is.numeric, sum) %>%
-    mutate(Category = "Fuglebeskyt") %>%
+    mutate(Category = "Kun fuglebeskyt") %>%
     relocate(Category, .before = everything()) %>%
     dplyr::select(-Natura_2000)
 
@@ -3606,7 +3550,7 @@ Ramsar <- LongSeaTable %>%
     dplyr::select(Natura_2000, Area_Sq_Km, Proportion) %>%
     group_by_if(is.character) %>%
     summarise_if(is.numeric, sum) %>%
-    mutate(Category = "Kun ramsar") %>%
+    mutate(Category = "Ramsar") %>%
     relocate(Category, .before = everything()) %>%
     dplyr::select(-Natura_2000)
 
@@ -3615,7 +3559,7 @@ Habitatnaturtype <- LongSeaTable %>%
     dplyr::select(Natura_2000, Area_Sq_Km, Proportion) %>%
     group_by_if(is.character) %>%
     summarise_if(is.numeric, sum) %>%
-    mutate(Category = "Kun Habitatnaturtype") %>%
+    mutate(Category = "Habitatnaturtype") %>%
     relocate(Category, .before = everything()) %>%
     dplyr::select(-Natura_2000)
 
@@ -3624,7 +3568,7 @@ Havstrategi_standard <- LongSeaTable %>%
     dplyr::select(Natura_2000, Area_Sq_Km, Proportion) %>%
     group_by_if(is.character) %>%
     summarise_if(is.numeric, sum) %>%
-    mutate(Category = "Kun Havstrategi standard") %>%
+    mutate(Category = "Havstrategi standard") %>%
     relocate(Category, .before = everything()) %>%
     dplyr::select(-Natura_2000)
 
@@ -3633,7 +3577,7 @@ Havstrategi_streng <- LongSeaTable %>%
     dplyr::select(Natura_2000, Area_Sq_Km, Proportion) %>%
     group_by_if(is.character) %>%
     summarise_if(is.numeric, sum) %>%
-    mutate(Category = "Kun Havstrategi streng") %>%
+    mutate(Category = "Havstrategi streng") %>%
     relocate(Category, .before = everything()) %>%
     dplyr::select(-Natura_2000)
 
@@ -3643,13 +3587,28 @@ Natur_Vildt_Reservater <- LongSeaTable %>%
     dplyr::select(Natura_2000, Area_Sq_Km, Proportion) %>%
     group_by_if(is.character) %>%
     summarise_if(is.numeric, sum) %>%
-    mutate(Category = "Kun Natur Vildt Reservater") %>%
+    mutate(Category = "Vildt Reservater") %>%
     relocate(Category, .before = everything()) %>%
     dplyr::select(-Natura_2000)
+
+
+Natur_Habitatomrade_Fugle <- LongSeaTable %>%
+    dplyr::filter(Natura_2000 == "Yes" & Habitatomrade == "Yes" & Fuglebeskyt ==
+        "Yes") %>%
+    dplyr::select(Natura_2000, Area_Sq_Km, Proportion) %>%
+    group_by_if(is.character) %>%
+    summarise_if(is.numeric, sum) %>%
+    mutate(Category = "Habitatatomr. og fuglebesk.") %>%
+    relocate(Category, .before = everything()) %>%
+    dplyr::select(-Natura_2000)
+
+
 AllNatura2000 <- list(Total, Habitatomrade, fuglebeskyt, Ramsar, Habitatnaturtype,
-    Havstrategi_standard, Havstrategi_streng, Natur_Vildt_Reservater) %>%
+    Havstrategi_standard, Havstrategi_streng, Natur_Vildt_Reservater, Natur_Habitatomrade_Fugle) %>%
     purrr::reduce(bind_rows) %>%
     arrange(desc(Area_Sq_Km))
+
+openxlsx::write.xlsx(AllNatura2000, "Table4_Marine.xlsx")
 ```
 
 </details>
@@ -3660,15 +3619,17 @@ Show table 4 sea
 
 </summary>
 
-| Category                   | Area_Sq_Km | Proportion |
-|:---------------------------|-----------:|-----------:|
-| Natura 2000 i alt          |  30,478.81 |      29.02 |
-| Kun habitatomräde          |  19,979.97 |      19.02 |
-| Kun Habitatnaturtype       |   7,589.06 |       7.23 |
-| Kun ramsar                 |   7,279.41 |       6.93 |
-| Kun Havstrategi standard   |   3,495.71 |       3.33 |
-| Kun Havstrategi streng     |   3,281.20 |       3.12 |
-| Kun Natur Vildt Reservater |   3,170.23 |       3.02 |
+| Category                    | Area_Sq_Km | Proportion |
+|:----------------------------|-----------:|-----------:|
+| Natura 2000 i alt           |  26,284.82 |      25.03 |
+| Kun fuglebeskyt             |  22,270.90 |      21.21 |
+| Kun habitatomraade          |  16,074.55 |      15.31 |
+| Habitatatomr. og fuglebesk. |  12,060.63 |      11.48 |
+| Habitatnaturtype            |   7,105.58 |       6.77 |
+| Ramsar                      |   5,647.04 |       5.38 |
+| Havstrategi standard        |   3,494.82 |       3.33 |
+| Havstrategi streng          |   3,280.82 |       3.12 |
+| Vildt Reservater            |   2,290.20 |       2.18 |
 
 Table 4.2: Areas in square kms and proportions of Natura 2000 with other
 groups

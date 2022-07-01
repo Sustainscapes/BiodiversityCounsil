@@ -1557,14 +1557,6 @@ Urort_Skov_Ownership <- Long_Table_All2 %>%
   pivot_wider(names_from = ownership, values_from = Area_Sq_Km) %>%
   mutate(Total = Kommunal + Privat + Statslig + Unknown)
 
-Urort_Skov_Ownership <- Long_Table_All2 %>%
-  dplyr::filter(!is.na(Urort_Skov)) %>%
-  dplyr::mutate(Status = ifelse(is.na(Natura_2000) & is.na(Habitats_P3) & is.na(NaturaOgVildtreservater) & is.na(Naturnationalparker), "Exclusive", "Overlaps")) %>%
-  dplyr::select(Freq, Urort_Skov, Status) %>%
-  group_by(Urort_Skov, Status) %>%
-  summarise(Area_Sq_Km = (sum(Freq)*100)/1000000) %>%
-  ungroup() %>%
-  pivot_wider(names_from = Urort_Skov, values_from = Area_Sq_Km)
 
 saveRDS(Urort_Skov_Ownership, "Urort_Skov_Ownership.rds")
 readr::write_csv(Urort_Skov_Ownership, "Urort_Skov_Ownership.csv")
