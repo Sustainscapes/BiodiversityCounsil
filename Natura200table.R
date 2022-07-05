@@ -6,7 +6,6 @@ library(tidyverse)
 library(mregions)
 
 Template <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_markblokkort_Croped.tif")
-Template <- terra::rast("RasterizedCOG/Rast_COG_p3_klit_Croped.tif")
 
 values(Template) <- 1
 
@@ -299,7 +298,7 @@ All <- c(Rast_Natura2000_Croped, Rast_Habitatnaturtype_terrestrial_Croped, Rast_
 Long_Table_All <- terra::crosstab(All, useNA=T, long=TRUE)
 
 Long_Table_All2 <- Long_Table_All  %>% mutate_at(c("Natura_2000", "Habitatnaturtype", "NaturaOgVildtreservater",
-                                                          "IUCN", "Urort_Skov", "Naturnationalparks", "Stoette", "Fond"), ~ifelse(.x == 0, "Yes", NA)) %>%
+                                                   "IUCN", "Urort_Skov", "Naturnationalparks", "Stoette", "Fond"), ~ifelse(.x == 0, "Yes", NA)) %>%
   mutate(sub_tree_cover_2018_RECLASS1 = ifelse(sub_tree_cover_2018_RECLASS1 == 1, "Yes", NA)) %>%
   rename(Forest = sub_tree_cover_2018_RECLASS1)
 
@@ -358,8 +357,8 @@ Table2_Open_Nature <- Long_Table_All2 %>%
 Table2_Skovnatur <- Long_Table_All2 %>%
   dplyr::filter(!is.na(Natura_2000) | !is.na(Habitatnaturtype) | !is.na(NaturaOgVildtreservater) | !is.na(IUCN) | !is.na(Urort_Skov) | !is.na(Naturnationalparks) | !is.na(Stoette) | !is.na(Fond) | !is.na(Habitats_P3)) %>%
   dplyr::filter(Habitats_P3 %in% c("Mose") | is.na(Habitats_P3) & ## change this
-                !is.na(Urort_Skov) &
-                !is.na(Forest)) %>%
+                  !is.na(Urort_Skov) &
+                  !is.na(Forest)) %>%
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Skovnatur = Area_Sq_Km) %>%
   mutate(type = "Total")
