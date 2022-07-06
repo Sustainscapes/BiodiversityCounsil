@@ -151,8 +151,11 @@ Rast_IUCN  <- terra::rasterize(IUCN_Aggregated, Template, field = "IUCN")
 Rast_IUCN_Croped <- terra::mask(Rast_IUCN, DK)
 
 ## Urort skov
+Urort_Skov <- list.files(path = "O:/Nat_BDR-data/Arealanalyse/RAW/Uroert skov NST Feb2022/", full.names = T, pattern = "shp")
 
-Urort_Skov <- list.files(path = "O:/Nat_BDR-data/Arealanalyse/RAW/Uroert skov NST Feb2022/", full.names = T, pattern = "shp") %>%
+Urort_Skov <- Urort_Skov[str_detect(Urort_Skov, "Forslag2021_omfang", negate = T)]
+
+Urort_Skov <- Urort_Skov %>%
   purrr::map(vect) %>% purrr::reduce(rbind) %>%
   terra::project(crs(Template))
 
@@ -349,16 +352,21 @@ Table2_Open_Nature <- Long_Table_All2 %>%
   dplyr::filter(!is.na(Natura_2000) | !is.na(Habitatnaturtype) | !is.na(NaturaOgVildtreservater) | !is.na(IUCN) | !is.na(Urort_Skov) | !is.na(Naturnationalparks) | !is.na(Stoette) | !is.na(Fond) | !is.na(Habitats_P3)) %>%
   dplyr::filter(Habitats_P3 %in% c("Eng", "Hede", "Klit", "Overdrev", "Strandeng","Ukendt", "Mose"), # aadd this lines
                 is.na(Urort_Skov),
-                is.na(Forest)) %>%
+                is.na(Forest),
+                is.na(Types_markblokkort)) %>%
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Open_Area = Area_Sq_Km) %>%
   mutate(type = "Total")
 
 Table2_Skovnatur <- Long_Table_All2 %>%
   dplyr::filter(!is.na(Natura_2000) | !is.na(Habitatnaturtype) | !is.na(NaturaOgVildtreservater) | !is.na(IUCN) | !is.na(Urort_Skov) | !is.na(Naturnationalparks) | !is.na(Stoette) | !is.na(Fond) | !is.na(Habitats_P3)) %>%
-  dplyr::filter(Habitats_P3 %in% c("Mose") | is.na(Habitats_P3) & ## change this
-                  !is.na(Urort_Skov) &
-                  !is.na(Forest)) %>%
+  #### NEW CODE
+  dplyr::filter((!is.na(Habitats_P3) &
+                  !is.na(Forest)) | ## change this
+                  !is.na(Urort_Skov))  %>%
+  dplyr::filter(is.na(Types_markblokkort)) %>%
+  dplyr::filter(Habitats_P3 != "Sø" | is.na(Habitats_P3)) %>%
+  #### NEW CODE
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Skovnatur = Area_Sq_Km) %>%
   mutate(type = "Total")
@@ -372,8 +380,10 @@ Table2_Soer <- Long_Table_All2 %>%
 
 Table2_Drevet_Skov <- Long_Table_All2 %>%
   dplyr::filter(!is.na(Natura_2000) | !is.na(Habitatnaturtype) | !is.na(NaturaOgVildtreservater) | !is.na(IUCN) | !is.na(Urort_Skov) | !is.na(Naturnationalparks) | !is.na(Stoette) | !is.na(Fond) | !is.na(Habitats_P3)) %>%
-  dplyr::filter(is.na(Habitats_P3), is.na(Urort_Skov), !is.na(Forest)) %>%
-  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+##New Code
+  dplyr::filter(is.na(Habitats_P3), is.na(Urort_Skov), !is.na(Forest), is.na(Types_markblokkort)) %>%
+##New COde
+    summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Drevet_Skov = Area_Sq_Km) %>%
   mutate(type = "Total")
 
@@ -384,6 +394,14 @@ Table2_PGR <- Long_Table_All2 %>%
   rename(PGR = Area_Sq_Km) %>%
   mutate(type = "Total")
 
+### New COlumn
+Table2_PGR2 <- Long_Table_All2 %>%
+  dplyr::filter(!is.na(Natura_2000) | !is.na(Habitatnaturtype) | !is.na(NaturaOgVildtreservater) | !is.na(IUCN) | !is.na(Urort_Skov) | !is.na(Naturnationalparks) | !is.na(Stoette) | !is.na(Fond) | !is.na(Habitats_P3)) %>%
+  dplyr::filter(!is.na(Habitats_P3), Types_markblokkort == "PGR") %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  rename(PGR_P3 = Area_Sq_Km) %>%
+  mutate(type = "Total")
+## New Column
 Table2_OMD <- Long_Table_All2 %>%
   dplyr::filter(!is.na(Natura_2000) | !is.na(Habitatnaturtype) | !is.na(NaturaOgVildtreservater) | !is.na(IUCN) | !is.na(Urort_Skov) | !is.na(Naturnationalparks) | !is.na(Stoette) | !is.na(Fond) | !is.na(Habitats_P3)) %>%
   dplyr::filter(Types_markblokkort == "OMD") %>%
@@ -391,7 +409,7 @@ Table2_OMD <- Long_Table_All2 %>%
   rename(OMD = Area_Sq_Km) %>%
   mutate(type = "Total")
 
-Table2_All_Total <- list(Table2_Total, Table2_Open_Nature, Table2_Skovnatur, Table2_Soer, Table2_Drevet_Skov, Table2_PGR, Table2_OMD) %>%
+Table2_All_Total <- list(Table2_Total, Table2_Open_Nature, Table2_Skovnatur, Table2_Soer, Table2_Drevet_Skov, Table2_PGR2, Table2_PGR,  Table2_OMD) %>%
   purrr::reduce(full_join) %>%
   dplyr::relocate(type, .before = everything())
 
@@ -407,16 +425,19 @@ Table2_Open_Nature <- Long_Table_All2 %>%
   dplyr::filter(Natura_2000 == "Yes") %>%
   dplyr::filter(Habitats_P3 %in% c("Eng", "Hede", "Klit", "Overdrev", "Strandeng","Ukendt", "Mose"), # aadd this lines
                 is.na(Urort_Skov),
-                is.na(Forest)) %>%
+                is.na(Forest),
+                is.na(Types_markblokkort)) %>%
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Open_Area = Area_Sq_Km) %>%
   mutate(type = "Natura_2000")
 
 Table2_Skovnatur <- Long_Table_All2 %>%
   dplyr::filter(Natura_2000 == "Yes") %>%
-  dplyr::filter(Habitats_P3 %in% c("Mose") | is.na(Habitats_P3) & ## change this
-                  !is.na(Urort_Skov) &
-                  !is.na(Forest)) %>%
+  dplyr::filter((!is.na(Habitats_P3) &
+                   !is.na(Forest)) | ## change this
+                  !is.na(Urort_Skov))  %>%
+  dplyr::filter(is.na(Types_markblokkort)) %>%
+  dplyr::filter(Habitats_P3 != "Sø" | is.na(Habitats_P3)) %>%
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Skovnatur = Area_Sq_Km) %>%
   mutate(type = "Natura_2000")
@@ -465,16 +486,19 @@ Table2_Open_Nature <- Long_Table_All2 %>%
   dplyr::filter(Habitatnaturtype  == "Yes") %>%
   dplyr::filter(Habitats_P3 %in% c("Eng", "Hede", "Klit", "Overdrev", "Strandeng","Ukendt", "Mose"), # aadd this lines
                 is.na(Urort_Skov),
-                is.na(Forest)) %>%
+                is.na(Forest),
+                is.na(Types_markblokkort)) %>%
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Open_Area = Area_Sq_Km) %>%
   mutate(type = "Habitatnaturtype")
 
 Table2_Skovnatur <- Long_Table_All2 %>%
   dplyr::filter(Habitatnaturtype == "Yes") %>%
-  dplyr::filter(Habitats_P3 %in% c("Mose") | is.na(Habitats_P3) & ## change this
-                  !is.na(Urort_Skov) &
-                  !is.na(Forest)) %>%
+  dplyr::filter((!is.na(Habitats_P3) &
+                   !is.na(Forest)) | ## change this
+                  !is.na(Urort_Skov))  %>%
+  dplyr::filter(is.na(Types_markblokkort)) %>%
+  dplyr::filter(Habitats_P3 != "Sø" | is.na(Habitats_P3)) %>%
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Skovnatur = Area_Sq_Km) %>%
   mutate(type = "Habitatnaturtype")
@@ -523,16 +547,19 @@ Table2_Open_Nature <- Long_Table_All2 %>%
   dplyr::filter(!is.na(Habitats_P3)) %>%
   dplyr::filter(Habitats_P3 %in% c("Eng", "Hede", "Klit", "Overdrev", "Strandeng","Ukendt", "Mose"), # aadd this lines
                 is.na(Urort_Skov),
-                is.na(Forest)) %>%
+                is.na(Forest),
+                is.na(Types_markblokkort)) %>%
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Open_Area = Area_Sq_Km) %>%
   mutate(type = "Paragraph_3_klit")
 
 Table2_Skovnatur <- Long_Table_All2 %>%
   dplyr::filter(!is.na(Habitats_P3)) %>%
-  dplyr::filter(Habitats_P3 %in% c("Mose") | is.na(Habitats_P3) & ## change this
-                  !is.na(Urort_Skov) &
-                  !is.na(Forest)) %>%
+  dplyr::filter((!is.na(Habitats_P3) &
+                   !is.na(Forest)) | ## change this
+                  !is.na(Urort_Skov))  %>%
+  dplyr::filter(is.na(Types_markblokkort)) %>%
+  dplyr::filter(Habitats_P3 != "Sø" | is.na(Habitats_P3)) %>%
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Skovnatur = Area_Sq_Km) %>%
   mutate(type = "Paragraph_3_klit")
@@ -581,16 +608,19 @@ Table2_Open_Nature <- Long_Table_All2 %>%
   dplyr::filter(!is.na(NaturaOgVildtreservater)) %>%
   dplyr::filter(Habitats_P3 %in% c("Eng", "Hede", "Klit", "Overdrev", "Strandeng","Ukendt", "Mose"), # aadd this lines
                 is.na(Urort_Skov),
-                is.na(Forest)) %>%
+                is.na(Forest),
+                is.na(Types_markblokkort)) %>%
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Open_Area = Area_Sq_Km) %>%
   mutate(type = "NaturaOgVildtreservater")
 
 Table2_Skovnatur <- Long_Table_All2 %>%
   dplyr::filter(!is.na(NaturaOgVildtreservater)) %>%
-  dplyr::filter(Habitats_P3 %in% c("Mose") | is.na(Habitats_P3) & ## change this
-                  !is.na(Urort_Skov) &
-                  !is.na(Forest)) %>%
+  dplyr::filter((!is.na(Habitats_P3) &
+                   !is.na(Forest)) | ## change this
+                  !is.na(Urort_Skov))  %>%
+  dplyr::filter(is.na(Types_markblokkort)) %>%
+  dplyr::filter(Habitats_P3 != "Sø" | is.na(Habitats_P3)) %>%
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Skovnatur = Area_Sq_Km) %>%
   mutate(type = "NaturaOgVildtreservater")
@@ -639,16 +669,19 @@ Table2_Open_Nature <- Long_Table_All2 %>%
   dplyr::filter(!is.na(IUCN)) %>%
   dplyr::filter(Habitats_P3 %in% c("Eng", "Hede", "Klit", "Overdrev", "Strandeng","Ukendt", "Mose"), # aadd this lines
                 is.na(Urort_Skov),
-                is.na(Forest)) %>%
+                is.na(Forest),
+                is.na(Types_markblokkort)) %>%
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Open_Area = Area_Sq_Km) %>%
   mutate(type = "IUCN")
 
 Table2_Skovnatur <- Long_Table_All2 %>%
   dplyr::filter(!is.na(IUCN)) %>%
-  dplyr::filter(Habitats_P3 %in% c("Mose") | is.na(Habitats_P3) & ## change this
-                  !is.na(Urort_Skov) &
-                  !is.na(Forest)) %>%
+  dplyr::filter((!is.na(Habitats_P3) &
+                   !is.na(Forest)) | ## change this
+                  !is.na(Urort_Skov))  %>%
+  dplyr::filter(is.na(Types_markblokkort)) %>%
+  dplyr::filter(Habitats_P3 != "Sø" | is.na(Habitats_P3)) %>%
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Skovnatur = Area_Sq_Km) %>%
   mutate(type = "IUCN")
@@ -697,20 +730,24 @@ Table2_Open_Nature <- Long_Table_All2 %>%
   dplyr::filter(!is.na(Urort_Skov)) %>%
   dplyr::filter(Habitats_P3 %in% c("Eng", "Hede", "Klit", "Overdrev", "Strandeng","Ukendt", "Mose"), # aadd this lines
                 is.na(Urort_Skov),
-                is.na(Forest)) %>%
+                is.na(Forest),
+                is.na(Types_markblokkort)) %>%
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Open_Area = Area_Sq_Km) %>%
   mutate(type = "Urort_Skov")
 
+## Fixed
 Table2_Skovnatur <- Long_Table_All2 %>%
   dplyr::filter(!is.na(Urort_Skov)) %>%
-  dplyr::filter(Habitats_P3 %in% c("Mose") | is.na(Habitats_P3) & ## change this
-                  !is.na(Urort_Skov) &
-                  !is.na(Forest)) %>%
+  dplyr::filter((!is.na(Habitats_P3) &
+                   !is.na(Forest)) | ## change this
+                  !is.na(Urort_Skov) | (!is.na(Forest) & !is.na(Naturnationalparks)))  %>%
+  dplyr::filter(is.na(Types_markblokkort)) %>%
+  dplyr::filter(Habitats_P3 != "Sø" | is.na(Habitats_P3)) %>%
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Skovnatur = Area_Sq_Km) %>%
   mutate(type = "Urort_Skov")
-
+## Fixed
 Table2_Soer <- Long_Table_All2 %>%
   dplyr::filter(!is.na(Urort_Skov)) %>%
   dplyr::filter(Habitats_P3 %in% c("Sø")) %>%
@@ -718,12 +755,15 @@ Table2_Soer <- Long_Table_All2 %>%
   rename(Soer = Area_Sq_Km) %>%
   mutate(type = "Urort_Skov")
 
+
+## FIXED
 Table2_Drevet_Skov <- Long_Table_All2 %>%
   dplyr::filter(!is.na(Urort_Skov)) %>%
-  dplyr::filter(is.na(Habitats_P3), is.na(Urort_Skov), !is.na(Forest)) %>%
+  dplyr::filter(is.na(Habitats_P3), is.na(Urort_Skov), !is.na(Forest), is.na(Types_markblokkort)) %>%
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Drevet_Skov = Area_Sq_Km) %>%
   mutate(type = "Urort_Skov")
+## FIXED
 
 Table2_PGR <- Long_Table_All2 %>%
   dplyr::filter(!is.na(Urort_Skov)) %>%
@@ -755,20 +795,23 @@ Table2_Open_Nature <- Long_Table_All2 %>%
   dplyr::filter(!is.na(Naturnationalparks)) %>%
   dplyr::filter(Habitats_P3 %in% c("Eng", "Hede", "Klit", "Overdrev", "Strandeng","Ukendt", "Mose"), # aadd this lines
                 is.na(Urort_Skov),
-                is.na(Forest)) %>%
+                is.na(Forest),
+                is.na(Types_markblokkort)) %>%
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Open_Area = Area_Sq_Km) %>%
   mutate(type = "Naturnationalparks")
-
+# Fixed
 Table2_Skovnatur <- Long_Table_All2 %>%
   dplyr::filter(!is.na(Naturnationalparks)) %>%
-  dplyr::filter(Habitats_P3 %in% c("Mose") | is.na(Habitats_P3) & ## change this
-                  !is.na(Urort_Skov) &
-                  !is.na(Forest)) %>%
+  dplyr::filter((!is.na(Habitats_P3) &
+   !is.na(Forest)) | ## change this
+   !is.na(Urort_Skov) | !is.na(Forest))  %>%
+  dplyr::filter(is.na(Types_markblokkort)) %>%
+  dplyr::filter(Habitats_P3 != "Sø" | is.na(Habitats_P3)) %>%
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Skovnatur = Area_Sq_Km) %>%
   mutate(type = "Naturnationalparks")
-
+# Fixed
 Table2_Soer <- Long_Table_All2 %>%
   dplyr::filter(!is.na(Naturnationalparks)) %>%
   dplyr::filter(Habitats_P3 %in% c("Sø")) %>%
@@ -776,13 +819,15 @@ Table2_Soer <- Long_Table_All2 %>%
   rename(Soer = Area_Sq_Km) %>%
   mutate(type = "Naturnationalparks")
 
+## Fixed
 Table2_Drevet_Skov <- Long_Table_All2 %>%
   dplyr::filter(!is.na(Naturnationalparks)) %>%
-  dplyr::filter(is.na(Habitats_P3), is.na(Urort_Skov), !is.na(Forest)) %>%
+  dplyr::filter(is.na(Forest) & is.na(Naturnationalparks)) %>%
+  dplyr::filter(is.na(Habitats_P3), is.na(Urort_Skov), !is.na(Forest), is.na(Types_markblokkort)) %>%
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Drevet_Skov = Area_Sq_Km) %>%
   mutate(type = "Naturnationalparks")
-
+## Fixed
 Table2_PGR <- Long_Table_All2 %>%
   dplyr::filter(!is.na(Naturnationalparks)) %>%
   dplyr::filter(is.na(Habitats_P3), Types_markblokkort == "PGR") %>%
@@ -813,16 +858,19 @@ Table2_Open_Nature <- Long_Table_All2 %>%
   dplyr::filter(!is.na(Stoette)) %>%
   dplyr::filter(Habitats_P3 %in% c("Eng", "Hede", "Klit", "Overdrev", "Strandeng","Ukendt", "Mose"), # aadd this lines
                 is.na(Urort_Skov),
-                is.na(Forest)) %>%
+                is.na(Forest),
+                is.na(Types_markblokkort)) %>%
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Open_Area = Area_Sq_Km) %>%
   mutate(type = "Stoette")
 
 Table2_Skovnatur <- Long_Table_All2 %>%
   dplyr::filter(!is.na(Stoette)) %>%
-  dplyr::filter(Habitats_P3 %in% c("Mose") | is.na(Habitats_P3) & ## change this
-                  !is.na(Urort_Skov) &
-                  !is.na(Forest)) %>%
+  dplyr::filter((!is.na(Habitats_P3) &
+                   !is.na(Forest)) | ## change this
+                  !is.na(Urort_Skov))  %>%
+  dplyr::filter(is.na(Types_markblokkort)) %>%
+  dplyr::filter(Habitats_P3 != "Sø" | is.na(Habitats_P3)) %>%
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Skovnatur = Area_Sq_Km) %>%
   mutate(type = "Stoette")
@@ -871,16 +919,19 @@ Table2_Open_Nature <- Long_Table_All2 %>%
   dplyr::filter(!is.na(Fond)) %>%
   dplyr::filter(Habitats_P3 %in% c("Eng", "Hede", "Klit", "Overdrev", "Strandeng","Ukendt", "Mose"), # aadd this lines
                 is.na(Urort_Skov),
-                is.na(Forest)) %>%
+                is.na(Forest),
+                is.na(Types_markblokkort)) %>%
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Open_Area = Area_Sq_Km) %>%
   mutate(type = "Fond")
 
 Table2_Skovnatur <- Long_Table_All2 %>%
   dplyr::filter(!is.na(Fond)) %>%
-  dplyr::filter(Habitats_P3 %in% c("Mose") | is.na(Habitats_P3) & ## change this
-                  !is.na(Urort_Skov) &
-                  !is.na(Forest)) %>%
+  dplyr::filter((!is.na(Habitats_P3) &
+                   !is.na(Forest)) | ## change this
+                  !is.na(Urort_Skov))  %>%
+  dplyr::filter(is.na(Types_markblokkort)) %>%
+  dplyr::filter(Habitats_P3 != "Sø" | is.na(Habitats_P3)) %>%
   summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
   rename(Skovnatur = Area_Sq_Km) %>%
   mutate(type = "Fond")

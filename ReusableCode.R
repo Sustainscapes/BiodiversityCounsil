@@ -334,7 +334,11 @@ plot(Rast_NaturaOgVildtreservater_Croped, add =T)
 
 # Read state owned untouched forest
 
-Urort_Skov <- list.files(path = "O:/Nat_BDR-data/Arealanalyse/RAW/Uroert skov NST Feb2022/", full.names = T, pattern = "shp") %>%
+Urort_Skov <- list.files(path = "O:/Nat_BDR-data/Arealanalyse/RAW/Uroert skov NST Feb2022/", full.names = T, pattern = "shp")
+
+Urort_Skov <- Urort_Skov[str_detect(Urort_Skov, "Forslag2021_omfang", negate = T)]
+
+Urort_Skov <- Urort_Skov %>%
   purrr::map(vect) %>% purrr::reduce(rbind) %>%
   terra::project(crs(Template))
 
@@ -1815,8 +1819,7 @@ Wildreserve <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/NATUR_VILDT_RESERVA
 # Eliminate the some of the reserves
 
 Natur_Vildt_Reservater <- Wildreserve[!(Wildreserve$Beken_navn %in% c("Agerø og Skibsted Fjord", "Agger Tange", "Anholt",
-                                                                       "Ertholmene", "Hesselø", "Hirsholmene",
-                                                                       "Horsens Nørrestrand",  "Vorsø")),]
+                                                                       "Ertholmene", "Hesselø", "Hirsholmene", "Vorsø")),]
 
 Natur_Vildt_Reservater$Natur_Vildt_Reservater <- "Yes"
 Natur_Vildt_Reservater <- Natur_Vildt_Reservater[,c("Natur_Vildt_Reservater")]
@@ -1852,7 +1855,7 @@ plot(Natur_Vildt_Reservater_Croped_Sea, add =T, legend = "bottom")
 
 
 Fredninger <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/IUCN beskyt hav/Beskyt_omr_hav_IUCN_m_info_2.shp")
-Fredninger <- Fredninger[Fredninger$Type == "Fredning" & Fredninger$Naturbesk_ == "Ja",]
+Fredninger <- Fredninger[Fredninger$Type %in% c("Fredning", "Bekendtgørelsesfredning") & Fredninger$Naturbesk_ == "Ja",]
 
 Fredninger$Fredninger <- "Yes"
 Fredninger <- Fredninger[,c("Fredninger")]
