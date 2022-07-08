@@ -1073,7 +1073,7 @@ Table2_All_Fond  <- list(Table2_Total, Table2_Open_Nature, Table2_Skovnatur, Tab
 
 Table2_Final <- list(Table2_All_Total, Table2_All_Natura2000, Table2_All_Habitatnaturtype, Table2_All_Paragraph3, Table2_All_NaturaOgVildtreservater, Table2_All_IUCN, Table2_All_Urort_Skov, Table2_All_Naturnationalparks, Table2_All_Stoette, Table2_All_Fond) %>%
   purrr::reduce(bind_rows) %>%
-  mutate(Other = Area - (Open_Area + Skovnatur + Soer + Drevet_Skov + PGR + OMD)) %>%
+  mutate(Other = Area - (Open_Area + Skovnatur + Soer + Drevet_Skov + PGR + OMD + PGR_P3)) %>%
   relocate(Other, .after = Area) %>%
   arrange(desc(Area))
 
