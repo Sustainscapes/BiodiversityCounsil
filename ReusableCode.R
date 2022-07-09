@@ -1511,7 +1511,7 @@ knitr::kable(Ownership_Table, digits = 3, caption = "Total area for areas by own
 
 ## ---- build-P3-Ownership-table --------
 
-Long_Table_All2 <- readRDS("NewTable2.rds")
+Long_Table_All2 <- readRDS("ALongerTable.rds")
 
 P3_Ownership <- Long_Table_All2 %>%
   dplyr::select("Natura_2000", "NaturaOgVildtreservater",
@@ -1541,7 +1541,7 @@ knitr::kable(P3_Ownership, digits = 3, caption = "Total area for paragraph 3 and
 
 ## ---- build-Skov-Ownership-table --------
 
-Long_Table_All2 <- readRDS("NewTable2.rds")
+Long_Table_All2 <- readRDS("ALongerTable.rds")
 
 Urort_Skov_Ownership <- Long_Table_All2 %>%
   dplyr::select("Natura_2000", "NaturaOgVildtreservater",
