@@ -1502,6 +1502,158 @@ openxlsx::write.xlsx(Urort_Skov_Ownership, "Urort_Skov_Ownership.xlsx")
 
 knitr::kable(Urort_Skov_Ownership, digits = 3, caption = "Total area for untouched forest in square kilometers separated by ownership", format.args	= list(big.mark = ','))
 
+## ---- TerrestrialTable4 --------
+
+Total <- readRDS("ALongerTable.rds") %>%
+  dplyr::filter(Natura_2000 == "Yes") %>%
+  mutate(Subclass = case_when(Habitats_P3 %in% c("Eng", "Hede", "Mose", "Overdrev", "Strandeng") ~ "Open",
+                              Habitats_P3  %in% c("Sø") ~ "Sø")) %>%
+  ungroup() %>%
+  dplyr::select(Forest, Subclass, Area_Sq_Km, Proportion) %>%
+  group_by_if(is.character) %>%
+  summarise_if(is.numeric, sum) %>%
+  ungroup()
+
+Total_all <- Total %>%
+  summarise_if(is.numeric, sum) %>%
+  rename(Total = Area_Sq_Km) %>%
+  mutate(Class = "Total")
+
+Total_Skov <- Total %>%
+  dplyr::filter(Forest == "Yes") %>%
+  summarise_if(is.numeric, sum) %>%
+  rename(Skov = Area_Sq_Km) %>%
+  dplyr::select(-Proportion) %>%
+  mutate(Class = "Total")
+
+Total_Open <- Total %>%
+  dplyr::filter(!is.na(Subclass)) %>%
+  group_by(Subclass) %>%
+  summarise_if(is.numeric, sum) %>%
+  dplyr::select(-Proportion) %>%
+  pivot_wider(names_from = Subclass, values_from = Area_Sq_Km) %>%
+  mutate(Class = "Total")
+
+TotalTable4 <- list(Total_all, Total_Skov, Total_Open) %>% purrr::reduce(dplyr::full_join)
+
+
+### By Group
+
+Total_By_Group <- readRDS("ALongerTable.rds") %>%
+  dplyr::filter(Natura_2000 == "Yes") %>%
+  mutate(Subclass = case_when(Habitats_P3 %in% c("Eng", "Hede", "Mose", "Overdrev", "Strandeng") ~ "Open",
+                              Habitats_P3  %in% c("Sø") ~ "Sø")) %>%
+  ungroup() %>%
+  pivot_longer(c("Habitatnaturtype", "Saerligt", "Pleje_og_graes", "Stoette"), names_to = "Class") %>%
+  dplyr::filter(!is.na(value)) %>%
+  dplyr::select(Forest, Subclass, Area_Sq_Km, Proportion, Class) %>%
+  group_by_if(is.character) %>%
+  summarise_if(is.numeric, sum) %>%
+  ungroup()
+
+Total_all_By_Group <- Total_By_Group %>%
+  group_by(Class) %>%
+  summarise_if(is.numeric, sum) %>%
+  rename(Total = Area_Sq_Km)
+
+Total_Skov_By_Group <- Total_By_Group %>%
+  group_by(Class) %>%
+  dplyr::filter(Forest == "Yes") %>%
+  summarise_if(is.numeric, sum) %>%
+  rename(Skov = Area_Sq_Km) %>%
+  dplyr::select(-Proportion)
+
+Total_Open_By_Group <- Total_By_Group %>%
+  dplyr::filter(!is.na(Subclass)) %>%
+  group_by(Subclass, Class) %>%
+  summarise_if(is.numeric, sum) %>%
+  dplyr::select(-Proportion) %>%
+  pivot_wider(names_from = Subclass, values_from = Area_Sq_Km)
+
+TotalTable4_By_Group <- list(Total_all_By_Group, Total_Skov_By_Group, Total_Open_By_Group) %>% purrr::reduce(dplyr::full_join)
+
+TotalTable4 <- TotalTable4 %>% dplyr::bind_rows(TotalTable4_By_Group) %>%
+  relocate(Class, .before = everything())  %>% arrange(desc(Total))
+
+
+
+####
+
+
+# Habitatomrade <- LongSeaTable %>%
+#   dplyr::filter(Natura_2000 == "Yes" & Habitatomrade == "Yes") %>%
+#   dplyr::select(Natura_2000, Area_Sq_Km, Proportion) %>%
+#   group_by_if(is.character) %>%
+#   summarise_if(is.numeric, sum) %>%
+#   mutate(Category = "Kun habitatomraade") %>%
+#   relocate(Category, .before = everything()) %>%
+#   dplyr::select(-Natura_2000)
+#
+# # Natura 2000 that is not Habitatomrade
+# fuglebeskyt  <- LongSeaTable %>%
+#   dplyr::filter(Natura_2000 == "Yes" & Fuglebeskyt == "Yes") %>%
+#   dplyr::select(Natura_2000, Area_Sq_Km, Proportion) %>%
+#   group_by_if(is.character) %>%
+#   summarise_if(is.numeric, sum) %>%
+#   mutate(Category = "Kun fuglebeskyt") %>%
+#   relocate(Category, .before = everything()) %>%
+#   dplyr::select(-Natura_2000)
+
+
+
+
+
+#Natur_Habitatomrade_Fugle <- LongSeaTable %>%
+#  dplyr::filter(Natura_2000 == "Yes" & Habitatomrade == "Yes" & Fuglebeskyt == "Yes") %>%
+#  dplyr::select(Natura_2000, Area_Sq_Km, Proportion) %>%
+#  group_by_if(is.character) %>%
+#  summarise_if(is.numeric, sum) %>%
+#  mutate(Category = "Habitatatomr. og fuglebesk.") %>%
+##  relocate(Category, .before = everything()) %>%
+#  dplyr::select(-Natura_2000)
+
+
+openxlsx::write.xlsx(TotalTable4, "Table4_Terrestrial.xlsx")
+
+## ---- TerrestrialTable5 --------
+
+
+
+Total <- readRDS("ALongerTable.rds") %>%
+  dplyr::filter(Stoette == "Yes") %>%
+  mutate(Subclass = case_when(Habitats_P3 %in% c("Eng", "Hede", "Mose", "Overdrev", "Strandeng") ~ "Open",
+                              Habitats_P3  %in% c("Sø") ~ "Sø")) %>%
+  ungroup() %>%
+  dplyr::select(stoette_detail, Forest, Subclass, Area_Sq_Km, Proportion) %>%
+  group_by_if(is.character) %>%
+  summarise_if(is.numeric, sum) %>%
+  ungroup()
+
+Total_all <- Total %>%
+  group_by(stoette_detail) %>%
+  summarise_if(is.numeric, sum) %>%
+  rename(Total = Area_Sq_Km)
+
+Total_Skov <- Total %>%
+  dplyr::filter(Forest == "Yes") %>%
+  group_by(stoette_detail) %>%
+  summarise_if(is.numeric, sum) %>%
+  rename(Skov = Area_Sq_Km) %>%
+  dplyr::select(-Proportion)
+
+Total_Open <- Total %>%
+  dplyr::filter(!is.na(Subclass)) %>%
+  group_by(stoette_detail, Subclass) %>%
+  summarise_if(is.numeric, sum) %>%
+  dplyr::select(-Proportion) %>%
+  pivot_wider(names_from = Subclass, values_from = Area_Sq_Km)
+
+
+
+TerrestrialTable5 <- list(Total_all, Total_Skov, Total_Open) %>% purrr::reduce(dplyr::full_join) %>% relocate(Proportion, .before = Total) %>%
+  arrange(desc(Total))
+
+openxlsx::write.xlsx(TerrestrialTable5, "Table5_Terrestrial.xlsx")
 
 ## ---- sea-of-Denmark --------
 
