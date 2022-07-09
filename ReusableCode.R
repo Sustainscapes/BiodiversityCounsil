@@ -1573,7 +1573,7 @@ knitr::kable(Urort_Skov_Ownership, digits = 3, caption = "Total area for untouch
 
 ## ---- sea-of-Denmark --------
 
-SeaOfDenmark <- mregions::mr_shp("Denmark:eez") %>%
+SeaOfDenmark <- mregions::mr_shp("MarineRegions:eez") %>%
   dplyr::filter(geoname == "Danish Exclusive Economic Zone" ) %>%
   dplyr::select(geoname) %>%
   terra::vect() %>%

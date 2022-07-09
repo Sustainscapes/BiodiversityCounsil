@@ -152,7 +152,11 @@ Rast_IUCN_Croped <- terra::mask(Rast_IUCN, DK)
 
 ## Urort skov
 
-Urort_Skov <- list.files(path = "O:/Nat_BDR-data/Arealanalyse/RAW/Uroert skov NST Feb2022/", full.names = T, pattern = "shp") %>%
+Urort_Skov <- list.files(path = "O:/Nat_BDR-data/Arealanalyse/RAW/Uroert skov NST Feb2022/", full.names = T, pattern = "shp")
+
+Urort_Skov <- Urort_Skov[str_detect(Urort_Skov, "Forslag2021_omfang", negate = T)]
+
+Urort_Skov <- Urort_Skov %>%
   purrr::map(vect) %>% purrr::reduce(rbind) %>%
   terra::project(crs(Template))
 
@@ -239,6 +243,48 @@ Rast_stoette  <- terra::rasterize(stoette_Aggregated, Template, field = "Type")
 Rast_stoette_Croped <- terra::mask(Rast_stoette, DK)
 
 names(Rast_stoette_Croped) <- "Stoette"
+
+## Stoette detail
+
+# Read Private owned untouched forest
+
+stoette_Skov <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/PRIVATE_UNTOUCHED_FOREST/aftale_natur_tinglyst.shp")
+stoette_Skov <- stoette_Skov[stoette_Skov$tilskudsor== "Privat urørt skov", ]
+
+stoette_Skov$Type <- "Skov"
+
+# Read sammenhaengende
+
+stoette_sammenhaengende <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/PRIVATE_UNTOUCHED_FOREST/aftale_natur_tinglyst.shp")
+stoette_sammenhaengende <- stoette_sammenhaengende[stoette_sammenhaengende$tilskudsor== "Sammenhængende arealer", ]
+stoette_sammenhaengende$Type <- "sammenhaengende"
+
+
+# read egekrat
+
+stoette_egekrat <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/EGEKRAT/egekrat.shp")
+
+stoette_egekrat <- stoette_egekrat[stoette_egekrat$vurdering_ %in% c(1,2),]
+stoette_egekrat <- stoette_egekrat[stoette_egekrat$sikret %in% c("ja"),]
+stoette_egekrat$Type <- "egekrat"
+
+# Join them together
+
+stoette <- list(stoette_Skov, stoette_sammenhaengende, stoette_egekrat) %>% purrr::reduce(rbind) %>%
+  terra::project(crs(Template))
+
+# Transform to multipolygon
+
+stoette <- stoette[,"Type"]
+stoette_Aggregated <- terra::aggregate(stoette, by='Type')
+
+# Rasterize
+
+Rast_stoette  <- terra::rasterize(stoette_Aggregated, Template, field = "Type")
+
+Rast_stoette_detail_Croped <- terra::mask(Rast_stoette, DK)
+
+names(Rast_stoette_detail_Croped) <- "Stoette_detail"
 
 ### Fund
 
@@ -330,7 +376,7 @@ Rast_Pleje_og_graes_Croped <- terra::mask(Rast_Pleje_og_graes, DK)
 names(Rast_Pleje_og_graes_Croped) <- "Pleje_og_graes"
 ###
 
-All <- c(Rast_Natura2000_Croped, Rast_Habitatnaturtype_terrestrial_Croped, Rast_p3_klit_Croped, Rast_NaturaOgVildtreservater_Croped, Rast_IUCN_Croped, Rast_Urort_Skov_Croped, Rast_National_Parks_Croped, Rast_stoette_Croped, Rast_Fondsejede_Croped, Forerst, Rast_markblokkort_Croped, Rast_Ownersip_Croped, Rast_Saerligt_NATURA_2000_Croped, Rast_Pleje_og_graes_Croped)
+All <- c(Rast_Natura2000_Croped, Rast_Habitatnaturtype_terrestrial_Croped, Rast_p3_klit_Croped, Rast_NaturaOgVildtreservater_Croped, Rast_IUCN_Croped, Rast_Urort_Skov_Croped, Rast_National_Parks_Croped, Rast_stoette_Croped, Rast_Fondsejede_Croped, Forerst, Rast_markblokkort_Croped, Rast_Ownersip_Croped, Rast_Saerligt_NATURA_2000_Croped, Rast_Pleje_og_graes_Croped, Rast_stoette_detail_Croped)
 
 Long_Table_All <- terra::crosstab(All, useNA=T, long=TRUE)
 
@@ -365,6 +411,12 @@ Ownership_DF <- data.frame(Ownership  = 0:(length(levels(Rast_Ownersip_Croped)[[
 Long_Table_All2 <- Long_Table_All2 %>%
   full_join(Ownership_DF) %>%
   dplyr::select(-Ownership)
+
+Stoette_Detail_DF <- data.frame(Stoette_detail  = 0:(length(levels(Rast_stoette_detail_Croped)[[1]]) - 1), stoette_detail = levels(Rast_stoette_detail_Croped)[[1]])
+
+Long_Table_All2 <- Long_Table_All2 %>%
+  full_join(Stoette_Detail_DF) %>%
+  dplyr::select(-Stoette_detail)
 
 Long_Table_All2 <- Long_Table_All2[!(rowSums(is.na(Long_Table_All2)) == max(rowSums(is.na(Long_Table_All2)))),]
 
