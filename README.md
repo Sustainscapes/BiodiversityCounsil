@@ -1,7 +1,7 @@
 Dataset generation for the Danish Biodiversity council
 ================
 Derek Corcoran
-30/06, 2022
+09/07, 2022
 
 -   [1 Objective](#1-objective)
 -   [2 Packages needed](#2-packages-needed)
@@ -127,7 +127,7 @@ Denmark Area
 
 ``` r
 DK <- geodata::gadm(country = "Denmark", level = 0, path = getwd(), version = "4.0") %>%
-    terra::project(terra::crs(Template))
+  terra::project(terra::crs(Template))
 Area_DK <- terra::expanse(DK)
 ```
 
@@ -549,40 +549,40 @@ rasterize Untouched forest
 ``` r
 # Read state owned untouched forest
 
-Urort_Skov <- list.files(path = "O:/Nat_BDR-data/Arealanalyse/RAW/Uroert skov NST Feb2022/",
-    full.names = T, pattern = "shp") %>%
-    purrr::map(vect) %>%
-    purrr::reduce(rbind) %>%
-    terra::project(crs(Template))
+Urort_Skov <- list.files(path = "O:/Nat_BDR-data/Arealanalyse/RAW/Uroert skov NST Feb2022/", full.names = T, pattern = "shp")
+
+Urort_Skov <- Urort_Skov[str_detect(Urort_Skov, "Forslag2021_omfang", negate = T)]
+
+Urort_Skov <- Urort_Skov %>%
+  purrr::map(vect) %>% purrr::reduce(rbind) %>%
+  terra::project(crs(Template))
 
 Urort_Skov$Owned <- "State"
 
 # Read private owned untouched forest
 
 private_Urort_Skov <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/PRIVATE_UNTOUCHED_FOREST/aftale_natur_tinglyst.shp") %>%
-    terra::project(crs(Template))
-private_Urort_Skov <- private_Urort_Skov[private_Urort_Skov$tilskudsor == "Privat urørt skov",
-    ]
+  terra::project(crs(Template))
+private_Urort_Skov <- private_Urort_Skov[private_Urort_Skov$tilskudsor== "Privat urørt skov", ]
 
 private_Urort_Skov$Owned <- "Private"
 
 # join geometries
 
 Urort_Skov <- rbind(Urort_Skov, private_Urort_Skov)
-Urort_Skov <- Urort_Skov[, "Owned"]
+Urort_Skov <- Urort_Skov[,"Owned"]
 
 # fix validity problems
 
-Urort_Skov <- Urort_Skov %>%
-    terra::makeValid()
+Urort_Skov <- Urort_Skov %>% terra::makeValid()
 
 # Transform to multipolygons
 
-Urort_Skov_Aggregated <- terra::aggregate(Urort_Skov, by = "Owned")
+Urort_Skov_Aggregated <- terra::aggregate(Urort_Skov, by='Owned')
 
 # Rasterize and crop
 
-Rast_Urort_Skov <- terra::rasterize(Urort_Skov_Aggregated, Template, field = "Owned")
+Rast_Urort_Skov  <- terra::rasterize(Urort_Skov_Aggregated, Template, field = "Owned")
 
 Rast_Urort_Skov_Croped <- terra::mask(Rast_Urort_Skov, DK)
 ```
@@ -2579,89 +2579,14 @@ Creation of the Ownership table
 </summary>
 
 ``` r
-Ownership <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Ownersip_Croped.tif")
-
-Natura2000 <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Natura2000_Croped.tif")
-
-Paragraph3 <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_p3_klit_Croped.tif")
-
-Vildtreservater <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_NaturaOgVildtreservater_Croped.tif")
-
-Urort_skov <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_Urort_Skov_Croped.tif")
-
-National_Parks <- terra::rast("O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Rast_National_Parks_Croped.tif")
-
-ForTable <- c(Ownership, Natura2000, Paragraph3, Vildtreservater, Urort_skov, National_Parks)
-
-Ownership_Long_Table <- terra::crosstab(ForTable, useNA = T, long = TRUE)
-
-saveRDS(Ownership_Long_Table, "Ownership_Long_Table.rds")
-
-Paragraph3_DF <- data.frame(Natyp_navn = 0:(length(levels(Paragraph3)[[1]]) - 1),
-    Habitats_P3 = levels(Paragraph3)[[1]])
-
-Ownership_Long_Table <- Ownership_Long_Table %>%
-    full_join(Paragraph3_DF) %>%
-    dplyr::select(-Natyp_navn)
-
-# Change the names of the columns of Natura 2000 from Natura2000 to Natura_2000
-# and change numbers for actual names
-
-Natura2000_DF <- data.frame(Natura2000 = 0, Natura_2000 = "Yes")
-
-Ownership_Long_Table <- Ownership_Long_Table %>%
-    full_join(Natura2000_DF) %>%
-    dplyr::select(-Natura2000)
-
-
-# Change the names of the columns of Urort_Skov from Owned to Urort_Skov and
-# change numbers for actual names
-
-Urort_Skov_DF <- data.frame(Owned = 0:(length(levels(Urort_skov)[[1]]) - 1), Urort_Skov = levels(Urort_skov)[[1]])
-
-Ownership_Long_Table <- Ownership_Long_Table %>%
-    full_join(Urort_Skov_DF) %>%
-    dplyr::select(-Owned)
-
-# Change the names of the columns of NaturaOgVildtreservater_DF from Temanavn
-# to NaturaOgVildtreservater and change numbers for actual names
-
-NaturaOgVildtreservater_DF <- data.frame(Temanavn = 0, NaturaOgVildtreservater = "Yes")
-
-Ownership_Long_Table <- Ownership_Long_Table %>%
-    full_join(NaturaOgVildtreservater_DF) %>%
-    dplyr::select(-Temanavn)
-
-# Change the names of the columns of Naturnationalparker from ID to
-# Naturnationalparker and change numbers for actual names
-
-Naturnationalparker_DF <- data.frame(ID = 0, Naturnationalparker = "Yes")
-
-Ownership_Long_Table <- Ownership_Long_Table %>%
-    full_join(Naturnationalparker_DF) %>%
-    dplyr::select(-ID)
-
-## Change the names of owntership
-
-Ownership_DF <- data.frame(Ownership = 0:(length(levels(Ownership)[[1]]) - 1), ownership = levels(Ownership)[[1]])
-
-Ownership_Long_Table <- Ownership_Long_Table %>%
-    full_join(Ownership_DF) %>%
-    dplyr::select(-Ownership)
-
-Ownership_Table <- Ownership_Long_Table %>%
-    mutate(Area_Sq_Mt = 100 * Freq, Proportion = 100 * (Area_Sq_Mt/Area_DK)) %>%
-    dplyr::select(-Freq) %>%
-    mutate_at(c("Habitats_P3", "Natura_2000", "Urort_Skov", "NaturaOgVildtreservater",
-        "Naturnationalparker"), ~ifelse(is.na(.x), NA, "Yes")) %>%
-    pivot_longer(c("Habitats_P3", "Natura_2000", "Urort_Skov", "NaturaOgVildtreservater",
-        "Naturnationalparker")) %>%
-    dplyr::filter(!is.na(value)) %>%
-    dplyr::select(-value, -Proportion) %>%
-    group_by(name, ownership) %>%
-    summarise(Area_Sq_Km = sum(Area_Sq_Mt)/1e+06) %>%
-    mutate(ownership = ifelse(is.na(ownership), "Unknown", ownership)) %>%
-    pivot_wider(values_from = Area_Sq_Km, names_from = ownership)
+Ownership_Table <- readRDS("ALongerTable.rds") %>%
+  pivot_longer(c("Habitats_P3", "Natura_2000", "Urort_Skov", "NaturaOgVildtreservater","Naturnationalparks")) %>%
+  dplyr::filter(!is.na(value)) %>%
+ dplyr::select(-value, -Proportion) %>%
+  group_by(name, ownership) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  mutate(ownership = ifelse(is.na(ownership), "Unknown", ownership)) %>%
+  pivot_wider(values_from = Area_Sq_Km, names_from = ownership)
 
 saveRDS(Ownership_Table, "Ownership_Table.rds")
 readr::write_csv(Ownership_Table, "Ownership_Table.csv")
@@ -2688,11 +2613,11 @@ Ownership table
 
 | name                    | Kommunal |    Privat |  Statslig | Unknown |
 |:------------------------|---------:|----------:|----------:|--------:|
-| Habitats_P3             |  187.460 | 3,193.396 |   882.343 | 273.905 |
-| Natura_2000             |   60.449 | 2,229.276 | 1,241.710 | 347.185 |
-| NaturaOgVildtreservater |    7.108 |   151.268 |   164.311 | 116.919 |
-| Naturnationalparker     |    0.001 |     0.468 |   253.860 |   1.026 |
-| Urort_Skov              |    0.469 |    33.874 |   651.373 |  12.008 |
+| Habitats_P3             |  187.460 | 3,193.395 |   882.342 | 273.906 |
+| Natura_2000             |   60.449 | 2,229.277 | 1,241.711 | 347.188 |
+| NaturaOgVildtreservater |    7.108 |   151.268 |   164.311 | 116.922 |
+| Naturnationalparks      |    0.001 |     0.468 |   253.860 |   1.026 |
+| Urort_Skov              |    0.439 |    28.633 |   565.972 |   4.668 |
 
 Table 3.4: Total area for areas by ownership in square kilometers
 
@@ -2711,25 +2636,25 @@ Creation of the Ownership table for paragraph 3
 </summary>
 
 ``` r
-Long_Table_All2 <- readRDS("NewTable2.rds")
+Long_Table_All2 <- readRDS("ALongerTable.rds")
 
 P3_Ownership <- Long_Table_All2 %>%
-    dplyr::select("Natura_2000", "NaturaOgVildtreservater", "IUCN", "Urort_Skov",
-        "Naturnationalparks", "Stoette", "Fond", "Proportion", "Area_Sq_Km", "Habitats_P3",
-        "ownership") %>%
-    rowwise() %>%
-    mutate(Yes = sum(c_across(Natura_2000:Fond) == "Yes", na.rm = TRUE)) %>%
-    dplyr::filter(!is.na(Habitats_P3)) %>%
-    dplyr::mutate(Status = ifelse(Yes == 0, "Exclusive", "Overlaps")) %>%
-    dplyr::select(Area_Sq_Km, Habitats_P3, ownership, Status) %>%
-    dplyr::mutate(Habitats_P3 = ifelse(is.na(Habitats_P3), NA, "Yes")) %>%
-    mutate(ownership = ifelse(is.na(ownership), "Unknown", ownership)) %>%
-    group_by(Habitats_P3, ownership, Status) %>%
-    summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
-    ungroup() %>%
-    dplyr::select(-Habitats_P3) %>%
-    pivot_wider(names_from = ownership, values_from = Area_Sq_Km) %>%
-    mutate(Total = Kommunal + Privat + Statslig + Unknown)
+  dplyr::select("Natura_2000", "NaturaOgVildtreservater",
+                "IUCN", "Urort_Skov", "Naturnationalparks", "Stoette", "Fond", "Proportion", "Area_Sq_Km", "Habitats_P3",
+                "ownership") %>%
+  rowwise() %>%
+  mutate(Yes = sum(c_across(Natura_2000:Fond) == "Yes", na.rm = TRUE)) %>%
+  dplyr::filter(!is.na(Habitats_P3)) %>%
+  dplyr::mutate(Status = ifelse(Yes == 0, "Exclusive", "Overlaps")) %>%
+  dplyr::select(Area_Sq_Km, Habitats_P3, ownership, Status) %>%
+  dplyr::mutate(Habitats_P3 = ifelse(is.na(Habitats_P3), NA, "Yes")) %>%
+  mutate(ownership = ifelse(is.na(ownership), "Unknown", ownership)) %>%
+  group_by(Habitats_P3, ownership, Status) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  ungroup() %>%
+  dplyr::select(-Habitats_P3) %>%
+  pivot_wider(names_from = ownership, values_from = Area_Sq_Km) %>%
+  mutate(Total = Kommunal + Privat + Statslig + Unknown)
 
 saveRDS(P3_Ownership, "P3_Ownership.rds")
 readr::write_csv(P3_Ownership, "P3_Ownership.csv")
@@ -2756,8 +2681,8 @@ Ownership table paragraph 3
 
 | Status    | Kommunal |    Privat | Statslig | Unknown |     Total |
 |:----------|---------:|----------:|---------:|--------:|----------:|
-| Exclusive |  140.138 | 2,114.140 |  130.560 |  68.297 | 2,453.135 |
-| Overlaps  |   47.322 | 1,079.256 |  751.783 | 205.608 | 2,083.969 |
+| Exclusive |  140.141 | 2,114.366 |  141.162 |  69.045 | 2,464.714 |
+| Overlaps  |   47.319 | 1,079.029 |  741.181 | 204.860 | 2,072.388 |
 
 Table 3.5: Total area for paragraph 3 and klit in square kilometers
 separated by ownership
@@ -2777,25 +2702,25 @@ Creation of the Ownership table for untouched forest
 </summary>
 
 ``` r
-Long_Table_All2 <- readRDS("NewTable2.rds")
+Long_Table_All2 <- readRDS("ALongerTable.rds")
 
 Urort_Skov_Ownership <- Long_Table_All2 %>%
-    dplyr::select("Natura_2000", "NaturaOgVildtreservater", "IUCN", "Habitats_P3",
-        "Naturnationalparks", "Stoette", "Fond", "Proportion", "Area_Sq_Km", "Urort_Skov",
-        "ownership") %>%
-    dplyr::mutate(Habitats_P3 = ifelse(is.na(Habitats_P3), NA, "Yes")) %>%
-    rowwise() %>%
-    mutate(Yes = sum(c_across(Natura_2000:Fond) == "Yes", na.rm = TRUE)) %>%
-    dplyr::filter(!is.na(Urort_Skov)) %>%
-    dplyr::mutate(Status = ifelse(Yes == 0, "Exclusive", "Overlaps")) %>%
-    dplyr::select(Area_Sq_Km, Urort_Skov, ownership, Status) %>%
-    mutate(ownership = ifelse(is.na(ownership), "Unknown", ownership)) %>%
-    group_by(Urort_Skov, ownership, Status) %>%
-    summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
-    ungroup() %>%
-    dplyr::select(-Urort_Skov) %>%
-    pivot_wider(names_from = ownership, values_from = Area_Sq_Km) %>%
-    mutate(Total = Kommunal + Privat + Statslig + Unknown)
+  dplyr::select("Natura_2000", "NaturaOgVildtreservater",
+                "IUCN", "Habitats_P3", "Naturnationalparks", "Stoette", "Fond", "Proportion", "Area_Sq_Km", "Urort_Skov",
+                "ownership") %>%
+  dplyr::mutate(Habitats_P3 = ifelse(is.na(Habitats_P3), NA, "Yes")) %>%
+  rowwise() %>%
+  mutate(Yes = sum(c_across(Natura_2000:Fond) == "Yes", na.rm = TRUE)) %>%
+  dplyr::filter(!is.na(Urort_Skov)) %>%
+  dplyr::mutate(Status = ifelse(Yes == 0, "Exclusive", "Overlaps")) %>%
+  dplyr::select(Area_Sq_Km, Urort_Skov, ownership, Status) %>%
+  mutate(ownership = ifelse(is.na(ownership), "Unknown", ownership)) %>%
+  group_by(Urort_Skov, ownership, Status) %>%
+  summarise(Area_Sq_Km = sum(Area_Sq_Km)) %>%
+  ungroup() %>%
+  dplyr::select(-Urort_Skov) %>%
+  pivot_wider(names_from = ownership, values_from = Area_Sq_Km) %>%
+  mutate(Total = Kommunal + Privat + Statslig + Unknown)
 
 
 saveRDS(Urort_Skov_Ownership, "Urort_Skov_Ownership.rds")
@@ -2823,8 +2748,8 @@ Ownership table forest
 
 | Status    | Kommunal | Privat | Statslig | Unknown |   Total |
 |:----------|---------:|-------:|---------:|--------:|--------:|
-| Exclusive |    0.043 |  2.483 |  169.024 |   1.198 | 172.748 |
-| Overlaps  |    0.426 | 31.390 |  482.353 |  10.810 | 524.980 |
+| Exclusive |    0.033 |  2.158 |  152.232 |   0.940 | 155.363 |
+| Overlaps  |    0.406 | 26.474 |  413.740 |   3.728 | 444.347 |
 
 Table 3.6: Total area for untouched forest in square kilometers
 separated by ownership
@@ -2858,11 +2783,11 @@ Denmark EEZ
 </summary>
 
 ``` r
-SeaOfDenmark <- mregions::mr_shp("Denmark:eez") %>%
-    dplyr::filter(geoname == "Danish Exclusive Economic Zone") %>%
-    dplyr::select(geoname) %>%
-    terra::vect() %>%
-    terra::project(terra::crs(DK))
+SeaOfDenmark <- mregions::mr_shp("MarineRegions:eez") %>%
+  dplyr::filter(geoname == "Danish Exclusive Economic Zone" ) %>%
+  dplyr::select(geoname) %>%
+  terra::vect() %>%
+  terra::project(terra::crs(DK))
 
 Area_Sea_DK <- expanse(SeaOfDenmark)
 
@@ -3180,29 +3105,33 @@ Wildreserve <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/NATUR_VILDT_RESERVA
 
 # Eliminate the some of the reserves
 
-Natur_Vildt_Reservater <- Wildreserve[!(Wildreserve$Beken_navn %in% c("Agerø og Skibsted Fjord",
-    "Agger Tange", "Anholt", "Ertholmene", "Hesselø", "Hirsholmene", "Horsens Nørrestrand",
-    "Vorsø")), ]
+Natur_Vildt_Reservater <- Wildreserve[!(Wildreserve$Beken_navn %in% c("Agerø og Skibsted Fjord", "Agger Tange", "Anholt",
+                                                                       "Ertholmene", "Hesselø", "Hirsholmene", "Vorsø")),]
 
 Natur_Vildt_Reservater$Natur_Vildt_Reservater <- "Yes"
-Natur_Vildt_Reservater <- Natur_Vildt_Reservater[, c("Natur_Vildt_Reservater")]
+Natur_Vildt_Reservater <- Natur_Vildt_Reservater[,c("Natur_Vildt_Reservater")]
 
-Natur_Vildt_Reservater <- aggregate(Natur_Vildt_Reservater, by = "Natur_Vildt_Reservater")
+Natur_Vildt_Reservater <- aggregate(Natur_Vildt_Reservater, by='Natur_Vildt_Reservater')
 Natur_Vildt_Reservater <- terra::rasterize(Natur_Vildt_Reservater, TemplateSea)
 Natur_Vildt_Reservater_Croped_Sea <- terra::mask(Natur_Vildt_Reservater, SeaOfDenmark)
 
 
 # Write croped rasters to disk
 
-writeRaster(Natur_Vildt_Reservater_Croped_Sea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Natur_Vildt_Reservater_Croped_Sea.tif",
-    overwrite = TRUE, gdal = c("COMPRESS=DEFLATE", "TFW=YES", "of=COG"))
+writeRaster(Natur_Vildt_Reservater_Croped_Sea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Natur_Vildt_Reservater_Croped_Sea.tif", overwrite=TRUE, gdal=c("COMPRESS=DEFLATE", "TFW=YES","of=COG"))
 
 # save as cloud optimized rasters
 
-sf::gdal_utils("warp", source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Natur_Vildt_Reservater_Croped_Sea.tif",
-    destination = "RasterizedCOG/Natur_Vildt_Reservater_Croped_Sea.tif", options = c("-of",
-        "COG", "-co", "RESAMPLING=NEAREST", "-co", "TILING_SCHEME=GoogleMapsCompatible",
-        "-co", "COMPRESS=DEFLATE", "-co", "NUM_THREADS=46"))
+sf::gdal_utils("warp",
+               source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Natur_Vildt_Reservater_Croped_Sea.tif",
+               destination = "RasterizedCOG/Natur_Vildt_Reservater_Croped_Sea.tif",
+               options = c(
+                 "-of", "COG",
+                 "-co", "RESAMPLING=NEAREST",
+                 "-co", "TILING_SCHEME=GoogleMapsCompatible",
+                 "-co", "COMPRESS=DEFLATE",
+                 "-co", "NUM_THREADS=46"
+               ))
 ```
 
 </details>
@@ -3227,13 +3156,12 @@ Crop and save Fredninger sea
 
 ``` r
 Fredninger <- terra::vect("O:/Nat_BDR-data/Arealanalyse/RAW/IUCN beskyt hav/Beskyt_omr_hav_IUCN_m_info_2.shp")
-Fredninger <- Fredninger[Fredninger$Type == "Fredning" & Fredninger$Naturbesk_ ==
-    "Ja", ]
+Fredninger <- Fredninger[Fredninger$Type %in% c("Fredning", "Bekendtgørelsesfredning") & Fredninger$Naturbesk_ == "Ja",]
 
 Fredninger$Fredninger <- "Yes"
-Fredninger <- Fredninger[, c("Fredninger")]
+Fredninger <- Fredninger[,c("Fredninger")]
 
-Fredninger <- aggregate(Fredninger, by = "Fredninger")
+Fredninger <- aggregate(Fredninger, by='Fredninger')
 Fredninger <- terra::rasterize(Fredninger, TemplateSea)
 Fredninger_Croped_Sea <- terra::mask(Fredninger, SeaOfDenmark)
 
@@ -3244,15 +3172,20 @@ Fredninger_Croped_Sea <- terra::mask(Fredninger, SeaOfDenmark)
 
 # Write croped rasters to disk
 
-writeRaster(Fredninger_Croped_Sea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Fredninger_Croped_Sea.tif",
-    overwrite = TRUE, gdal = c("COMPRESS=DEFLATE", "TFW=YES", "of=COG"))
+writeRaster(Fredninger_Croped_Sea, "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Fredninger_Croped_Sea.tif", overwrite=TRUE, gdal=c("COMPRESS=DEFLATE", "TFW=YES","of=COG"))
 
 # save as cloud optimized rasters
 
-sf::gdal_utils("warp", source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Fredninger_Croped_Sea.tif",
-    destination = "RasterizedCOG/Fredninger_Croped_Sea.tif", options = c("-of", "COG",
-        "-co", "RESAMPLING=NEAREST", "-co", "TILING_SCHEME=GoogleMapsCompatible",
-        "-co", "COMPRESS=DEFLATE", "-co", "NUM_THREADS=46"))
+sf::gdal_utils("warp",
+               source = "O:/Nat_BDR-data/Arealanalyse/CLEAN/Rasterized/Fredninger_Croped_Sea.tif",
+               destination = "RasterizedCOG/Fredninger_Croped_Sea.tif",
+               options = c(
+                 "-of", "COG",
+                 "-co", "RESAMPLING=NEAREST",
+                 "-co", "TILING_SCHEME=GoogleMapsCompatible",
+                 "-co", "COMPRESS=DEFLATE",
+                 "-co", "NUM_THREADS=46"
+               ))
 ```
 
 </details>
@@ -3645,111 +3578,107 @@ Session info
 
 </summary>
 
-``` r
-sessioninfo::session_info()
-#> - Session info ---------------------------------------------------------------
-#>  setting  value
-#>  version  R version 4.1.2 (2021-11-01)
-#>  os       Windows Server 2012 R2 x64 (build 9600)
-#>  system   x86_64, mingw32
-#>  ui       RTerm
-#>  language en
-#>  collate  Danish_Denmark.1252
-#>  ctype    Danish_Denmark.1252
-#>  tz       Europe/Paris
-#>  date     2022-06-21
-#>  pandoc   2.14.0.3 @ C:/Program Files/RStudio/bin/pandoc/ (via rmarkdown)
-#> 
-#> - Packages -------------------------------------------------------------------
-#>  package     * version date (UTC) lib source
-#>  assertthat    0.2.1   2019-03-21 [1] CRAN (R 4.1.2)
-#>  backports     1.4.1   2021-12-13 [1] CRAN (R 4.1.2)
-#>  bit           4.0.4   2020-08-04 [1] CRAN (R 4.1.2)
-#>  bit64         4.0.5   2020-08-30 [1] CRAN (R 4.1.2)
-#>  bookdown      0.26    2022-04-15 [1] CRAN (R 4.1.3)
-#>  broom         0.7.11  2022-01-03 [1] CRAN (R 4.1.2)
-#>  cellranger    1.1.0   2016-07-27 [1] CRAN (R 4.1.2)
-#>  class         7.3-19  2021-05-03 [2] CRAN (R 4.1.2)
-#>  classInt      0.4-3   2020-04-07 [1] CRAN (R 4.1.2)
-#>  cli           3.1.0   2021-10-27 [1] CRAN (R 4.1.2)
-#>  codetools     0.2-18  2020-11-04 [2] CRAN (R 4.1.2)
-#>  colorspace    2.0-2   2021-06-24 [1] CRAN (R 4.1.2)
-#>  crayon        1.5.1   2022-03-26 [1] CRAN (R 4.1.3)
-#>  DBI           1.1.2   2021-12-20 [1] CRAN (R 4.1.2)
-#>  dbplyr        2.1.1   2021-04-06 [1] CRAN (R 4.1.2)
-#>  digest        0.6.29  2021-12-01 [1] CRAN (R 4.1.2)
-#>  dplyr       * 1.0.7   2021-06-18 [1] CRAN (R 4.1.2)
-#>  e1071         1.7-9   2021-09-16 [1] CRAN (R 4.1.2)
-#>  ellipsis      0.3.2   2021-04-29 [1] CRAN (R 4.1.2)
-#>  evaluate      0.15    2022-02-18 [1] CRAN (R 4.1.3)
-#>  fansi         0.5.0   2021-05-25 [1] CRAN (R 4.1.2)
-#>  fastmap       1.1.0   2021-01-25 [1] CRAN (R 4.1.2)
-#>  forcats     * 0.5.1   2021-01-27 [1] CRAN (R 4.1.2)
-#>  formatR       1.12    2022-03-31 [1] CRAN (R 4.1.3)
-#>  fs            1.5.2   2021-12-08 [1] CRAN (R 4.1.2)
-#>  generics      0.1.1   2021-10-25 [1] CRAN (R 4.1.2)
-#>  geodata     * 0.4-6   2022-04-09 [1] CRAN (R 4.1.3)
-#>  ggplot2     * 3.3.5   2021-06-25 [1] CRAN (R 4.1.2)
-#>  glue          1.5.1   2021-11-30 [1] CRAN (R 4.1.2)
-#>  gtable        0.3.0   2019-03-25 [1] CRAN (R 4.1.2)
-#>  haven         2.4.3   2021-08-04 [1] CRAN (R 4.1.2)
-#>  highr         0.9     2021-04-16 [1] CRAN (R 4.1.2)
-#>  hms           1.1.1   2021-09-26 [1] CRAN (R 4.1.2)
-#>  htmltools     0.5.2   2021-08-25 [1] CRAN (R 4.1.2)
-#>  httr          1.4.3   2022-05-04 [1] CRAN (R 4.1.3)
-#>  jsonlite      1.8.0   2022-02-22 [1] CRAN (R 4.1.3)
-#>  KernSmooth    2.23-20 2021-05-03 [2] CRAN (R 4.1.2)
-#>  knitr         1.39    2022-04-26 [1] CRAN (R 4.1.3)
-#>  lattice       0.20-45 2021-09-22 [2] CRAN (R 4.1.2)
-#>  lifecycle     1.0.1   2021-09-24 [1] CRAN (R 4.1.2)
-#>  lubridate     1.8.0   2021-10-07 [1] CRAN (R 4.1.2)
-#>  magrittr    * 2.0.1   2020-11-17 [1] CRAN (R 4.1.2)
-#>  modelr        0.1.8   2020-05-19 [1] CRAN (R 4.1.2)
-#>  mregions    * 0.1.8   2022-06-15 [1] Github (ropensci/mregions@26f40ba)
-#>  munsell       0.5.0   2018-06-12 [1] CRAN (R 4.1.2)
-#>  openxlsx      4.2.5   2021-12-14 [1] CRAN (R 4.1.3)
-#>  pillar        1.7.0   2022-02-01 [1] CRAN (R 4.1.3)
-#>  pkgconfig     2.0.3   2019-09-22 [1] CRAN (R 4.1.2)
-#>  proxy         0.4-26  2021-06-07 [1] CRAN (R 4.1.2)
-#>  purrr       * 0.3.4   2020-04-17 [1] CRAN (R 4.1.2)
-#>  R6            2.5.1   2021-08-19 [1] CRAN (R 4.1.2)
-#>  rappdirs      0.3.3   2021-01-31 [1] CRAN (R 4.1.2)
-#>  Rcpp          1.0.7   2021-07-07 [1] CRAN (R 4.1.2)
-#>  readr       * 2.1.1   2021-11-30 [1] CRAN (R 4.1.2)
-#>  readxl        1.3.1   2019-03-13 [1] CRAN (R 4.1.2)
-#>  reprex        2.0.1   2021-08-05 [1] CRAN (R 4.1.3)
-#>  rgdal         1.5-28  2021-12-15 [1] CRAN (R 4.1.2)
-#>  rlang         1.0.2   2022-03-04 [1] CRAN (R 4.1.3)
-#>  rmarkdown     2.14    2022-04-25 [1] CRAN (R 4.1.3)
-#>  rstudioapi    0.13    2020-11-12 [1] CRAN (R 4.1.2)
-#>  rvest         1.0.2   2021-10-16 [1] CRAN (R 4.1.2)
-#>  scales        1.1.1   2020-05-11 [1] CRAN (R 4.1.2)
-#>  sessioninfo   1.2.2   2021-12-06 [1] CRAN (R 4.1.2)
-#>  sf          * 1.0-4   2021-11-14 [1] CRAN (R 4.1.2)
-#>  sp            1.5-0   2022-06-05 [1] CRAN (R 4.1.3)
-#>  stringi       1.7.6   2021-11-29 [1] CRAN (R 4.1.2)
-#>  stringr     * 1.4.0   2019-02-10 [1] CRAN (R 4.1.2)
-#>  terra       * 1.5-35  2022-05-18 [1] https://rspatial.r-universe.dev (R 4.1.3)
-#>  tibble      * 3.1.6   2021-11-07 [1] CRAN (R 4.1.2)
-#>  tidyr       * 1.1.4   2021-09-27 [1] CRAN (R 4.1.2)
-#>  tidyselect    1.1.2   2022-02-21 [1] CRAN (R 4.1.3)
-#>  tidyverse   * 1.3.1   2021-04-15 [1] CRAN (R 4.1.2)
-#>  tzdb          0.2.0   2021-10-27 [1] CRAN (R 4.1.2)
-#>  units         0.7-2   2021-06-08 [1] CRAN (R 4.1.2)
-#>  utf8          1.2.2   2021-07-24 [1] CRAN (R 4.1.2)
-#>  vctrs         0.3.8   2021-04-29 [1] CRAN (R 4.1.2)
-#>  vroom         1.5.7   2021-11-30 [1] CRAN (R 4.1.2)
-#>  withr         2.5.0   2022-03-03 [1] CRAN (R 4.1.3)
-#>  xfun          0.29    2021-12-14 [1] CRAN (R 4.1.2)
-#>  xml2          1.3.3   2021-11-30 [1] CRAN (R 4.1.2)
-#>  yaml          2.2.1   2020-02-01 [1] CRAN (R 4.1.1)
-#>  zip           2.2.0   2021-05-31 [1] CRAN (R 4.1.2)
-#> 
-#>  [1] C:/Users/au687614/Documents/R/win-library/4.1
-#>  [2] C:/Program Files/R/R-4.1.2/library
-#> 
-#> ------------------------------------------------------------------------------
-```
+    #> - Session info ---------------------------------------------------------------
+    #>  setting  value
+    #>  version  R version 4.1.2 (2021-11-01)
+    #>  os       Windows Server x64 (build 17763)
+    #>  system   x86_64, mingw32
+    #>  ui       RTerm
+    #>  language en
+    #>  collate  Danish_Denmark.1252
+    #>  ctype    Danish_Denmark.1252
+    #>  tz       Europe/Paris
+    #>  date     2022-07-09
+    #>  pandoc   2.14.0.3 @ C:/Program Files/RStudio/bin/pandoc/ (via rmarkdown)
+    #> 
+    #> - Packages -------------------------------------------------------------------
+    #>  package     * version date (UTC) lib source
+    #>  assertthat    0.2.1   2019-03-21 [1] CRAN (R 4.1.2)
+    #>  backports     1.4.1   2021-12-13 [1] CRAN (R 4.1.2)
+    #>  bit           4.0.4   2020-08-04 [1] CRAN (R 4.1.2)
+    #>  bit64         4.0.5   2020-08-30 [1] CRAN (R 4.1.2)
+    #>  bookdown      0.27    2022-06-14 [1] CRAN (R 4.1.3)
+    #>  broom         1.0.0   2022-07-01 [1] CRAN (R 4.1.3)
+    #>  cellranger    1.1.0   2016-07-27 [1] CRAN (R 4.1.2)
+    #>  class         7.3-19  2021-05-03 [2] CRAN (R 4.1.2)
+    #>  classInt      0.4-7   2022-06-10 [1] CRAN (R 4.1.3)
+    #>  cli           3.3.0   2022-04-25 [1] CRAN (R 4.1.3)
+    #>  codetools     0.2-18  2020-11-04 [2] CRAN (R 4.1.2)
+    #>  colorspace    2.0-3   2022-02-21 [1] CRAN (R 4.1.3)
+    #>  crayon        1.5.1   2022-03-26 [1] CRAN (R 4.1.3)
+    #>  DBI           1.1.3   2022-06-18 [1] CRAN (R 4.1.3)
+    #>  dbplyr        2.2.1   2022-06-27 [1] CRAN (R 4.1.3)
+    #>  digest        0.6.29  2021-12-01 [1] CRAN (R 4.1.2)
+    #>  dplyr       * 1.0.9   2022-04-28 [1] CRAN (R 4.1.3)
+    #>  e1071         1.7-11  2022-06-07 [1] CRAN (R 4.1.3)
+    #>  ellipsis      0.3.2   2021-04-29 [1] CRAN (R 4.1.2)
+    #>  evaluate      0.15    2022-02-18 [1] CRAN (R 4.1.3)
+    #>  fansi         1.0.3   2022-03-24 [1] CRAN (R 4.1.3)
+    #>  fastmap       1.1.0   2021-01-25 [1] CRAN (R 4.1.2)
+    #>  forcats     * 0.5.1   2021-01-27 [1] CRAN (R 4.1.2)
+    #>  fs            1.5.2   2021-12-08 [1] CRAN (R 4.1.2)
+    #>  generics      0.1.3   2022-07-05 [1] CRAN (R 4.1.2)
+    #>  geodata     * 0.4-6   2022-04-09 [1] CRAN (R 4.1.3)
+    #>  ggplot2     * 3.3.6   2022-05-03 [1] CRAN (R 4.1.3)
+    #>  glue          1.6.2   2022-02-24 [1] CRAN (R 4.1.3)
+    #>  gtable        0.3.0   2019-03-25 [1] CRAN (R 4.1.2)
+    #>  haven         2.5.0   2022-04-15 [1] CRAN (R 4.1.3)
+    #>  highr         0.9     2021-04-16 [1] CRAN (R 4.1.2)
+    #>  hms           1.1.1   2021-09-26 [1] CRAN (R 4.1.2)
+    #>  htmltools     0.5.2   2021-08-25 [1] CRAN (R 4.1.2)
+    #>  httr          1.4.3   2022-05-04 [1] CRAN (R 4.1.3)
+    #>  jsonlite      1.8.0   2022-02-22 [1] CRAN (R 4.1.3)
+    #>  KernSmooth    2.23-20 2021-05-03 [2] CRAN (R 4.1.2)
+    #>  knitr         1.39    2022-04-26 [1] CRAN (R 4.1.3)
+    #>  lattice       0.20-45 2021-09-22 [2] CRAN (R 4.1.2)
+    #>  lifecycle     1.0.1   2021-09-24 [1] CRAN (R 4.1.2)
+    #>  lubridate     1.8.0   2021-10-07 [1] CRAN (R 4.1.2)
+    #>  magrittr    * 2.0.3   2022-03-30 [1] CRAN (R 4.1.3)
+    #>  modelr        0.1.8   2020-05-19 [1] CRAN (R 4.1.2)
+    #>  mregions    * 0.1.8   2022-04-11 [1] CRAN (R 4.1.3)
+    #>  munsell       0.5.0   2018-06-12 [1] CRAN (R 4.1.2)
+    #>  openxlsx      4.2.5   2021-12-14 [1] CRAN (R 4.1.3)
+    #>  pillar        1.7.0   2022-02-01 [1] CRAN (R 4.1.2)
+    #>  pkgconfig     2.0.3   2019-09-22 [1] CRAN (R 4.1.2)
+    #>  proxy         0.4-27  2022-06-09 [1] CRAN (R 4.1.3)
+    #>  purrr       * 0.3.4   2020-04-17 [1] CRAN (R 4.1.2)
+    #>  R6            2.5.1   2021-08-19 [1] CRAN (R 4.1.2)
+    #>  rappdirs      0.3.3   2021-01-31 [1] CRAN (R 4.1.2)
+    #>  Rcpp          1.0.9   2022-07-08 [1] CRAN (R 4.1.2)
+    #>  readr       * 2.1.2   2022-01-30 [1] CRAN (R 4.1.2)
+    #>  readxl        1.4.0   2022-03-28 [1] CRAN (R 4.1.3)
+    #>  reprex        2.0.1   2021-08-05 [1] CRAN (R 4.1.2)
+    #>  rgdal         1.5-32  2022-05-09 [1] CRAN (R 4.1.3)
+    #>  rlang         1.0.3   2022-06-27 [1] CRAN (R 4.1.3)
+    #>  rmarkdown     2.14    2022-04-25 [1] CRAN (R 4.1.3)
+    #>  rstudioapi    0.13    2020-11-12 [1] CRAN (R 4.1.2)
+    #>  rvest         1.0.2   2021-10-16 [1] CRAN (R 4.1.2)
+    #>  scales        1.2.0   2022-04-13 [1] CRAN (R 4.1.3)
+    #>  sessioninfo   1.2.2   2021-12-06 [1] CRAN (R 4.1.2)
+    #>  sf          * 1.0-7   2022-03-07 [1] CRAN (R 4.1.3)
+    #>  sp            1.5-0   2022-06-05 [1] CRAN (R 4.1.3)
+    #>  stringi       1.7.6   2021-11-29 [1] CRAN (R 4.1.2)
+    #>  stringr     * 1.4.0   2019-02-10 [1] CRAN (R 4.1.2)
+    #>  terra       * 1.5-34  2022-06-09 [1] CRAN (R 4.1.3)
+    #>  tibble      * 3.1.7   2022-05-03 [1] CRAN (R 4.1.3)
+    #>  tidyr       * 1.2.0   2022-02-01 [1] CRAN (R 4.1.2)
+    #>  tidyselect    1.1.2   2022-02-21 [1] CRAN (R 4.1.3)
+    #>  tidyverse   * 1.3.1   2021-04-15 [1] CRAN (R 4.1.2)
+    #>  tzdb          0.3.0   2022-03-28 [1] CRAN (R 4.1.3)
+    #>  units         0.8-0   2022-02-05 [1] CRAN (R 4.1.2)
+    #>  utf8          1.2.2   2021-07-24 [1] CRAN (R 4.1.2)
+    #>  vctrs         0.4.1   2022-04-13 [1] CRAN (R 4.1.3)
+    #>  vroom         1.5.7   2021-11-30 [1] CRAN (R 4.1.2)
+    #>  withr         2.5.0   2022-03-03 [1] CRAN (R 4.1.3)
+    #>  xfun          0.31    2022-05-10 [1] CRAN (R 4.1.3)
+    #>  xml2          1.3.3   2021-11-30 [1] CRAN (R 4.1.2)
+    #>  yaml          2.3.5   2022-02-21 [1] CRAN (R 4.1.3)
+    #>  zip           2.2.0   2021-05-31 [1] CRAN (R 4.1.2)
+    #> 
+    #>  [1] C:/Users/au687614/Documents/R/win-library/4.1
+    #>  [2] C:/Program Files/R/R-4.1.2/library
+    #> 
+    #> ------------------------------------------------------------------------------
 
 </details>
 
